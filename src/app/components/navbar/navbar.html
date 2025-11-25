@@ -1,0 +1,165 @@
+<nz-layout class="layout">
+      <!-- Header Principal -->
+      <nz-header class="main-header">
+        <div class="header-content">
+          <div class="logo">
+            <span nz-icon nzType="calendar" nzTheme="outline"></span>
+            <span class="logo-text">Predictify</span>
+          </div>
+          
+          <div class="header-actions">
+            <nz-input-group [nzPrefix]="prefixIconSearch" class="search-input">
+              <input 
+                type="text" 
+                nz-input 
+                placeholder="Buscar eventos tecnológicos..." 
+                [(ngModel)]="searchQuery"
+                (keyup.enter)="search()"
+              />
+            </nz-input-group>
+            <ng-template #prefixIconSearch>
+              <span nz-icon nzType="search"></span>
+            </ng-template>
+
+            <button nz-button nzType="default" class="btn-notifications">
+              <nz-badge [nzCount]="3" [nzOffset]="[5, 0]">
+                <span nz-icon nzType="bell" nzTheme="outline"></span>
+              </nz-badge>
+            </button>
+
+            <button nz-button nzType="default" class="btn-user" nz-dropdown [nzDropdownMenu]="userMenu">
+              <span nz-icon nzType="user" nzTheme="outline"></span>
+              Mi Cuenta
+              <span nz-icon nzType="down"></span>
+            </button>
+            <nz-dropdown-menu #userMenu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item (click)="navigate('profile')">
+                  <span nz-icon nzType="user"></span>
+                  Perfil
+                </li>
+                <li nz-menu-item (click)="navigate('my-events')">
+                  <span nz-icon nzType="calendar"></span>
+                  Mis Eventos
+                </li>
+                <li nz-menu-item (click)="navigate('settings')">
+                  <span nz-icon nzType="setting"></span>
+                  Configuración
+                </li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item (click)="logout()">
+                  <span nz-icon nzType="logout"></span>
+                  Cerrar Sesión
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </div>
+        </div>
+      </nz-header>
+
+      <!-- Barra de Categorías -->
+      <div class="categories-bar">
+        <div class="categories-content">
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'all' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('all')">
+            Todos los Eventos
+          </button>
+
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'frontend' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('frontend')">
+            <span nz-icon nzType="code"></span>
+            Frontend
+          </button>
+
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'backend' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('backend')">
+            <span nz-icon nzType="database"></span>
+            Backend
+          </button>
+
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'cloud' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('cloud')">
+            <span nz-icon nzType="cloud"></span>
+            Cloud & DevOps
+          </button>
+
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'ai' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('ai')">
+            <span nz-icon nzType="robot"></span>
+            Inteligencia Artificial
+          </button>
+
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'mobile' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('mobile')">
+            <span nz-icon nzType="mobile"></span>
+            Mobile
+          </button>
+
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'security' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('security')">
+            <span nz-icon nzType="safety"></span>
+            Ciberseguridad
+          </button>
+
+          <button 
+            nz-button 
+            [nzType]="selectedCategory === 'data' ? 'primary' : 'default'"
+            class="category-btn"
+            (click)="selectCategory('data')">
+            <span nz-icon nzType="bar-chart"></span>
+            Data Science
+          </button>
+
+          <button 
+            nz-button 
+            nzType="default"
+            class="category-btn filter-btn"
+            nz-dropdown 
+            [nzDropdownMenu]="filterMenu">
+            <span nz-icon nzType="filter"></span>
+            Filtros
+            <span nz-icon nzType="down"></span>
+          </button>
+          <nz-dropdown-menu #filterMenu="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-submenu nzTitle="Tipo de Evento">
+                <ul>
+                  <li nz-menu-item (click)="filterByType('conference')">Conferencias</li>
+                  <li nz-menu-item (click)="filterByType('workshop')">Workshops</li>
+                  <li nz-menu-item (click)="filterByType('webinar')">Webinars</li>
+                  <li nz-menu-item (click)="filterByType('hackathon')">Hackathons</li>
+                </ul>
+              </li>
+              <li nz-submenu nzTitle="Modalidad">
+                <ul>
+                  <li nz-menu-item (click)="filterByLocation('online')">Online</li>
+                  <li nz-menu-item (click)="filterByLocation('presencial')">Presencial</li>
+                  <li nz-menu-item (click)="filterByLocation('hibrido')">Híbrido</li>
+                </ul>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+    </nz-layout>
