@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Use Node
@@ -26,24 +26,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # ----------------------------
-      # Install Chrome for Karma
-      # ----------------------------
+      # Install Chrome
       - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Configure Chrome headless
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
-          export CHROME_BIN=chromium-browser
+          export CHROME_BIN=$(which chrome)
+          echo "Using chrome at $CHROME_BIN"
 
-      - name: Verify Chrome installed
+      # Run Tests Headless
+      - name: Run tests (Headless Chrome)
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
         run: |
-          chromium-browser --version
+          npm test -- --watch=false --browsers=ChromeHeadless --no-sandbox
 
-      # ----------------------------
-      # Run tests normally
-      # ----------------------------
-      - name: Run tests
-        run: npm test -- --watch=false
-
-      - name: Build project
+      # Build Angular project
+      - name: Build
         run: npm run build
