@@ -8,5 +8,5 @@ import { NzCardModule } from 'ng-zorro-antd/card';
   styleUrl: './event-card.css',
 })
 export class EventCard {
-  @Input() event!: { title: string; date: string; description: string };
+  @Input() event!: { title: string; date: string; description: string};
 }
