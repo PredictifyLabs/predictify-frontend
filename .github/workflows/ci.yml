@@ -26,6 +26,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # ----------------------------
+      # Install Chrome for Karma
+      # ----------------------------
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+          export CHROME_BIN=chromium-browser
+
+      - name: Verify Chrome installed
+        run: |
+          chromium-browser --version
+
+      # ----------------------------
+      # Run tests normally
+      # ----------------------------
       - name: Run tests
         run: npm test -- --watch=false
 
