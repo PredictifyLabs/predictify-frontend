@@ -1,0 +1,14 @@
+addReviewers: true
+addAssignees: false
+
+reviewers:
+  - jesuviloria
+  - Luisr26
+
+numberOfReviewers: 2
+
+skipDraft: true
+
+readyComment: |
+  🚀 Pull Request is now marked as **Ready for Review**.
+  Reviewers have been assigned!
