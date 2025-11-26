@@ -1,10 +1,10 @@
-.container-cards{
+.container-cards {
     width: 100%;
     display: flex;
     justify-content: center;
 }
 
-.cards{
+.cards {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
