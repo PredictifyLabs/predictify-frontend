@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @Component({
     selector: 'app-landing',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, NzButtonModule, NzIconModule],
     templateUrl: './landing.component.html',
     styleUrls: ['./landing.component.css']
 })
@@ -13,7 +15,6 @@ export class LandingComponent {
     constructor(private router: Router) { }
 
     navigateToApp(): void {
-        // Navigate to the main app (you can change this route as needed)
         this.router.navigate(['/events']);
     }
 }
