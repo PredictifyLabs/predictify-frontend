@@ -7,6 +7,7 @@ Aplicación web desarrollada con **Angular + ng-zorro** para gestionar empleados
 - Angular
 - TypeScript
 - ng-zorro
+- Tailwind CSS
 
 ## 📌 Funcionalidades
 
