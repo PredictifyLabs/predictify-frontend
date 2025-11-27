@@ -1,5 +1,170 @@
-<div class="container-cards">
-  <div class="cards">
-    <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
+<div class="events-page">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Descubre eventos
+        <span class="gradient-text">tecnológicos</span>
+      </h1>
+      <p class="hero-subtitle">Conecta con la comunidad tech, aprende y crece profesionalmente</p>
+
+      <!-- Search Bar -->
+      <div class="search-container">
+        <i nz-icon nzType="search" nzTheme="outline"></i>
+        <input type="text" placeholder="Buscar eventos, categorías, ubicaciones..." class="search-input"
+          [(ngModel)]="searchQuery" />
+      </div>
+    </div>
+
+    <!-- Glow Effects -->
+    <div class="glow-orb purple"></div>
+    <div class="glow-orb blue"></div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filter-pills">
+      <button class="filter-pill" [class.active]="selectedCategory === 'all'" (click)="filterByCategory('all')">
+        Todos
+      </button>
+      <button class="filter-pill" [class.active]="selectedCategory === 'hackathon'"
+        (click)="filterByCategory('hackathon')">
+        <i nz-icon nzType="trophy" nzTheme="outline"></i> Hackathons
+      </button>
+      <button class="filter-pill" [class.active]="selectedCategory === 'conference'"
+        (click)="filterByCategory('conference')">
+        <i nz-icon nzType="sound" nzTheme="outline"></i> Conferencias
+      </button>
+      <button class="filter-pill" [class.active]="selectedCategory === 'workshop'"
+        (click)="filterByCategory('workshop')">
+        <i nz-icon nzType="code" nzTheme="outline"></i> Talleres
+      </button>
+      <button class="filter-pill" [class.active]="selectedCategory === 'networking'"
+        (click)="filterByCategory('networking')">
+        <i nz-icon nzType="team" nzTheme="outline"></i> Networking
+      </button>
+    </div>
+  </div>
+
+  <!-- Events Grid -->
+  <div class="events-container">
+    <div class="events-grid">
+      <app-event-card *ngFor="let event of filteredEvents" [event]="event"></app-event-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredEvents.length === 0">
+      <div class="empty-icon">
+        <i nz-icon nzType="search" nzTheme="outline"></i>
+      </div>
+      <h3>No se encontraron eventos</h3>
+      <p>Intenta ajustar tus filtros de búsqueda</p>
+    </div>
+  </div>
+
+  <!-- Categories Showcase -->
+  <div class="categories-showcase">
+    <h2 class="categories-title">Explorar por categoría</h2>
+
+    <div class="categories-grid">
+      <!-- Tecnología -->
+      <div class="category-pill">
+        <div class="category-pill-icon tech">
+          <i nz-icon nzType="api" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Tecnología</h3>
+          <p class="category-pill-count">3 mil eventos</p>
+        </div>
+      </div>
+
+      <!-- Programación -->
+      <div class="category-pill">
+        <div class="category-pill-icon code">
+          <i nz-icon nzType="code" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Programación</h3>
+          <p class="category-pill-count">1.8 mil eventos</p>
+        </div>
+      </div>
+
+      <!-- Desarrollo Web -->
+      <div class="category-pill">
+        <div class="category-pill-icon web">
+          <i nz-icon nzType="global" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Desarrollo Web</h3>
+          <p class="category-pill-count">2.5 mil eventos</p>
+        </div>
+      </div>
+
+      <!-- Desarrollo Móvil -->
+      <div class="category-pill">
+        <div class="category-pill-icon mobile">
+          <i nz-icon nzType="mobile" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Desarrollo Móvil</h3>
+          <p class="category-pill-count">1.2 mil eventos</p>
+        </div>
+      </div>
+
+      <!-- IA -->
+      <div class="category-pill">
+        <div class="category-pill-icon ai">
+          <i nz-icon nzType="bulb" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">IA</h3>
+          <p class="category-pill-count">2 mil eventos</p>
+        </div>
+      </div>
+
+      <!-- Machine Learning -->
+      <div class="category-pill">
+        <div class="category-pill-icon ml">
+          <i nz-icon nzType="experiment" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Machine Learning</h3>
+          <p class="category-pill-count">1.5 mil eventos</p>
+        </div>
+      </div>
+
+      <!-- Blockchain -->
+      <div class="category-pill">
+        <div class="category-pill-icon blockchain">
+          <i nz-icon nzType="link" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Blockchain</h3>
+          <p class="category-pill-count">884 eventos</p>
+        </div>
+      </div>
+
+      <!-- Videojuegos -->
+      <div class="category-pill">
+        <div class="category-pill-icon games">
+          <i nz-icon nzType="robot" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Videojuegos</h3>
+          <p class="category-pill-count">756 eventos</p>
+        </div>
+      </div>
+
+      <!-- Cloud Computing -->
+      <div class="category-pill">
+        <div class="category-pill-icon cloud">
+          <i nz-icon nzType="cloud" nzTheme="outline"></i>
+        </div>
+        <div class="category-pill-info">
+          <h3 class="category-pill-name">Cloud Computing</h3>
+          <p class="category-pill-count">1.1 mil eventos</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
