@@ -1,4 +1,70 @@
 /* ============================================
+   Navbar
+   ============================================ */
+
+   .container{
+    display: flex;
+    flex-direction: column;
+    background-color: red;
+    height: 100%;
+    width: 100%;
+   }
+
+   .navbar{
+    background-color: green;
+    height: 20%;
+    display: flex;
+    align-items: center;
+   }
+
+   .title_main{
+    background-color: yellow;
+    height: 50%;
+   }
+
+   .paragraph_main{
+    background-color: rgb(255, 136, 24);
+    height: 30%;
+   }
+
+/* Styles of the section button for navbar*/
+/* From Uiverse.io by faxriddin20 */ 
+.button-container {
+  display: flex;
+  background-color: black;
+  min-width: 270px;
+  height: 50px;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 10px;
+}
+
+.button {
+  outline: 0 !important;
+  border: 0 !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all ease-in-out 0.3s;
+  cursor: pointer;
+}
+
+.button:hover {
+  transform: translateY(-3px);
+}
+
+.icon {
+  font-size: 20px;
+  color: white;
+}
+
+
+/* ============================================
    CATEGORIES SHOWCASE - MINIMALIST DESIGN
    ============================================ */
 
@@ -178,6 +244,8 @@
   background-color: #050505;
   color: #fff;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative; /* para que las glow-orb usen este contenedor como referencia */
+  overflow: hidden; /* evita que las glow-orb se salgan visualmente del grid */
 }
 
 /* Hero Section */
