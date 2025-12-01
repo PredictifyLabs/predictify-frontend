@@ -2,12 +2,19 @@
    Navbar
    ============================================ */
 
+   .container-main{
+    display: flex !important;
+    padding: 0 !important;
+   }
+
    .container{
     display: flex;
     flex-direction: column;
     background-color: red;
     height: 100%;
     width: 100%;
+    flex: 1 1 100%;
+    max-width: 100%;
    }
 
    .navbar{
@@ -15,20 +22,70 @@
     height: 20%;
     display: flex;
     align-items: center;
+    width: 100%;
+    flex-shrink: 0;
+   }
+
+   .logo-container{
+    width: 80px;
+    height: 80px;
+    position: relative;
+    top: 5px;
    }
 
    .title_main{
     background-color: yellow;
     height: 50%;
+    width: 100%;
+    flex-shrink: 0;
    }
 
    .paragraph_main{
     background-color: rgb(255, 136, 24);
     height: 30%;
+    width: 100%;
+    flex-shrink: 0;
    }
 
 /* Styles of the section button for navbar*/
 /* From Uiverse.io by faxriddin20 */ 
+
+/* Search button with fixed icon */
+.button-container > div:first-child {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.button-container > div:first-child button {
+  position: relative !important;
+  padding-left: 0 !important;
+  justify-content: flex-start !important;
+  margin-left: 0 !important;
+  transform-origin: left center !important;
+}
+
+.button-container > div:first-child button > div:first-child {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  margin: auto !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+}
+
+.button-container > div:first-child button input {
+  padding-left: 48px !important;
+  width: calc(100% - 48px) !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.button-container > div:first-child button:hover input,
+.button-container > div:first-child button:focus-within input {
+  opacity: 1 !important;
+}
+
 .button-container {
   display: flex;
   background-color: black;
