@@ -1,0 +1,174 @@
+<div class="profile-page">
+  <div class="profile-container">
+    <!-- Header -->
+    <header class="profile-header">
+      <div class="header-background"></div>
+      <div class="header-content">
+        <div class="avatar-section">
+          <img [src]="user.avatar" alt="Avatar" class="avatar">
+          <button class="avatar-edit-btn" *ngIf="isEditing">
+            <span nz-icon nzType="camera" nzTheme="outline"></span>
+          </button>
+        </div>
+        
+        <div class="user-info">
+          <div class="user-main">
+            <h1 *ngIf="!isEditing">{{ user.name }}</h1>
+            <input *ngIf="isEditing" [(ngModel)]="editedUser.name" class="edit-input name-input" placeholder="Nombre">
+            <span class="role-badge" [class]="user.role">{{ user.role === 'organizer' ? 'Organizador' : 'Usuario' }}</span>
+          </div>
+          <p class="user-email">{{ user.email }}</p>
+        </div>
+
+        <div class="header-actions">
+          <button *ngIf="!isEditing" class="btn-secondary" (click)="startEditing()">
+            <span nz-icon nzType="edit" nzTheme="outline"></span>
+            Editar Perfil
+          </button>
+          <button *ngIf="isEditing" class="btn-primary" (click)="saveProfile()">
+            <span nz-icon nzType="check" nzTheme="outline"></span>
+            Guardar
+          </button>
+          <button *ngIf="isEditing" class="btn-secondary" (click)="cancelEditing()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-number">{{ user.eventsAttended }}</span>
+        <span class="stat-label">Eventos Asistidos</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ savedEvents.length }}</span>
+        <span class="stat-label">Eventos Guardados</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ user.eventsCreated }}</span>
+        <span class="stat-label">Eventos Creados</span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="profile-content">
+      <!-- Left Column - About -->
+      <div class="about-section card-glass">
+        <h3>Sobre mí</h3>
+        <div *ngIf="!isEditing" class="about-content">
+          <p class="bio">{{ user.bio || 'Sin descripción' }}</p>
+          
+          <div class="info-item" *ngIf="user.location">
+            <span nz-icon nzType="environment" nzTheme="outline"></span>
+            <span>{{ user.location }}</span>
+          </div>
+          
+          <div class="info-item" *ngIf="user.website">
+            <span nz-icon nzType="link" nzTheme="outline"></span>
+            <a [href]="user.website" target="_blank">{{ user.website }}</a>
+          </div>
+          
+          <div class="info-item">
+            <span nz-icon nzType="calendar" nzTheme="outline"></span>
+            <span>Miembro desde {{ user.joinedDate | date:'MMMM yyyy' }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="isEditing" class="edit-form">
+          <div class="form-group">
+            <label>Bio</label>
+            <textarea [(ngModel)]="editedUser.bio" rows="4" placeholder="Cuéntanos sobre ti..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Ubicación</label>
+            <input [(ngModel)]="editedUser.location" placeholder="Tu ciudad">
+          </div>
+          <div class="form-group">
+            <label>Website</label>
+            <input [(ngModel)]="editedUser.website" placeholder="https://...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Tabs -->
+      <div class="events-section">
+        <nz-tabset>
+          <nz-tab nzTitle="Eventos Guardados">
+            <div class="events-grid">
+              <div class="event-card" *ngFor="let event of savedEvents" (click)="navigateToEvent(event.id)">
+                <div class="event-image">
+                  <img [src]="event.image" [alt]="event.title">
+                  <button class="remove-btn" (click)="removeFromSaved(event.id); $event.stopPropagation()">
+                    <span nz-icon nzType="close" nzTheme="outline"></span>
+                  </button>
+                </div>
+                <div class="event-info">
+                  <h4>{{ event.title }}</h4>
+                  <p class="event-meta">
+                    <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                    {{ event.date | date:'d MMM yyyy' }}
+                  </p>
+                  <p class="event-meta">
+                    <span nz-icon nzType="environment" nzTheme="outline"></span>
+                    {{ event.location }}
+                  </p>
+                  <div class="prediction-badge" [style.color]="getPredictionColor(event.prediction)">
+                    <span nz-icon nzType="line-chart" nzTheme="outline"></span>
+                    {{ event.prediction }}%
+                  </div>
+                </div>
+              </div>
+              
+              <div class="empty-state" *ngIf="savedEvents.length === 0">
+                <span nz-icon nzType="heart" nzTheme="outline"></span>
+                <p>No tienes eventos guardados</p>
+                <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
+              </div>
+            </div>
+          </nz-tab>
+
+          <nz-tab nzTitle="Historial de Asistencia">
+            <div class="events-grid">
+              <div class="event-card attended" *ngFor="let event of attendedEvents" (click)="navigateToEvent(event.id)">
+                <div class="event-image">
+                  <img [src]="event.image" [alt]="event.title">
+                  <span class="attended-badge">
+                    <span nz-icon nzType="check-circle" nzTheme="fill"></span>
+                    Asistido
+                  </span>
+                </div>
+                <div class="event-info">
+                  <h4>{{ event.title }}</h4>
+                  <p class="event-meta">
+                    <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                    {{ event.date | date:'d MMM yyyy' }}
+                  </p>
+                  <p class="event-meta">
+                    <span nz-icon nzType="environment" nzTheme="outline"></span>
+                    {{ event.location }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="empty-state" *ngIf="attendedEvents.length === 0">
+                <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                <p>No has asistido a ningún evento todavía</p>
+                <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
+              </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="profile-actions">
+      <button class="btn-danger" (click)="logout()">
+        <span nz-icon nzType="logout" nzTheme="outline"></span>
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</div>
