@@ -1,0 +1,203 @@
+<div class="dashboard-page">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Dashboard</h1>
+      <p class="welcome-text">Bienvenido de vuelta, Organizador 👋</p>
+    </div>
+    <button class="btn-primary" (click)="createEvent()">
+      <span nz-icon nzType="plus" nzTheme="outline"></span>
+      Crear Evento
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <span nz-icon nzType="calendar" nzTheme="outline"></span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number">{{ stats.totalEvents }}</span>
+        <span class="stat-label">Eventos Creados</span>
+      </div>
+      <span class="stat-trend positive">+12% ↗</span>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <span nz-icon nzType="team" nzTheme="outline"></span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number">{{ stats.totalAttendees | number }}</span>
+        <span class="stat-label">Asistentes Totales</span>
+      </div>
+      <span class="stat-trend positive">+8% ↗</span>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <span nz-icon nzType="rise" nzTheme="outline"></span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number">{{ stats.averageAttendanceRate }}%</span>
+        <span class="stat-label">Tasa de Asistencia</span>
+      </div>
+      <span class="stat-trend positive">+5% ↗</span>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon yellow">
+        <span nz-icon nzType="dollar" nzTheme="outline"></span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-number">${{ stats.totalRevenue | number }}</span>
+        <span class="stat-label">Ingresos Generados</span>
+      </div>
+      <span class="stat-trend positive">+23% ↗</span>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="dashboard-content">
+    
+    <!-- My Events Section -->
+    <div class="events-section card-glass">
+      <div class="section-header">
+        <h2>Mis Eventos</h2>
+        <div class="section-actions">
+          <button class="btn-text">Ver Todos</button>
+        </div>
+      </div>
+
+      <div class="events-table" *ngIf="!isLoading && myEvents.length > 0">
+        <div class="table-header">
+          <span class="col-name">Evento</span>
+          <span class="col-date">Fecha</span>
+          <span class="col-status">Estado</span>
+          <span class="col-prediction">Predicción</span>
+          <span class="col-attendees">Asistentes</span>
+          <span class="col-actions">Acciones</span>
+        </div>
+
+        <div class="table-row" *ngFor="let event of myEvents">
+          <div class="col-name">
+            <img [src]="event.image" [alt]="event.title" class="event-thumbnail">
+            <div class="event-info">
+              <span class="event-title">{{ event.title }}</span>
+              <span class="event-category">{{ event.category }}</span>
+            </div>
+          </div>
+          
+          <span class="col-date">{{ event.date | date:'dd MMM yyyy' }}</span>
+          
+          <span class="col-status">
+            <span class="status-badge" [style.background]="getStatusColor(event.status) + '20'" [style.color]="getStatusColor(event.status)">
+              {{ getStatusLabel(event.status) }}
+            </span>
+          </span>
+          
+          <span class="col-prediction">
+            <span class="prediction-value" *ngIf="event.prediction" 
+                  [style.color]="event.prediction.level === 'high' ? '#10B981' : event.prediction.level === 'medium' ? '#F59E0B' : '#EF4444'">
+              {{ event.prediction.probability }}%
+            </span>
+          </span>
+          
+          <span class="col-attendees">{{ event.interested }} / {{ event.capacity }}</span>
+          
+          <div class="col-actions">
+            <button class="action-btn" (click)="editEvent(event)" title="Editar">
+              <span nz-icon nzType="edit" nzTheme="outline"></span>
+            </button>
+            <button class="action-btn" (click)="viewAnalytics(event)" title="Analytics">
+              <span nz-icon nzType="bar-chart" nzTheme="outline"></span>
+            </button>
+            <button class="action-btn" (click)="duplicateEvent(event)" title="Duplicar">
+              <span nz-icon nzType="copy" nzTheme="outline"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="!isLoading && myEvents.length === 0">
+        <span nz-icon nzType="inbox" nzTheme="outline"></span>
+        <p>No tienes eventos aún</p>
+        <button class="btn-primary" (click)="createEvent()">Crear tu primer evento</button>
+      </div>
+
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <p>Cargando eventos...</p>
+      </div>
+    </div>
+
+    <!-- Quick Stats Panel -->
+    <div class="quick-stats card-glass">
+      <h3>Resumen Rápido</h3>
+      
+      <div class="quick-stat-item">
+        <div class="quick-stat-icon upcoming">
+          <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+        </div>
+        <div class="quick-stat-info">
+          <span class="quick-stat-number">{{ stats.upcomingEvents }}</span>
+          <span class="quick-stat-label">Próximos Eventos</span>
+        </div>
+      </div>
+
+      <div class="quick-stat-item">
+        <div class="quick-stat-icon completed">
+          <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+        </div>
+        <div class="quick-stat-info">
+          <span class="quick-stat-number">{{ stats.completedEvents }}</span>
+          <span class="quick-stat-label">Eventos Completados</span>
+        </div>
+      </div>
+
+      <div class="quick-stat-item">
+        <div class="quick-stat-icon draft">
+          <span nz-icon nzType="file-text" nzTheme="outline"></span>
+        </div>
+        <div class="quick-stat-info">
+          <span class="quick-stat-number">{{ stats.draftEvents }}</span>
+          <span class="quick-stat-label">Borradores</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h4>Predicción vs Realidad</h4>
+      <div class="prediction-accuracy">
+        <div class="accuracy-bar">
+          <div class="accuracy-fill" style="width: 94%"></div>
+        </div>
+        <div class="accuracy-info">
+          <span class="accuracy-label">Precisión del Modelo</span>
+          <span class="accuracy-value">94.2%</span>
+        </div>
+      </div>
+
+      <div class="recent-activity">
+        <h4>Actividad Reciente</h4>
+        <div class="activity-item">
+          <span class="activity-dot green"></span>
+          <span class="activity-text">Nuevo registro en Tech Summit</span>
+          <span class="activity-time">Hace 5 min</span>
+        </div>
+        <div class="activity-item">
+          <span class="activity-dot blue"></span>
+          <span class="activity-text">Predicción actualizada</span>
+          <span class="activity-time">Hace 1 hora</span>
+        </div>
+        <div class="activity-item">
+          <span class="activity-dot purple"></span>
+          <span class="activity-text">Evento marcado como trending</span>
+          <span class="activity-time">Hace 3 horas</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
