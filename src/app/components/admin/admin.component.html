@@ -1,0 +1,462 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h1 class="logo">
+        <span class="gradient-text">Predictify</span>
+      </h1>
+      <span class="admin-badge">Admin</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li *ngFor="let item of sidebarItems">
+          <a 
+            [class.active]="currentSection === item.route"
+            (click)="setSection(item.route)"
+          >
+            <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <span nz-icon nzType="logout" nzTheme="outline"></span>
+        Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Top Bar -->
+    <header class="admin-header">
+      <div class="header-left">
+        <h2>{{ currentSection === 'dashboard' ? 'Dashboard General' : 
+               currentSection === 'events' ? 'Gestión de Eventos' :
+               currentSection === 'users' ? 'Gestión de Usuarios' :
+               currentSection === 'ai' ? 'Sistema IA' : 'Admin Panel' }}</h2>
+      </div>
+      <div class="header-right">
+        <button class="header-btn">
+          <span nz-icon nzType="search" nzTheme="outline"></span>
+        </button>
+        <button class="header-btn notification-btn">
+          <nz-badge [nzCount]="8">
+            <span nz-icon nzType="bell" nzTheme="outline"></span>
+          </nz-badge>
+        </button>
+        <div class="admin-profile">
+          <img src="https://api.dicebear.com/7.x/initials/svg?seed=AD" alt="Admin" class="admin-avatar">
+          <span class="admin-name">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="admin-content">
+      
+      <!-- Dashboard Section -->
+      <div *ngIf="currentSection === 'dashboard'" class="dashboard-section">
+        
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon blue">
+              <span nz-icon nzType="calendar" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">{{ stats.totalEvents | number }}</span>
+              <span class="kpi-label">Eventos</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.eventsGrowth }}% ↗</span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon green">
+              <span nz-icon nzType="team" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">{{ stats.totalUsers | number }}</span>
+              <span class="kpi-label">Usuarios</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.usersGrowth }}% ↗</span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon purple">
+              <span nz-icon nzType="bank" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">{{ stats.totalOrganizers | number }}</span>
+              <span class="kpi-label">Organizadores</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.organizersGrowth }}% ↗</span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon yellow">
+              <span nz-icon nzType="dollar" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">${{ stats.totalRevenue | number }}</span>
+              <span class="kpi-label">Revenue</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.revenueGrowth }}% ↗</span>
+          </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="dashboard-grid">
+          
+          <!-- Alerts Panel -->
+          <div class="panel alerts-panel">
+            <h3>⚠️ Alertas Importantes</h3>
+            <div class="alerts-list">
+              <div class="alert-item" *ngFor="let alert of alerts" [style.borderLeftColor]="getAlertColor(alert.type)">
+                <span nz-icon [nzType]="getAlertIcon(alert.type)" nzTheme="outline" [style.color]="getAlertColor(alert.type)"></span>
+                <span class="alert-text">
+                  <strong *ngIf="alert.count">{{ alert.count }}</strong> {{ alert.message }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Panel -->
+          <div class="panel activity-panel">
+            <h3>📋 Actividad Reciente</h3>
+            <div class="activity-list">
+              <div class="activity-item" *ngFor="let activity of recentActivity">
+                <div class="activity-icon" [style.background]="activity.color + '20'" [style.color]="activity.color">
+                  <span nz-icon [nzType]="activity.icon" nzTheme="outline"></span>
+                </div>
+                <div class="activity-info">
+                  <span class="activity-text">{{ activity.text }}</span>
+                  <span class="activity-time">{{ activity.time }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Status Panel -->
+          <div class="panel ai-panel">
+            <h3>🤖 Estado del Sistema IA</h3>
+            <div class="ai-status">
+              <div class="status-indicator online">
+                <span class="status-dot"></span>
+                <span class="status-text">Sistema Operativo</span>
+              </div>
+              
+              <div class="ai-metrics">
+                <div class="ai-metric">
+                  <span class="metric-label">Precisión Global</span>
+                  <span class="metric-value">87.3%</span>
+                  <div class="metric-bar">
+                    <div class="metric-fill" style="width: 87.3%"></div>
+                  </div>
+                </div>
+                
+                <div class="ai-metric">
+                  <span class="metric-label">Predicciones Hoy</span>
+                  <span class="metric-value">1,247</span>
+                </div>
+                
+                <div class="ai-metric">
+                  <span class="metric-label">Última Actualización</span>
+                  <span class="metric-value">Hace 2 horas</span>
+                </div>
+              </div>
+
+              <button class="btn-secondary">
+                <span nz-icon nzType="reload" nzTheme="outline"></span>
+                Reentrenar Modelo
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Actions Panel -->
+          <div class="panel actions-panel">
+            <h3>⚡ Acciones Rápidas</h3>
+            <div class="quick-actions">
+              <button class="quick-action-btn">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                Crear Evento
+              </button>
+              <button class="quick-action-btn">
+                <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                Añadir Usuario
+              </button>
+              <button class="quick-action-btn">
+                <span nz-icon nzType="file-text" nzTheme="outline"></span>
+                Generar Reporte
+              </button>
+              <button class="quick-action-btn">
+                <span nz-icon nzType="mail" nzTheme="outline"></span>
+                Enviar Newsletter
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Events Management Section -->
+      <div *ngIf="currentSection === 'events'" class="events-section">
+        <div class="section-header">
+          <h3>Todos los Eventos</h3>
+          <button class="btn-primary">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>
+            Crear Evento Admin
+          </button>
+        </div>
+
+        <div class="filters-bar">
+          <input type="text" placeholder="Buscar eventos..." class="search-input">
+          <select class="filter-select">
+            <option>Todos los Estados</option>
+            <option>Publicado</option>
+            <option>Borrador</option>
+            <option>En Revisión</option>
+            <option>Reportado</option>
+          </select>
+          <select class="filter-select">
+            <option>Todas las Categorías</option>
+            <option>Conferencia</option>
+            <option>Hackathon</option>
+            <option>Workshop</option>
+          </select>
+        </div>
+
+        <div class="data-table">
+          <div class="table-header">
+            <span>ID</span>
+            <span>Evento</span>
+            <span>Organizador</span>
+            <span>Fecha</span>
+            <span>Estado</span>
+            <span>Predicción</span>
+            <span>Acciones</span>
+          </div>
+          <div class="table-row">
+            <span>#101</span>
+            <span>Tech Summit 2025</span>
+            <span>TechMadrid</span>
+            <span>15/12/2025</span>
+            <span><span class="status-badge live">🟢 Live</span></span>
+            <span class="prediction-high">82%</span>
+            <span class="actions">
+              <button class="icon-btn"><span nz-icon nzType="eye" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="more" nzTheme="outline"></span></button>
+            </span>
+          </div>
+          <div class="table-row">
+            <span>#102</span>
+            <span>AI Workshop Pro</span>
+            <span>AI Global</span>
+            <span>20/12/2025</span>
+            <span><span class="status-badge review">🟡 En Revisión</span></span>
+            <span class="prediction-medium">65%</span>
+            <span class="actions">
+              <button class="icon-btn"><span nz-icon nzType="eye" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="more" nzTheme="outline"></span></button>
+            </span>
+          </div>
+          <div class="table-row">
+            <span>#103</span>
+            <span>DevOps Meetup</span>
+            <span>DevOps Community</span>
+            <span>05/01/2026</span>
+            <span><span class="status-badge reported">🔴 Reportado</span></span>
+            <span class="prediction-low">35%</span>
+            <span class="actions">
+              <button class="icon-btn"><span nz-icon nzType="eye" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="more" nzTheme="outline"></span></button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Management Section -->
+      <div *ngIf="currentSection === 'users'" class="users-section">
+        <div class="section-header">
+          <h3>Gestión de Usuarios</h3>
+          <button class="btn-primary">
+            <span nz-icon nzType="user-add" nzTheme="outline"></span>
+            Crear Usuario
+          </button>
+        </div>
+
+        <div class="user-stats">
+          <div class="user-stat-card">
+            <span class="user-stat-number">45,892</span>
+            <span class="user-stat-label">Total Usuarios</span>
+          </div>
+          <div class="user-stat-card">
+            <span class="user-stat-number">38,241</span>
+            <span class="user-stat-label">Activos</span>
+          </div>
+          <div class="user-stat-card">
+            <span class="user-stat-number">7,651</span>
+            <span class="user-stat-label">Inactivos</span>
+          </div>
+        </div>
+
+        <div class="filters-bar">
+          <input type="text" placeholder="Buscar por nombre, email, ID..." class="search-input">
+          <select class="filter-select">
+            <option>Todos los Roles</option>
+            <option>Usuario</option>
+            <option>Organizador</option>
+            <option>Admin</option>
+          </select>
+          <select class="filter-select">
+            <option>Todos los Estados</option>
+            <option>Activo</option>
+            <option>Suspendido</option>
+            <option>Baneado</option>
+          </select>
+        </div>
+
+        <div class="data-table">
+          <div class="table-header">
+            <span>ID</span>
+            <span>Usuario</span>
+            <span>Email</span>
+            <span>Rol</span>
+            <span>Estado</span>
+            <span>Acciones</span>
+          </div>
+          <div class="table-row">
+            <span>#1001</span>
+            <span class="user-cell">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="">
+              John Doe
+            </span>
+            <span>john&#64;email.com</span>
+            <span><span class="role-badge user">User</span></span>
+            <span><span class="status-dot green"></span> Activo</span>
+            <span class="actions">
+              <button class="icon-btn"><span nz-icon nzType="eye" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+            </span>
+          </div>
+          <div class="table-row">
+            <span>#1002</span>
+            <span class="user-cell">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jane" alt="">
+              Jane Smith
+            </span>
+            <span>jane&#64;email.com</span>
+            <span><span class="role-badge organizer">Organizer</span></span>
+            <span><span class="status-dot green"></span> Activo</span>
+            <span class="actions">
+              <button class="icon-btn"><span nz-icon nzType="eye" nzTheme="outline"></span></button>
+              <button class="icon-btn"><span nz-icon nzType="edit" nzTheme="outline"></span></button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI System Section -->
+      <div *ngIf="currentSection === 'ai'" class="ai-section">
+        <div class="section-header">
+          <h3>🤖 Sistema de Predicción IA</h3>
+          <div class="ai-status-badge online">
+            <span class="status-dot"></span>
+            Operativo
+          </div>
+        </div>
+
+        <div class="ai-dashboard">
+          <div class="ai-main-stats">
+            <div class="ai-stat-card large">
+              <span class="ai-stat-label">Precisión Global</span>
+              <span class="ai-stat-value">87.3%</span>
+              <div class="ai-progress">
+                <div class="ai-progress-fill" style="width: 87.3%"></div>
+              </div>
+              <span class="ai-stat-change">+3.4% vs mes anterior</span>
+            </div>
+            
+            <div class="ai-stat-card">
+              <span class="ai-stat-label">MAE (Error Medio)</span>
+              <span class="ai-stat-value">8.2%</span>
+            </div>
+            
+            <div class="ai-stat-card">
+              <span class="ai-stat-label">Predicciones Hoy</span>
+              <span class="ai-stat-value">1,247</span>
+            </div>
+            
+            <div class="ai-stat-card">
+              <span class="ai-stat-label">Versión Modelo</span>
+              <span class="ai-stat-value">v2.3.1</span>
+            </div>
+          </div>
+
+          <div class="ai-factors">
+            <h4>Factores más Influyentes</h4>
+            <div class="factor-list">
+              <div class="factor-item">
+                <span class="factor-name">Histórico del organizador</span>
+                <div class="factor-bar"><div class="factor-fill" style="width: 38%"></div></div>
+                <span class="factor-value">38%</span>
+              </div>
+              <div class="factor-item">
+                <span class="factor-name">Engagement pre-evento</span>
+                <div class="factor-bar"><div class="factor-fill" style="width: 24%"></div></div>
+                <span class="factor-value">24%</span>
+              </div>
+              <div class="factor-item">
+                <span class="factor-name">Precio del evento</span>
+                <div class="factor-bar"><div class="factor-fill" style="width: 15%"></div></div>
+                <span class="factor-value">15%</span>
+              </div>
+              <div class="factor-item">
+                <span class="factor-name">Día de la semana</span>
+                <div class="factor-bar"><div class="factor-fill" style="width: 12%"></div></div>
+                <span class="factor-value">12%</span>
+              </div>
+              <div class="factor-item">
+                <span class="factor-name">Competencia</span>
+                <div class="factor-bar"><div class="factor-fill" style="width: 8%"></div></div>
+                <span class="factor-value">8%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-actions">
+            <button class="btn-primary">
+              <span nz-icon nzType="reload" nzTheme="outline"></span>
+              Reentrenar Modelo
+            </button>
+            <button class="btn-secondary">
+              <span nz-icon nzType="file-text" nzTheme="outline"></span>
+              Ver Logs
+            </button>
+            <button class="btn-secondary">
+              <span nz-icon nzType="setting" nzTheme="outline"></span>
+              Configurar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Default placeholder for other sections -->
+      <div *ngIf="!['dashboard', 'events', 'users', 'ai'].includes(currentSection)" class="placeholder-section">
+        <div class="placeholder-content">
+          <span nz-icon nzType="tool" nzTheme="outline" class="placeholder-icon"></span>
+          <h3>{{ currentSection | titlecase }} - En Desarrollo</h3>
+          <p>Esta sección estará disponible próximamente.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
