@@ -1,0 +1,53 @@
+<div class="prediction-factors">
+  <h4 class="factors-title">Factores analizados:</h4>
+  
+  <div class="factors-list">
+    <!-- Factores Positivos -->
+    <div *ngFor="let factor of positiveFactors" 
+         class="factor-item positive"
+         [class.high-impact]="factor.impact === 'high'"
+         [class.medium-impact]="factor.impact === 'medium'"
+         [class.low-impact]="factor.impact === 'low'">
+      
+      <div class="factor-icon positive-icon">
+        <span nz-icon [nzType]="factor.icon" nzTheme="outline"></span>
+      </div>
+      
+      <div class="factor-content">
+        <div class="factor-header">
+          <span class="factor-name">{{ factor.name }}</span>
+          <span class="factor-impact-badge positive-badge">
+            +{{ getWeightPercentage(factor.weight) | number:'1.0-0' }}%
+          </span>
+        </div>
+        <p class="factor-description">{{ factor.description }}</p>
+      </div>
+    </div>
+
+    <!-- Factores Negativos -->
+    <div *ngFor="let factor of negativeFactors" 
+         class="factor-item negative"
+         [class.high-impact]="factor.impact === 'high'"
+         [class.medium-impact]="factor.impact === 'medium'"
+         [class.low-impact]="factor.impact === 'low'">
+      
+      <div class="factor-icon negative-icon">
+        <span nz-icon [nzType]="factor.icon" nzTheme="outline"></span>
+      </div>
+      
+      <div class="factor-content">
+        <div class="factor-header">
+          <span class="factor-name">{{ factor.name }}</span>
+          <span class="factor-impact-badge negative-badge">
+            {{ getWeightPercentage(factor.weight) | number:'1.0-0' }}%
+          </span>
+        </div>
+        <p class="factor-description">{{ factor.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="factors.length > maxFactors" class="factors-more">
+    <span class="more-text">+{{ factors.length - maxFactors }} factores más</span>
+  </div>
+</div>
