@@ -1,0 +1,135 @@
+<div class="auth-page">
+  <div class="auth-container">
+    <!-- Left Side - Branding -->
+    <div class="auth-branding">
+      <div class="branding-content">
+        <h1 class="brand-title">
+          <span class="gradient-text">Predictify</span>
+        </h1>
+        <p class="brand-subtitle">
+          Únete a la comunidad de eventos tech más innovadora
+        </p>
+        
+        <div class="features-list">
+          <div class="feature-item">
+            <span class="feature-icon">🚀</span>
+            <span class="feature-text">Crea eventos en minutos</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🤖</span>
+            <span class="feature-text">Predicciones IA de asistencia</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">💰</span>
+            <span class="feature-text">Comienza gratis, escala cuando quieras</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Register Form -->
+    <div class="auth-form-container">
+      <div class="auth-form-content">
+        <div class="form-header">
+          <h2>Crear Cuenta</h2>
+          <p>Completa tus datos para comenzar</p>
+        </div>
+
+        <!-- Register Form -->
+        <form class="register-form" (ngSubmit)="register()">
+          <div class="form-group">
+            <label for="name">Nombre Completo</label>
+            <div class="input-wrapper">
+              <span nz-icon nzType="user" nzTheme="outline" class="input-icon"></span>
+              <input 
+                type="text" 
+                id="name" 
+                [(ngModel)]="name" 
+                name="name"
+                placeholder="Juan Pérez"
+                class="form-input"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrapper">
+              <span nz-icon nzType="mail" nzTheme="outline" class="input-icon"></span>
+              <input 
+                type="email" 
+                id="email" 
+                [(ngModel)]="email" 
+                name="email"
+                placeholder="tu@email.com"
+                class="form-input"
+              >
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password">Contraseña</label>
+              <div class="input-wrapper">
+                <span nz-icon nzType="lock" nzTheme="outline" class="input-icon"></span>
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  id="password" 
+                  [(ngModel)]="password" 
+                  name="password"
+                  placeholder="••••••••"
+                  class="form-input"
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">Confirmar</label>
+              <div class="input-wrapper">
+                <span nz-icon nzType="lock" nzTheme="outline" class="input-icon"></span>
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  id="confirmPassword" 
+                  [(ngModel)]="confirmPassword" 
+                  name="confirmPassword"
+                  placeholder="••••••••"
+                  class="form-input"
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="organizer-toggle">
+            <label class="toggle-wrapper">
+              <input type="checkbox" [(ngModel)]="isOrganizer" name="isOrganizer">
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Quiero crear eventos (Organizador)</span>
+            </label>
+          </div>
+
+          <div class="terms-checkbox">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms">
+              <span class="checkmark"></span>
+              Acepto los <a href="#">Términos de Servicio</a> y la <a href="#">Política de Privacidad</a>
+            </label>
+          </div>
+
+          <div class="error-message" *ngIf="errorMessage">
+            <span nz-icon nzType="warning" nzTheme="outline"></span>
+            {{ errorMessage }}
+          </div>
+
+          <button type="submit" class="btn-primary full-width" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Crear Cuenta</span>
+            <span *ngIf="isLoading" class="loading-spinner"></span>
+          </button>
+        </form>
+
+        <p class="login-link">
+          ¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia Sesión</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
