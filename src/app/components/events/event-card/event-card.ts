@@ -1,24 +1,24 @@
 import { Component, Input } from '@angular/core';
-import { NzCardModule } from 'ng-zorro-antd/card';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { Event } from '../../../models/event.model';
 
 @Component({
   selector: 'app-event-card',
-  imports: [NzCardModule, NzIconModule],
+  standalone: true,
+  imports: [CommonModule, NzIconModule],
   templateUrl: './event-card.html',
   styleUrl: './event-card.css',
 })
 export class EventCard {
-  @Input() event!: {
-    title: string;
-    date: string;
-    time: string;
-    location: string;
-    description: string;
-    image: string;
-    category: string;
-    attendees: number;
-  };
+  @Input() event!: Event;
+
+  constructor(private router: Router) {}
+
+  navigateToDetail() {
+    this.router.navigate(['/events', this.event.id]);
+  }
 
   getDay(date: string): string {
     return new Date(date).getDate().toString();
