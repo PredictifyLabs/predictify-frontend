@@ -18,6 +18,10 @@
 	padding: 0rem 5rem;
 }
 
+.video-background {
+  object-fit: cover; /* Mantiene proporciones sin distorsión */
+}
+
 /* --- Navbar Mejorado --- */
 .navbar {
 	padding: 1.5rem 0rem;
