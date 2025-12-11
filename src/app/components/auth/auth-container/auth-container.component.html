@@ -1,0 +1,209 @@
+<div class="auth-page">
+  <div class="auth-container" [class.register-mode]="!isLoginMode()">
+    
+    <!-- ===== PANEL IZQUIERDO - BRANDING ===== -->
+    <div class="branding-panel">
+      <p class="tagline">Predicción inteligente para eventos tech — impulsado por IA</p>
+      
+      <div class="branding-content">
+        <h1 class="main-headline">
+          Descubre<br>
+          <span class="gradient-text">eventos tech</span>
+        </h1>
+        
+        <div class="mockup-container">
+          <div class="mockup-phone">
+            <div class="phone-screen">
+              <div class="app-header">
+                <span class="app-logo">predictify°</span>
+              </div>
+              <div class="prediction-card">
+                <div class="prediction-value">94%</div>
+                <div class="prediction-label">Probabilidad de asistencia</div>
+                <div class="prediction-bars">
+                  <div class="bar bar-1"></div>
+                  <div class="bar bar-2"></div>
+                  <div class="bar bar-3"></div>
+                  <div class="bar bar-4"></div>
+                  <div class="bar bar-5"></div>
+                </div>
+              </div>
+              <div class="stats-row">
+                <div class="mini-stat">
+                  <span class="mini-value">1.5K</span>
+                  <span class="mini-label">Eventos</span>
+                </div>
+                <div class="mini-stat">
+                  <span class="mini-value">50K</span>
+                  <span class="mini-label">Usuarios</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PANEL DERECHO - FORMULARIOS ===== -->
+    <div class="form-panel">
+      
+      <!-- Header con logo y toggle -->
+      <div class="form-header">
+        <div class="logo">
+          <span class="logo-icon">P</span>
+          <span class="logo-text">predictify<span class="degree">°</span></span>
+        </div>
+        <button class="toggle-btn" (click)="toggleMode()">
+          <span nz-icon [nzType]="isLoginMode() ? 'user-add' : 'login'" nzTheme="outline"></span>
+          {{ isLoginMode() ? 'Registrarse' : 'Iniciar Sesión' }}
+        </button>
+      </div>
+
+      <!-- Contenedor de formularios con animación -->
+      <div class="forms-slider">
+        
+        <!-- LOGIN FORM -->
+        <div class="form-wrapper login-form" [class.active]="isLoginMode()">
+          <h2>Iniciar Sesión</h2>
+          
+          <form (ngSubmit)="login()">
+            <div class="input-group">
+              <input 
+                type="email" 
+                [(ngModel)]="loginEmail" 
+                name="loginEmail"
+                placeholder="Email o Usuario"
+                autocomplete="email"
+              >
+            </div>
+            
+            <div class="input-group">
+              <input 
+                [type]="showLoginPassword ? 'text' : 'password'" 
+                [(ngModel)]="loginPassword" 
+                name="loginPassword"
+                placeholder="Contraseña"
+                autocomplete="current-password"
+              >
+              <button type="button" class="toggle-pass" (click)="toggleLoginPassword()">
+                <span nz-icon [nzType]="showLoginPassword ? 'eye-invisible' : 'eye'" nzTheme="outline"></span>
+              </button>
+            </div>
+            
+            <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+            
+            @if (loginError) {
+              <div class="error-message">
+                <span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>
+                {{ loginError }}
+              </div>
+            }
+            
+            <button type="submit" class="btn-submit" [disabled]="loginLoading">
+              @if (loginLoading) {
+                <span class="spinner"></span>
+              } @else {
+                <span nz-icon nzType="login" nzTheme="outline"></span>
+                Iniciar Sesión
+              }
+            </button>
+          </form>
+          
+          <p class="demo-hint">Demo: admin&#64;predictify.com / admin123</p>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div class="form-wrapper register-form" [class.active]="!isLoginMode()">
+          <h2>Crear Cuenta</h2>
+          
+          <form (ngSubmit)="register()">
+            <div class="input-group">
+              <input 
+                type="text" 
+                [(ngModel)]="registerName" 
+                name="registerName"
+                placeholder="Nombre completo"
+                autocomplete="name"
+              >
+            </div>
+            
+            <div class="input-group">
+              <input 
+                type="email" 
+                [(ngModel)]="registerEmail" 
+                name="registerEmail"
+                placeholder="Email"
+                autocomplete="email"
+              >
+            </div>
+            
+            <div class="input-group">
+              <input 
+                [type]="showRegisterPassword ? 'text' : 'password'" 
+                [(ngModel)]="registerPassword" 
+                name="registerPassword"
+                placeholder="Contraseña"
+                autocomplete="new-password"
+                (input)="checkPasswordStrength()"
+              >
+              <button type="button" class="toggle-pass" (click)="toggleRegisterPassword()">
+                <span nz-icon [nzType]="showRegisterPassword ? 'eye-invisible' : 'eye'" nzTheme="outline"></span>
+              </button>
+            </div>
+            
+            @if (registerPassword.length > 0) {
+              <div class="password-strength">
+                <div class="strength-track">
+                  <div class="strength-fill" [style.width.%]="passwordStrength() * 20" [style.background]="passwordStrengthColor()"></div>
+                </div>
+                <span class="strength-label" [style.color]="passwordStrengthColor()">{{ passwordStrengthText() }}</span>
+              </div>
+            }
+            
+            <div class="checkbox-group">
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="isOrganizer" name="isOrganizer">
+                <span class="checkmark"></span>
+                Quiero crear eventos (Organizador)
+              </label>
+            </div>
+            
+            <div class="checkbox-group">
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms">
+                <span class="checkmark"></span>
+                Acepto los <a href="#">términos</a> y <a href="#">privacidad</a>
+              </label>
+            </div>
+            
+            @if (registerError) {
+              <div class="error-message">
+                <span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>
+                {{ registerError }}
+              </div>
+            }
+            
+            <button type="submit" class="btn-submit" [disabled]="registerLoading">
+              @if (registerLoading) {
+                <span class="spinner"></span>
+              } @else {
+                <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                Crear Cuenta
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <span>© 2024 Predictify Inc.</span>
+        <div class="footer-links">
+          <a href="#">Contacto</a>
+          <a href="#">Español</a>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
