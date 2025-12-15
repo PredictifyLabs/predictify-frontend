@@ -5,9 +5,75 @@
 }
 
 .profile-container {
-  max-width: 1100px;
+  max-width: 60vw;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+
+/* ===== Background ====== */
+.events-page {
+  min-height: 100vh;
+  background: #050505;
+  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===== AMBIENT BACKGROUND ===== */
+.ambient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.4;
+}
+
+.orb-1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #7C3AED, #4F46E5);
+  top: -200px;
+  left: -200px;
+  animation: float-slow 20s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #3B82F6, #06B6D4);
+  top: 50%;
+  right: -150px;
+  animation: float-slow 25s ease-in-out infinite reverse;
+}
+
+.orb-3 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #EC4899, #8B5CF6);
+  bottom: -100px;
+  left: 30%;
+  animation: float-slow 22s ease-in-out infinite 5s;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
 
 /* ===== HEADER ===== */
 .profile-header {
@@ -26,9 +92,10 @@
   display: flex;
   align-items: flex-end;
   gap: 24px;
-  padding: 0 32px 32px;
+  padding: 0 1rem 7rem;
   margin-top: -60px;
   position: relative;
+  top: 5rem;
 }
 
 .avatar-section {

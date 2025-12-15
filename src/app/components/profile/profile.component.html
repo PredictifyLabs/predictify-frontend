@@ -1,4 +1,9 @@
 <div class="profile-page">
+  <div class="ambient-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
   <div class="profile-container">
     <!-- Banner -->
     <div class="profile-banner" [style.background-image]="'url(' + userBanner() + ')'">
@@ -40,121 +45,119 @@
       </div>
     </header>
 
-    <!-- Stats -->
-    <div class="stats-bar">
-      <div class="stat">
-        <span class="stat-number">{{ attendedEvents().length }}</span>
-        <span class="stat-label">Eventos Asistidos</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">{{ savedEvents().length }}</span>
-        <span class="stat-label">Eventos Guardados</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number">{{ memberSince() }}</span>
-        <span class="stat-label">Miembro desde</span>
-      </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="profile-content">
-      <!-- Left Column - About -->
-      <div class="about-section card-glass">
-        <h3>Sobre mí</h3>
-        <div class="about-content">
-          <p class="bio">{{ userBio() }}</p>
-          
-          <div class="info-item">
-            <span nz-icon nzType="environment" nzTheme="outline"></span>
-            <span>{{ userLocation() }}</span>
-          </div>
-          
-          <div class="info-item">
-            <span nz-icon nzType="calendar" nzTheme="outline"></span>
-            <span>Miembro desde {{ memberSince() }}</span>
-          </div>
-
-          @if (isOrganizer()) {
-            <div class="organizer-badge">
-              <span nz-icon nzType="star" nzTheme="fill"></span>
-              <span>Puede crear eventos</span>
-            </div>
-          }
+    <div class="container-main-profile">
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-number">{{ attendedEvents().length }}</span>
+          <span class="stat-label">Eventos Asistidos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">{{ savedEvents().length }}</span>
+          <span class="stat-label">Eventos Guardados</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">{{ memberSince() }}</span>
+          <span class="stat-label">Miembro desde</span>
         </div>
       </div>
-
-      <!-- Right Column - Tabs -->
-      <div class="events-section">
-        <nz-tabset>
-          <nz-tab nzTitle="Eventos Guardados">
-            <div class="events-grid">
-              @for (event of savedEvents(); track event.id) {
-                <div class="event-card" (click)="navigateToEvent(event.id)">
-                  <div class="event-image">
-                    <img [src]="event.image" [alt]="event.title">
-                    <button class="remove-btn" (click)="removeFromSaved(event.id); $event.stopPropagation()">
-                      <span nz-icon nzType="close" nzTheme="outline"></span>
-                    </button>
-                  </div>
-                  <div class="event-info">
-                    <h4>{{ event.title }}</h4>
-                    <p class="event-meta">
-                      <span nz-icon nzType="calendar" nzTheme="outline"></span>
-                      {{ event.date | date:'d MMM yyyy' }}
-                    </p>
-                    <p class="event-meta">
-                      <span nz-icon nzType="environment" nzTheme="outline"></span>
-                      {{ event.location }}
-                    </p>
-                    <div class="prediction-badge" [style.color]="getPredictionColor(event.prediction)">
-                      <span nz-icon nzType="line-chart" nzTheme="outline"></span>
-                      {{ event.prediction }}%
+      <!-- Main Content -->
+      <div class="profile-content">
+        <!-- Left Column - About -->
+        <div class="about-section card-glass">
+          <h3>Sobre mí</h3>
+          <div class="about-content">
+            <p class="bio">{{ userBio() }}</p>
+      
+            <div class="info-item">
+              <span nz-icon nzType="environment" nzTheme="outline"></span>
+              <span>{{ userLocation() }}</span>
+            </div>
+      
+            <div class="info-item">
+              <span nz-icon nzType="calendar" nzTheme="outline"></span>
+              <span>Miembro desde {{ memberSince() }}</span>
+            </div>
+            @if (isOrganizer()) {
+              <div class="organizer-badge">
+                <span nz-icon nzType="star" nzTheme="fill"></span>
+                <span>Puede crear eventos</span>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- Right Column - Tabs -->
+        <div class="events-section">
+          <nz-tabset>
+            <nz-tab nzTitle="Eventos Guardados">
+              <div class="events-grid">
+                @for (event of savedEvents(); track event.id) {
+                  <div class="event-card" (click)="navigateToEvent(event.id)">
+                    <div class="event-image">
+                      <img [src]="event.image" [alt]="event.title">
+                      <button class="remove-btn" (click)="removeFromSaved(event.id); $event.stopPropagation()">
+                        <span nz-icon nzType="close" nzTheme="outline"></span>
+                      </button>
+                    </div>
+                    <div class="event-info">
+                      <h4>{{ event.title }}</h4>
+                      <p class="event-meta">
+                        <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                        {{ event.date | date:'d MMM yyyy' }}
+                      </p>
+                      <p class="event-meta">
+                        <span nz-icon nzType="environment" nzTheme="outline"></span>
+                        {{ event.location }}
+                      </p>
+                      <div class="prediction-badge" [style.color]="getPredictionColor(event.prediction)">
+                        <span nz-icon nzType="line-chart" nzTheme="outline"></span>
+                        {{ event.prediction }}%
+                      </div>
                     </div>
                   </div>
-                </div>
-              } @empty {
-                <div class="empty-state">
-                  <span nz-icon nzType="heart" nzTheme="outline"></span>
-                  <p>No tienes eventos guardados</p>
-                  <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
-                </div>
-              }
-            </div>
-          </nz-tab>
-
-          <nz-tab nzTitle="Historial de Asistencia">
-            <div class="events-grid">
-              @for (event of attendedEvents(); track event.id) {
-                <div class="event-card attended" (click)="navigateToEvent(event.id)">
-                  <div class="event-image">
-                    <img [src]="event.image" [alt]="event.title">
-                    <span class="attended-badge">
-                      <span nz-icon nzType="check-circle" nzTheme="fill"></span>
-                      Asistido
-                    </span>
+                } @empty {
+                  <div class="empty-state">
+                    <span nz-icon nzType="heart" nzTheme="outline"></span>
+                    <p>No tienes eventos guardados</p>
+                    <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
                   </div>
-                  <div class="event-info">
-                    <h4>{{ event.title }}</h4>
-                    <p class="event-meta">
-                      <span nz-icon nzType="calendar" nzTheme="outline"></span>
-                      {{ event.date | date:'d MMM yyyy' }}
-                    </p>
-                    <p class="event-meta">
-                      <span nz-icon nzType="environment" nzTheme="outline"></span>
-                      {{ event.location }}
-                    </p>
+                }
+              </div>
+            </nz-tab>
+            <nz-tab nzTitle="Historial de Asistencia">
+              <div class="events-grid">
+                @for (event of attendedEvents(); track event.id) {
+                  <div class="event-card attended" (click)="navigateToEvent(event.id)">
+                    <div class="event-image">
+                      <img [src]="event.image" [alt]="event.title">
+                      <span class="attended-badge">
+                        <span nz-icon nzType="check-circle" nzTheme="fill"></span>
+                        Asistido
+                      </span>
+                    </div>
+                    <div class="event-info">
+                      <h4>{{ event.title }}</h4>
+                      <p class="event-meta">
+                        <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                        {{ event.date | date:'d MMM yyyy' }}
+                      </p>
+                      <p class="event-meta">
+                        <span nz-icon nzType="environment" nzTheme="outline"></span>
+                        {{ event.location }}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              } @empty {
-                <div class="empty-state">
-                  <span nz-icon nzType="calendar" nzTheme="outline"></span>
-                  <p>No has asistido a ningún evento todavía</p>
-                  <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
-                </div>
-              }
-            </div>
-          </nz-tab>
-        </nz-tabset>
+                } @empty {
+                  <div class="empty-state">
+                    <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                    <p>No has asistido a ningún evento todavía</p>
+                    <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
+                  </div>
+                }
+              </div>
+            </nz-tab>
+          </nz-tabset>
+        </div>
       </div>
     </div>
 

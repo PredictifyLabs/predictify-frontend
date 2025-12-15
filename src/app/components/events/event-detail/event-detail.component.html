@@ -158,25 +158,50 @@
           
           <!-- Calendar Card -->
           <div class="calendar-card card-glass">
-            <div class="calendar-header">
-              <span class="calendar-month">{{ ev.startDate | date:'MMMM' }}</span>
-              <span class="calendar-year">{{ ev.startDate | date:'yyyy' }}</span>
-            </div>
-            <div class="calendar-body">
-              <div class="calendar-day">{{ ev.startDate | date:'dd' }}</div>
-              <div class="calendar-weekday">{{ ev.startDate | date:'EEEE' }}</div>
-            </div>
-            <div class="calendar-footer">
-              <div class="calendar-time">
+            <div class="calendar-hero" [style.background-image]="'linear-gradient(180deg, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.85) 100%), url(' + ev.imageUrl + ')'">
+              <div class="calendar-hero-top">
+                <div class="calendar-hero-date">
+                  <div class="calendar-hero-day">{{ getCalendarDay(ev.startDate) }}</div>
+                  <div class="calendar-hero-weekday">{{ ev.startDate | date:'EEEE' }}</div>
+                </div>
+                <div class="calendar-hero-month">
+                  <div class="calendar-hero-month-name">{{ getCalendarMonthLabel(ev.startDate) }}</div>
+                  <div class="calendar-hero-year">{{ getCalendarYear(ev.startDate) }}</div>
+                </div>
+              </div>
+
+              <div class="calendar-hero-time">
                 <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
                 <span>{{ ev.startTime }} - {{ ev.endTime || 'TBD' }}</span>
               </div>
-              @if (ev.endDate && ev.endDate !== ev.startDate) {
-                <div class="calendar-duration">
-                  <span nz-icon nzType="calendar" nzTheme="outline"></span>
-                  <span>Hasta {{ ev.endDate | date:'d MMM' }}</span>
-                </div>
-              }
+            </div>
+
+            <div class="calendar-grid">
+              <div class="calendar-weekdays">
+                @for (wd of calendarWeekdays; track wd) {
+                  <div class="calendar-weekday-cell">{{ wd }}</div>
+                }
+              </div>
+
+              <div class="calendar-weeks">
+                @for (week of getCalendarWeeks(ev.startDate); track $index) {
+                  <div class="calendar-week-row">
+                    @for (day of week; track $index) {
+                      @if (day === null) {
+                        <div class="calendar-day-cell is-empty"></div>
+                      } @else {
+                        <div
+                          class="calendar-day-cell"
+                          [class.is-event-day]="day === getCalendarDay(ev.startDate)"
+                          [class.is-weekend]="$index === 5 || $index === 6"
+                        >
+                          {{ day }}
+                        </div>
+                      }
+                    }
+                  </div>
+                }
+              </div>
             </div>
           </div>
 

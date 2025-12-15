@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import * as L from 'leaflet';
+import type * as Leaflet from 'leaflet';
 
 @Component({
   selector: 'app-map-view',
@@ -69,8 +69,9 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() markerTitle: string = 'Ubicación del evento';
   @Input() interactive: boolean = false;
 
-  private map: L.Map | null = null;
-  private marker: L.Marker | null = null;
+  private L: typeof Leaflet | null = null;
+  private map: Leaflet.Map | null = null;
+  private marker: Leaflet.Marker | null = null;
   private platformId = inject(PLATFORM_ID);
   
   isBrowser = false;
@@ -81,7 +82,7 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      setTimeout(() => this.initMap(), 100);
+      setTimeout(() => void this.initMap(), 100);
     }
   }
 
@@ -92,8 +93,14 @@ export class MapViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private initMap(): void {
+  private async initMap(): Promise<void> {
     if (!this.mapElement?.nativeElement) return;
+
+    if (!this.L) {
+      this.L = await import('leaflet');
+    }
+
+    const L = this.L;
 
     // Fix Leaflet icon paths
     const iconRetinaUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png';

@@ -45,7 +45,7 @@
           <!-- Badge -->
           <div class="event-badge">
             <span nz-icon nzType="star" nzTheme="fill"></span>
-            Destacado en {{ event.location?.city || 'Tu ciudad' }}
+            Destacado en {{ event.location.city || 'Tu ciudad' }}
           </div>
 
           <!-- Title -->
@@ -82,8 +82,8 @@
               <span nz-icon nzType="environment" nzTheme="outline"></span>
             </div>
             <div class="info-text">
-              <span class="info-primary">{{ event.location?.venue || 'Ubicación por confirmar' }}</span>
-              <span class="info-secondary">{{ event.location?.city }}, {{ event.location?.country }}</span>
+              <span class="info-primary">{{ event.location.venue || 'Ubicación por confirmar' }}</span>
+              <span class="info-secondary">{{ event.location.city }}, {{ event.location.country }}</span>
             </div>
           </div>
 
@@ -110,9 +110,9 @@
           <div class="section-card">
             <h3 class="section-title">Ubicación</h3>
             <div class="location-details">
-              <strong>{{ event.location?.venue || 'Por confirmar' }}</strong>
-              <span>{{ event.location?.address || '' }}</span>
-              <span>{{ event.location?.city }}, {{ event.location?.country }}</span>
+              <strong>{{ event.location.venue || 'Por confirmar' }}</strong>
+              <span>{{ event.location.address || '' }}</span>
+              <span>{{ event.location.city }}, {{ event.location.country }}</span>
             </div>
             <div class="map-container">
               <iframe

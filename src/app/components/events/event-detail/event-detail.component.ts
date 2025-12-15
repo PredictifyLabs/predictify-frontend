@@ -8,9 +8,6 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { EventService } from '../../../infrastructure/services/event.service';
 import { SeoService } from '../../../infrastructure/services/seo.service';
-import { PredictionMeterComponent } from '../../shared/prediction-meter/prediction-meter.component';
-import { PredictionFactorsComponent } from '../../shared/prediction-factors/prediction-factors.component';
-import { SafePipe } from '../../../ui/pipes/safe.pipe';
 import { EventDTO } from '../../../domain/models/event.model';
 
 @Component({
@@ -22,9 +19,6 @@ import { EventDTO } from '../../../domain/models/event.model';
     NzButtonModule,
     NzSpinModule,
     NzModalModule,
-    PredictionMeterComponent,
-    PredictionFactorsComponent,
-    SafePipe
   ],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.css'],
@@ -39,6 +33,63 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   private readonly sanitizer = inject(DomSanitizer);
   
   readonly isSaved = signal(false);
+
+  readonly calendarWeekdays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'] as const;
+
+  private toDate(value: unknown): Date {
+    if (value instanceof Date) return value;
+    if (typeof value === 'string' || typeof value === 'number') {
+      const d = new Date(value);
+      if (!Number.isNaN(d.getTime())) return d;
+    }
+    return new Date();
+  }
+
+  getCalendarMonthLabel(dateInput: unknown): string {
+    const date = this.toDate(dateInput);
+    return new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(date);
+  }
+
+  getCalendarYear(dateInput: unknown): number {
+    return this.toDate(dateInput).getFullYear();
+  }
+
+  getCalendarDay(dateInput: unknown): number {
+    return this.toDate(dateInput).getDate();
+  }
+
+  getCalendarWeeks(dateInput: unknown): Array<Array<number | null>> {
+    const date = this.toDate(dateInput);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const firstOfMonth = new Date(year, month, 1);
+    const lastOfMonth = new Date(year, month + 1, 0);
+    const daysInMonth = lastOfMonth.getDate();
+
+    // JS: 0=Sunday..6=Saturday. We want Monday=0..Sunday=6.
+    const startOffset = (firstOfMonth.getDay() + 6) % 7;
+
+    const weeks: Array<Array<number | null>> = [];
+    let week: Array<number | null> = [];
+
+    for (let i = 0; i < startOffset; i++) week.push(null);
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      week.push(day);
+      if (week.length === 7) {
+        weeks.push(week);
+        week = [];
+      }
+    }
+
+    if (week.length) {
+      while (week.length < 7) week.push(null);
+      weeks.push(week);
+    }
+
+    return weeks;
+  }
   
   getMapUrl(lat: number, lng: number): SafeResourceUrl {
     const bbox = `${lng - 0.008},${lat - 0.005},${lng + 0.008},${lat + 0.005}`;
@@ -108,14 +159,11 @@ export class EventDetailComponent implements OnInit, OnDestroy {
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
           ">
-            <div style="
-              background: white;
-              padding: 20px;
-              border-radius: 16px;
-              display: inline-block;
-              box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-            ">
+            <div class="qr-code-container">
               <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.href)}" 
                    alt="QR Code" 
                    style="display: block; border-radius: 8px;" />
