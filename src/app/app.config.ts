@@ -2,7 +2,6 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChang
 import { provideRouter, withViewTransitions, withInMemoryScrolling } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 import { routes } from './app.routes';
 import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
@@ -31,7 +30,6 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([loadingInterceptor, authInterceptor, errorInterceptor])
     ),
-    provideClientHydration(withEventReplay()),
     provideNzI18n(en_US),
     provideAnimationsAsync(),
     provideAnimations()
