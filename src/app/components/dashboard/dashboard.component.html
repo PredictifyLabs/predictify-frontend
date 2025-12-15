@@ -82,14 +82,14 @@
 
         <div class="table-row" *ngFor="let event of myEvents">
           <div class="col-name">
-            <img [src]="event.image" [alt]="event.title" class="event-thumbnail">
+            <img [src]="event.imageUrl" [alt]="event.title" class="event-thumbnail">
             <div class="event-info">
               <span class="event-title">{{ event.title }}</span>
               <span class="event-category">{{ event.category }}</span>
             </div>
           </div>
           
-          <span class="col-date">{{ event.date | date:'dd MMM yyyy' }}</span>
+          <span class="col-date">{{ event.startDate | date:'dd MMM yyyy' }}</span>
           
           <span class="col-status">
             <span class="status-badge" [style.background]="getStatusColor(event.status) + '20'" [style.color]="getStatusColor(event.status)">
@@ -98,13 +98,10 @@
           </span>
           
           <span class="col-prediction">
-            <span class="prediction-value" *ngIf="event.prediction" 
-                  [style.color]="event.prediction.level === 'high' ? '#10B981' : event.prediction.level === 'medium' ? '#F59E0B' : '#EF4444'">
-              {{ event.prediction.probability }}%
-            </span>
+            <span class="prediction-value">--</span>
           </span>
           
-          <span class="col-attendees">{{ event.interested }} / {{ event.capacity }}</span>
+          <span class="col-attendees">-- / {{ event.capacity }}</span>
           
           <div class="col-actions">
             <button class="action-btn" (click)="editEvent(event)" title="Editar">
