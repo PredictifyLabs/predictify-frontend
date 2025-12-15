@@ -262,6 +262,40 @@ body {
   background: #3E3E3E;
 }
 
+/* ===== NG-ZORRO OVERLAYS (DARK THEME) ===== */
+.cdk-overlay-container .ant-select-dropdown,
+.cdk-overlay-container .ant-dropdown-menu,
+.cdk-overlay-container .ant-picker-dropdown,
+.cdk-overlay-container .ant-cascader-menu,
+.cdk-overlay-container .ant-tooltip-inner {
+  background: rgba(18, 18, 18, 0.96) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #FFFFFF !important;
+}
+
+.cdk-overlay-container .ant-select-item,
+.cdk-overlay-container .ant-dropdown-menu-item,
+.cdk-overlay-container .ant-dropdown-menu-submenu-title {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.cdk-overlay-container .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+.cdk-overlay-container .ant-dropdown-menu-item:hover,
+.cdk-overlay-container .ant-dropdown-menu-submenu-title:hover {
+  background: rgba(124, 58, 237, 0.16) !important;
+}
+
+.cdk-overlay-container .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background: rgba(64, 112, 244, 0.18) !important;
+}
+
+.cdk-overlay-container .ant-empty-description,
+.cdk-overlay-container .ant-select-empty {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
 /* ===== QR MODAL CUSTOM ===== */
 .qr-modal-custom .ant-modal-content {
   background: linear-gradient(135deg, rgba(20, 20, 30, 0.98), rgba(15, 15, 25, 0.99)) !important;
@@ -332,6 +366,31 @@ body {
   border-radius: 20px;
   box-shadow: 0 8px 40px rgba(99, 102, 241, 0.5);
 }
+
+ .qr-modal-custom .ant-modal-confirm-content {
+   background: white;
+   padding: 20px;
+   border-radius: 16px;
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+ }
+
+ .qr-modal-custom .ant-modal-confirm-content{
+   background: transparent;
+   padding: 0;
+   border-radius: 8px;
+   box-shadow: none;
+ }
+
+ .qr-code-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 20px 20px 20px;
+ }
 
 .qr-modal-custom .ant-modal-confirm-content p {
   color: #B3B3B3 !important;
