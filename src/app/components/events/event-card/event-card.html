@@ -1,72 +1,69 @@
-<article class="event-card" (click)="navigateToDetail()">
+<article class="event-card h-full flex flex-col" (click)="onCardClick()">
   <!-- Image Section -->
-  <div class="card-image">
-    <img [src]="event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400'" [alt]="event.title">
+  <div class="card-image relative overflow-hidden">
+    <img 
+      [src]="event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400'" 
+      [alt]="event.title"
+      class="w-full h-48 object-cover"
+      loading="lazy"
+    >
     <div class="image-overlay"></div>
     
     <!-- Floating Elements -->
     <div class="card-badges">
       <span class="category-badge">
-        <i nz-icon [nzType]="getCategoryIcon(event.category)" nzTheme="outline"></i>
+        <span nz-icon [nzType]="getCategoryIcon(event.category)" nzTheme="outline"></span>
         {{ getCategoryLabel(event.category) }}
       </span>
       <span class="date-badge">
-        {{ getDay(event.date) }} {{ getMonth(event.date) }}
+        {{ getDay(event.startDate) }} {{ getMonth(event.startDate) }}
       </span>
     </div>
 
     <!-- Like Button -->
     <button class="like-btn" (click)="$event.stopPropagation()">
-      <i nz-icon nzType="heart" nzTheme="outline"></i>
+      <span nz-icon nzType="heart" nzTheme="outline"></span>
     </button>
-
-    <!-- Prediction Indicator -->
-    <div class="prediction-indicator" *ngIf="event.prediction">
-      <div class="prediction-bar">
-        <div class="prediction-fill" [style.width.%]="event.prediction.probability"></div>
-      </div>
-      <span class="prediction-value">{{ event.prediction.probability }}%</span>
-    </div>
   </div>
 
   <!-- Content Section -->
-  <div class="card-content">
+  <div class="card-content flex-1 flex flex-col">
     <!-- Status Badges -->
     <div class="status-badges" *ngIf="event.isTrending || event.isNew || event.isFeatured">
       <span class="status trending" *ngIf="event.isTrending">
-        <i nz-icon nzType="fire" nzTheme="fill"></i>
+        <span nz-icon nzType="fire" nzTheme="fill"></span>
         Trending
       </span>
       <span class="status featured" *ngIf="event.isFeatured">
-        <i nz-icon nzType="star" nzTheme="fill"></i>
+        <span nz-icon nzType="star" nzTheme="fill"></span>
         Destacado
       </span>
     </div>
 
     <!-- Title -->
-    <h3 class="card-title">{{ event.title }}</h3>
+    <h3 class="card-title line-clamp-2">{{ event.title }}</h3>
 
     <!-- Meta Info -->
     <div class="card-meta">
       <span class="meta-item">
-        <i nz-icon nzType="environment" nzTheme="outline"></i>
-        {{ event.location.city || 'Virtual' }}
+        <span nz-icon nzType="environment" nzTheme="outline"></span>
+        {{ event.location?.city || 'Virtual' }}
       </span>
       <span class="meta-item">
-        <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
-        {{ event.time }}
+        <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+        {{ event.startTime }}
       </span>
     </div>
 
     <!-- Footer -->
-    <div class="card-footer">
+    <div class="card-footer mt-auto">
       <div class="attendees">
         <div class="attendee-avatars">
           <span class="avatar"></span>
           <span class="avatar"></span>
           <span class="avatar"></span>
         </div>
-        <span class="attendee-count">+{{ event.interested }} interesados</span>
+        <span class="attendee-count">+{{ event.interestedCount }} interesados</span>
       </div>
       <div class="price-tag" [class.free]="event.isFree">
         {{ event.isFree ? 'Gratis' : '$' + event.price }}

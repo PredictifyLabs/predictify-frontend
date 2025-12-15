@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Router } from '@angular/router';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -6,10 +7,14 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../infrastructure/services/auth.service';
+import { getRoleLabel } from '../../domain/models/user.model';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   imports: [
     NzMenuModule,
     NzBadgeModule,
@@ -19,42 +24,63 @@ import { FormsModule } from '@angular/forms';
     NzButtonModule,
     NzIconModule,
     NzDropDownModule,
+    NzAvatarModule,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Navbar {
-  selectedCategory: string = 'all';
-  searchQuery: string = '';
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  // Expose auth signals to template
+  readonly isAuthenticated = this.authService.isAuthenticated;
+  readonly user = this.authService.user;
+  
+  // Computed signals for UI
+  readonly userName = computed(() => this.user()?.name || 'Usuario');
+  readonly userAvatar = computed(() => this.user()?.avatar || '');
+  readonly userRole = computed(() => {
+    const role = this.user()?.role;
+    return role ? getRoleLabel(role) : '';
+  });
+  readonly isAdmin = computed(() => {
+    const role = this.user()?.role;
+    return role === 'ADMIN' || role === 'ORGANIZER';
+  });
+
+  selectedCategory = 'all';
+  searchQuery = '';
 
   selectCategory(category: string): void {
     this.selectedCategory = category;
-    console.log('Categoría seleccionada:', category);
-    // Aquí implementarías la lógica de filtrado por categoría
+    this.router.navigate(['/events'], { queryParams: { category } });
   }
 
   filterByType(type: string): void {
-    console.log('Filtrar por tipo:', type);
-    // Aquí implementarías la lógica de filtrado por tipo
+    this.router.navigate(['/events'], { queryParams: { type } });
   }
 
   filterByLocation(location: string): void {
-    console.log('Filtrar por ubicación:', location);
-    // Aquí implementarías la lógica de filtrado por ubicación
+    this.router.navigate(['/events'], { queryParams: { location } });
   }
 
   navigate(route: string): void {
-    console.log('Navegar a:', route);
-    // Aquí implementarías la navegación con Router
+    this.router.navigate(['/' + route]);
   }
 
   search(): void {
-    console.log('Buscar:', this.searchQuery);
-    // Aquí implementarías la lógica de búsqueda
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/events'], { queryParams: { q: this.searchQuery } });
+    }
   }
 
   logout(): void {
-    console.log('Cerrando sesión...');
-    // Aquí implementarías la lógica de logout
+    this.authService.logout();
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/auth']);
   }
 }

@@ -21,38 +21,60 @@
               <span nz-icon nzType="search"></span>
             </ng-template>
 
-            <button nz-button nzType="default" class="btn-notifications">
-              <nz-badge [nzCount]="3" [nzOffset]="[5, 0]">
-                <span nz-icon nzType="bell" nzTheme="outline"></span>
-              </nz-badge>
-            </button>
+            <!-- Authenticated User -->
+            @if (isAuthenticated()) {
+              <button nz-button nzType="default" class="btn-notifications">
+                <nz-badge [nzCount]="3" [nzOffset]="[5, 0]">
+                  <span nz-icon nzType="bell" nzTheme="outline"></span>
+                </nz-badge>
+              </button>
 
-            <button nz-button nzType="default" class="btn-user" nz-dropdown [nzDropdownMenu]="userMenu">
-              <span nz-icon nzType="user" nzTheme="outline"></span>
-              Mi Cuenta
-              <span nz-icon nzType="down"></span>
-            </button>
-            <nz-dropdown-menu #userMenu="nzDropdownMenu">
-              <ul nz-menu>
-                <li nz-menu-item (click)="navigate('profile')">
-                  <span nz-icon nzType="user"></span>
-                  Perfil
-                </li>
-                <li nz-menu-item (click)="navigate('my-events')">
-                  <span nz-icon nzType="calendar"></span>
-                  Mis Eventos
-                </li>
-                <li nz-menu-item (click)="navigate('settings')">
-                  <span nz-icon nzType="setting"></span>
-                  Configuración
-                </li>
-                <li nz-menu-divider></li>
-                <li nz-menu-item (click)="logout()">
-                  <span nz-icon nzType="logout"></span>
-                  Cerrar Sesión
-                </li>
-              </ul>
-            </nz-dropdown-menu>
+              <button nz-button nzType="default" class="btn-user" nz-dropdown [nzDropdownMenu]="userMenu">
+                @if (userAvatar()) {
+                  <nz-avatar [nzSrc]="userAvatar()" nzSize="small"></nz-avatar>
+                } @else {
+                  <span nz-icon nzType="user" nzTheme="outline"></span>
+                }
+                {{ userName() }}
+                <span nz-icon nzType="down"></span>
+              </button>
+              <nz-dropdown-menu #userMenu="nzDropdownMenu">
+                <ul nz-menu>
+                  <li nz-menu-item class="user-info-item" nzDisabled>
+                    <span class="user-role">{{ userRole() }}</span>
+                  </li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item (click)="navigate('profile')">
+                    <span nz-icon nzType="user"></span>
+                    Perfil
+                  </li>
+                  <li nz-menu-item (click)="navigate('dashboard')">
+                    <span nz-icon nzType="dashboard"></span>
+                    Dashboard
+                  </li>
+                  @if (isAdmin()) {
+                    <li nz-menu-item (click)="navigate('admin')">
+                      <span nz-icon nzType="setting"></span>
+                      Administración
+                    </li>
+                  }
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item nzDanger (click)="logout()">
+                    <span nz-icon nzType="logout"></span>
+                    Cerrar Sesión
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+            } @else {
+              <!-- Not Authenticated -->
+              <button nz-button nzType="default" (click)="goToLogin()">
+                <span nz-icon nzType="login" nzTheme="outline"></span>
+                Iniciar Sesión
+              </button>
+              <button nz-button nzType="primary" (click)="navigate('auth')">
+                Registrarse
+              </button>
+            }
           </div>
         </div>
       </nz-header>

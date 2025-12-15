@@ -1,11 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { AuthService } from '../../../infrastructure/services/auth.service';
 
 @Component({
   selector: 'app-auth-container',
@@ -72,7 +74,9 @@ export class AuthContainerComponent {
   passwordStrengthText = signal('');
   passwordStrengthColor = signal('');
 
-  constructor(private router: Router) {}
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly message = inject(NzMessageService);
 
   // Toggle between login and register
   toggleMode() {
@@ -109,26 +113,29 @@ export class AuthContainerComponent {
     this.loginLoading = true;
     this.loginError = '';
 
-    setTimeout(() => {
-      if (this.loginEmail === 'admin@predictify.com' && this.loginPassword === 'admin123') {
-        localStorage.setItem('user', JSON.stringify({ 
-          email: this.loginEmail, 
-          role: 'admin',
-          name: 'Administrador'
-        }));
-        this.router.navigate(['/admin']);
-      } else if (this.loginEmail && this.loginPassword) {
-        localStorage.setItem('user', JSON.stringify({ 
-          email: this.loginEmail, 
-          role: 'user',
-          name: 'Usuario'
-        }));
-        this.router.navigate(['/events']);
-      } else {
-        this.loginError = 'Credenciales incorrectas';
+    this.authService.login({ 
+      email: this.loginEmail, 
+      password: this.loginPassword 
+    }).subscribe({
+      next: () => {
+        this.message.success('¡Bienvenido!');
+        const user = this.authService.user();
+        
+        // Redirect based on role
+        if (user?.role === 'ADMIN' || user?.role === 'ORGANIZER') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/events']);
+        }
+      },
+      error: (err) => {
+        this.loginError = err.message || 'Credenciales incorrectas';
+        this.loginLoading = false;
+      },
+      complete: () => {
+        this.loginLoading = false;
       }
-      this.loginLoading = false;
-    }, 1500);
+    });
   }
 
   // Register methods

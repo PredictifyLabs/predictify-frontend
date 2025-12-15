@@ -1,60 +1,72 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { AuthService } from '../../../infrastructure/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, NzIconModule, NzInputModule, NzButtonModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly message = inject(NzMessageService);
+
   email = '';
   password = '';
-  isLoading = false;
-  showPassword = false;
-  errorMessage = '';
+  isLoading = signal(false);
+  showPassword = signal(false);
+  errorMessage = signal('');
 
-  constructor(private router: Router) {}
-
-  togglePassword() {
-    this.showPassword = !this.showPassword;
+  togglePassword(): void {
+    this.showPassword.update(v => !v);
   }
 
-  login() {
+  login(): void {
     if (!this.email || !this.password) {
-      this.errorMessage = 'Por favor completa todos los campos';
+      this.errorMessage.set('Por favor completa todos los campos');
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
 
-    // Simulación de login
-    setTimeout(() => {
-      if (this.email === 'admin@predictify.com' && this.password === 'admin123') {
-        localStorage.setItem('user', JSON.stringify({ email: this.email, role: 'admin' }));
-        this.router.navigate(['/admin']);
-      } else if (this.email && this.password) {
-        localStorage.setItem('user', JSON.stringify({ email: this.email, role: 'user' }));
-        this.router.navigate(['/events']);
-      } else {
-        this.errorMessage = 'Credenciales incorrectas';
+    this.authService.login({ email: this.email, password: this.password }).subscribe({
+      next: () => {
+        this.message.success('¡Bienvenido!');
+        const user = this.authService.user();
+        
+        // Redirect based on role
+        if (user?.role === 'ADMIN' || user?.role === 'ORGANIZER') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/events']);
+        }
+      },
+      error: (err) => {
+        this.errorMessage.set(err.message || 'Credenciales incorrectas');
+        this.isLoading.set(false);
+      },
+      complete: () => {
+        this.isLoading.set(false);
       }
-      this.isLoading = false;
-    }, 1500);
+    });
   }
 
-  loginWithGoogle() {
-    console.log('Login with Google');
+  loginWithGoogle(): void {
+    this.message.info('Login con Google próximamente');
   }
 
-  loginWithGithub() {
-    console.log('Login with GitHub');
+  loginWithGithub(): void {
+    this.message.info('Login con GitHub próximamente');
   }
 }

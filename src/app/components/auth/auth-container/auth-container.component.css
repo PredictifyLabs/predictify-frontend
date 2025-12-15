@@ -14,7 +14,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f5f5;
+  background: #0A0A0A;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(124, 58, 237, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(64, 112, 244, 0.08), transparent);
   padding: 20px;
 }
 
@@ -26,7 +29,8 @@
   min-height: 600px;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ===== PANEL IZQUIERDO - BRANDING ===== */
@@ -64,10 +68,24 @@
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #a855f7, #4070F4);
+  background: linear-gradient(
+    90deg,
+    #4070F4 0%,
+    #7C3AED 25%,
+    #a855f7 50%,
+    #7C3AED 75%,
+    #4070F4 100%
+  );
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
 /* ===== MOCKUP DEL TELÉFONO ===== */
@@ -188,10 +206,22 @@
 /* ===== PANEL DERECHO - FORMULARIOS ===== */
 .form-panel {
   width: 50%;
-  background: #ffffff;
+  background: linear-gradient(180deg, #121212 0%, #0d0d0d 100%);
   padding: 40px;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.form-panel::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 60%;
+  transform: translateY(-50%);
+  background: linear-gradient(180deg, transparent, rgba(168, 85, 247, 0.5), rgba(64, 112, 244, 0.5), transparent);
 }
 
 .form-header {
@@ -223,7 +253,7 @@
 .logo-text {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
 }
 
@@ -236,12 +266,12 @@
   align-items: center;
   gap: 6px;
   padding: 10px 18px;
-  background: transparent;
-  border: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50px;
   font-size: 13px;
   font-weight: 500;
-  color: #666;
+  color: #B3B3B3;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -249,6 +279,7 @@
 .toggle-btn:hover {
   border-color: #a855f7;
   color: #a855f7;
+  background: rgba(168, 85, 247, 0.1);
 }
 
 /* ===== SLIDER DE FORMULARIOS ===== */
@@ -281,7 +312,7 @@
 .form-wrapper h2 {
   font-size: 28px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #ffffff;
   margin-bottom: 32px;
 }
 
@@ -294,22 +325,22 @@
 .input-group input {
   width: 100%;
   padding: 16px 20px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50px;
   font-size: 15px;
-  color: #1a1a1a;
-  background: #fff;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
 }
 
 .input-group input:focus {
   outline: none;
   border-color: #a855f7;
-  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15), 0 0 20px rgba(168, 85, 247, 0.1);
 }
 
 .input-group input::placeholder {
-  color: #999;
+  color: #666;
 }
 
 .toggle-pass {
@@ -319,14 +350,14 @@
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #999;
+  color: #666;
   cursor: pointer;
   font-size: 18px;
   transition: color 0.2s;
 }
 
 .toggle-pass:hover {
-  color: #666;
+  color: #a855f7;
 }
 
 /* ===== LINKS ===== */
@@ -349,10 +380,10 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 12px;
-  color: #dc2626;
+  color: #EF4444;
   font-size: 13px;
   margin-bottom: 16px;
 }
@@ -365,7 +396,8 @@
   gap: 8px;
   width: 100%;
   padding: 16px 24px;
-  background: linear-gradient(90deg, #a855f7, #7c3aed);
+  background: linear-gradient(90deg, #7C3AED 0%, #a855f7 50%, #4070F4 100%);
+  background-size: 200% auto;
   border: none;
   border-radius: 50px;
   font-size: 15px;
@@ -373,12 +405,13 @@
   color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
 }
 
 .btn-submit:hover:not(:disabled) {
+  background-position: right center;
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(168, 85, 247, 0.4);
+  box-shadow: 0 8px 30px rgba(168, 85, 247, 0.5), 0 0 40px rgba(124, 58, 237, 0.2);
 }
 
 .btn-submit:disabled {
@@ -410,7 +443,7 @@
 .strength-track {
   flex: 1;
   height: 4px;
-  background: #e0e0e0;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -436,7 +469,7 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: #666;
+  color: #B3B3B3;
   cursor: pointer;
 }
 
@@ -460,9 +493,10 @@
   margin-top: 20px;
   text-align: center;
   font-size: 11px;
-  color: #999;
+  color: #888;
   padding: 10px;
-  background: #f9f9f9;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(64, 112, 244, 0.08));
+  border: 1px solid rgba(168, 85, 247, 0.15);
   border-radius: 8px;
 }
 
@@ -472,13 +506,13 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   margin-top: auto;
 }
 
 .form-footer span {
   font-size: 12px;
-  color: #999;
+  color: #666;
 }
 
 .footer-links {
@@ -488,7 +522,7 @@
 
 .footer-links a {
   font-size: 12px;
-  color: #666;
+  color: #888;
   text-decoration: none;
   transition: color 0.2s;
 }
@@ -523,6 +557,10 @@
   .form-panel {
     width: 100%;
     padding: 30px;
+  }
+
+  .form-panel::before {
+    display: none;
   }
 }
 

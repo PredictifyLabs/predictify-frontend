@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { Event } from '../../../models/event.model';
+import { EventDTO, getCategoryLabel, getCategoryIcon } from '../../../domain/models/event.model';
 
 @Component({
   selector: 'app-event-card',
@@ -10,13 +10,19 @@ import { Event } from '../../../models/event.model';
   imports: [CommonModule, NzIconModule],
   templateUrl: './event-card.html',
   styleUrl: './event-card.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventCard {
-  @Input() event!: Event;
+  @Input() event!: EventDTO;
+  @Output() preview = new EventEmitter<EventDTO>();
+  
+  private readonly router = inject(Router);
 
-  constructor(private router: Router) {}
+  onCardClick(): void {
+    this.preview.emit(this.event);
+  }
 
-  navigateToDetail() {
+  navigateToDetail(): void {
     this.router.navigate(['/events', this.event.id]);
   }
 
@@ -30,22 +36,10 @@ export class EventCard {
   }
 
   getCategoryLabel(category: string): string {
-    const labels: { [key: string]: string } = {
-      'hackathon': 'Hackathon',
-      'conference': 'Conferencia',
-      'workshop': 'Taller',
-      'networking': 'Networking'
-    };
-    return labels[category] || category;
+    return getCategoryLabel(category as any) || category;
   }
 
   getCategoryIcon(category: string): string {
-    const icons: { [key: string]: string } = {
-      'hackathon': 'trophy',
-      'conference': 'sound',
-      'workshop': 'code',
-      'networking': 'team'
-    };
-    return icons[category] || 'tag';
+    return getCategoryIcon(category as any) || 'tag';
   }
 }

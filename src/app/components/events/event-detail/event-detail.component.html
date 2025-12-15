@@ -1,7 +1,8 @@
-<div class="event-detail-page" *ngIf="!isLoading && event">
+@if (event(); as ev) {
+<div class="event-detail-page">
   
   <!-- Hero Section -->
-  <div class="event-hero" [style.background-image]="'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url(' + event.image + ')'">
+  <div class="event-hero" [style.background-image]="'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url(' + ev.imageUrl + ')'">
     <div class="hero-content">
       <!-- Breadcrumbs -->
       <div class="breadcrumbs">
@@ -9,28 +10,32 @@
           <span nz-icon nzType="arrow-left" nzTheme="outline"></span> Eventos
         </span>
         <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current">{{ event.title }}</span>
+        <span class="breadcrumb-current">{{ ev.title }}</span>
       </div>
 
       <!-- Tags -->
       <div class="event-tags">
-        <span class="tag category">{{ event.category }}</span>
-        <span class="tag type">{{ event.location.type }}</span>
-        <span class="tag trending" *ngIf="event.isTrending">🔥 Trending</span>
+        <span class="tag category">{{ ev.category }}</span>
+        <span class="tag type">{{ ev.location.type }}</span>
+        @if (ev.isTrending) {
+          <span class="tag trending"><span nz-icon nzType="fire" nzTheme="fill"></span> Trending</span>
+        }
       </div>
 
       <!-- Title -->
-      <h1 class="event-title">{{ event.title }}</h1>
+      <h1 class="event-title">{{ ev.title }}</h1>
 
       <!-- Organizer -->
       <div class="organizer-info">
-        <img [src]="event.organizer.avatar" [alt]="event.organizer.name" class="organizer-avatar">
+        <img [src]="ev.organizer.avatar" [alt]="ev.organizer.displayName" class="organizer-avatar">
         <div class="organizer-details">
           <span class="organizer-name">
-            {{ event.organizer.name }}
-            <span nz-icon nzType="safety-certificate" nzTheme="fill" class="verified-icon" *ngIf="event.organizer.isVerified"></span>
+            {{ ev.organizer.displayName }}
+            @if (ev.organizer.isVerified) {
+              <span nz-icon nzType="safety-certificate" nzTheme="fill" class="verified-icon"></span>
+            }
           </span>
-          <span class="organizer-meta">{{ event.organizer.eventsCount }} eventos organizados</span>
+          <span class="organizer-meta">{{ ev.organizer.eventsCount }} eventos organizados</span>
         </div>
       </div>
 
@@ -40,9 +45,9 @@
           <span nz-icon nzType="share-alt" nzTheme="outline"></span>
           Compartir
         </button>
-        <button class="action-btn" [class.saved]="isSaved" (click)="toggleSave()">
-          <span nz-icon [nzType]="isSaved ? 'heart' : 'heart'" [nzTheme]="isSaved ? 'fill' : 'outline'"></span>
-          {{ isSaved ? 'Guardado' : 'Guardar' }}
+        <button class="action-btn" [class.saved]="isSaved()" (click)="toggleSave()">
+          <span nz-icon nzType="heart" [nzTheme]="isSaved() ? 'fill' : 'outline'"></span>
+          {{ isSaved() ? 'Guardado' : 'Guardar' }}
         </button>
       </div>
     </div>
@@ -52,52 +57,37 @@
   <div class="event-content">
     <div class="content-grid">
       
-      <!-- Left Column (70%) -->
+      <!-- Left Column -->
       <div class="left-column">
         
         <!-- Prediction Panel -->
+        @if (prediction(); as pred) {
         <div class="prediction-panel card-glass">
           <div class="panel-header">
-            <h2>🤖 Predicción IA de Asistencia</h2>
+            <h2><span nz-icon nzType="robot" nzTheme="outline"></span> Predicción IA de Asistencia</h2>
           </div>
           
           <div class="prediction-content">
-            <div class="prediction-visual">
-              <app-prediction-meter
-                *ngIf="event.prediction"
-                [probability]="event.prediction.probability"
-                [variant]="'circular'"
-                [size]="'lg'"
-                [showLabel]="true"
-                [animated]="true"
-              ></app-prediction-meter>
-            </div>
-
-            <div class="prediction-info" *ngIf="event.prediction">
-              <div class="prediction-level" [class]="event.prediction.level">
+            <div class="prediction-info">
+              <div class="prediction-level" [class]="pred.level">
                 <span class="level-icon">
-                  {{ event.prediction.level === 'high' ? '🟢' : event.prediction.level === 'medium' ? '🟡' : '🔴' }}
+                  <span nz-icon [nzType]="pred.level === 'HIGH' ? 'check-circle' : pred.level === 'MEDIUM' ? 'info-circle' : 'close-circle'" nzTheme="fill"></span>
                 </span>
                 <span class="level-text">
-                  {{ event.prediction.level === 'high' ? 'Alta probabilidad de asistencia' : 
-                     event.prediction.level === 'medium' ? 'Probabilidad media de asistencia' : 
-                     'Baja probabilidad de asistencia' }}
+                  @if (pred.level === 'HIGH') { Alta probabilidad de asistencia }
+                  @else if (pred.level === 'MEDIUM') { Probabilidad media de asistencia }
+                  @else { Baja probabilidad de asistencia }
                 </span>
               </div>
 
               <div class="estimation">
                 <h4>Estimación de asistentes:</h4>
                 <p class="estimation-range">
-                  {{ event.prediction.estimatedAttendees.min }}-{{ event.prediction.estimatedAttendees.max }} personas
-                  <span class="expected">(~{{ event.prediction.estimatedAttendees.expected }} esperados)</span>
+                  {{ pred.estimatedMin }}-{{ pred.estimatedMax }} personas
+                  <span class="expected">(~{{ pred.estimatedExpected }} esperados)</span>
                 </p>
-                <p class="capacity-info">de {{ event.capacity }} capacidad total</p>
+                <p class="capacity-info">de {{ ev.capacity }} capacidad total</p>
               </div>
-
-              <app-prediction-factors
-                [factors]="event.prediction.factors"
-                [maxFactors]="5"
-              ></app-prediction-factors>
 
               <button class="btn-secondary full-width">
                 Ver Análisis Completo
@@ -105,70 +95,98 @@
             </div>
           </div>
         </div>
+        }
 
         <!-- Description -->
         <div class="description-section card-glass">
-          <h3>📝 Descripción del Evento</h3>
-          <p class="description-text">{{ event.description }}</p>
-        </div>
-
-        <!-- Agenda (if available) -->
-        <div class="agenda-section card-glass" *ngIf="event.agenda && event.agenda.length > 0">
-          <h3>📅 Agenda</h3>
-          <div class="agenda-timeline">
-            <div class="agenda-item" *ngFor="let item of event.agenda">
-              <div class="agenda-time">{{ item.time }}</div>
-              <div class="agenda-content">
-                <h4>{{ item.title }}</h4>
-                <p *ngIf="item.description">{{ item.description }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Speakers (if available) -->
-        <div class="speakers-section card-glass" *ngIf="event.speakers && event.speakers.length > 0">
-          <h3>🎤 Ponentes</h3>
-          <div class="speakers-grid">
-            <div class="speaker-card" *ngFor="let speaker of event.speakers">
-              <img [src]="speaker.avatar" [alt]="speaker.name" class="speaker-avatar">
-              <h4>{{ speaker.name }}</h4>
-              <p class="speaker-title">{{ speaker.title }}</p>
-              <p class="speaker-company">{{ speaker.company }}</p>
-            </div>
-          </div>
+          <h3><span nz-icon nzType="file-text" nzTheme="outline"></span> Descripción del Evento</h3>
+          <p class="description-text">{{ ev.description }}</p>
         </div>
 
         <!-- Location -->
         <div class="location-section card-glass">
-          <h3>📍 Ubicación</h3>
+          <h3><span nz-icon nzType="environment" nzTheme="outline"></span> Ubicación</h3>
           <div class="location-info">
             <p class="location-type">
-              <span nz-icon [nzType]="event.location.type === 'virtual' ? 'global' : 'environment'" nzTheme="outline"></span>
-              {{ event.location.type === 'virtual' ? 'Evento Virtual' : 'Evento Presencial' }}
+              <span nz-icon [nzType]="ev.location.type === 'VIRTUAL' ? 'global' : 'environment'" nzTheme="outline"></span>
+              {{ ev.location.type === 'VIRTUAL' ? 'Evento Virtual' : 'Evento Presencial' }}
             </p>
-            <p class="location-address" *ngIf="event.location.address">
-              {{ event.location.address }}, {{ event.location.city }}, {{ event.location.country }}
-            </p>
-            <p class="location-venue" *ngIf="event.location.venue">
-              {{ event.location.venue }}
-            </p>
+            @if (ev.location.address) {
+              <p class="location-address">
+                {{ ev.location.address }}, {{ ev.location.city }}, {{ ev.location.country }}
+              </p>
+            }
+            @if (ev.location.venue) {
+              <p class="location-venue">{{ ev.location.venue }}</p>
+            }
           </div>
+          
+          <!-- OpenStreetMap Embed -->
+          @if (ev.location.latitude && ev.location.longitude && ev.location.type !== 'VIRTUAL') {
+            <div class="location-map">
+              <iframe 
+                class="osm-iframe"
+                [src]="getMapUrl(ev.location.latitude, ev.location.longitude)"
+                width="100%"
+                height="250"
+                frameborder="0"
+                scrolling="no"
+                loading="lazy"
+                allowfullscreen>
+              </iframe>
+              <div class="map-actions">
+                <a [href]="'https://www.google.com/maps?q=' + ev.location.latitude + ',' + ev.location.longitude" 
+                   target="_blank" 
+                   class="map-link-btn">
+                  <span nz-icon nzType="environment" nzTheme="outline"></span>
+                  Abrir en Google Maps
+                </a>
+                <span class="map-coordinates">
+                  <span nz-icon nzType="aim" nzTheme="outline"></span>
+                  {{ ev.location.latitude }}, {{ ev.location.longitude }}
+                </span>
+              </div>
+            </div>
+          }
         </div>
 
       </div>
 
-      <!-- Right Column (30%) - Sticky -->
+      <!-- Right Column - Sticky -->
       <div class="right-column">
         <div class="sticky-sidebar">
           
+          <!-- Calendar Card -->
+          <div class="calendar-card card-glass">
+            <div class="calendar-header">
+              <span class="calendar-month">{{ ev.startDate | date:'MMMM' }}</span>
+              <span class="calendar-year">{{ ev.startDate | date:'yyyy' }}</span>
+            </div>
+            <div class="calendar-body">
+              <div class="calendar-day">{{ ev.startDate | date:'dd' }}</div>
+              <div class="calendar-weekday">{{ ev.startDate | date:'EEEE' }}</div>
+            </div>
+            <div class="calendar-footer">
+              <div class="calendar-time">
+                <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+                <span>{{ ev.startTime }} - {{ ev.endTime || 'TBD' }}</span>
+              </div>
+              @if (ev.endDate && ev.endDate !== ev.startDate) {
+                <div class="calendar-duration">
+                  <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                  <span>Hasta {{ ev.endDate | date:'d MMM' }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
           <!-- Event Info Card -->
           <div class="info-card card-glass">
             <div class="info-item">
               <span nz-icon nzType="calendar" nzTheme="outline"></span>
               <div class="info-text">
                 <span class="info-label">Fecha</span>
-                <span class="info-value">{{ formatDate(event.date) }}</span>
+                <span class="info-value">{{ formatDate(ev.startDate) }}</span>
               </div>
             </div>
 
@@ -176,7 +194,7 @@
               <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
               <div class="info-text">
                 <span class="info-label">Hora</span>
-                <span class="info-value">{{ event.time }}</span>
+                <span class="info-value">{{ ev.startTime }}</span>
               </div>
             </div>
 
@@ -184,7 +202,7 @@
               <span nz-icon nzType="environment" nzTheme="outline"></span>
               <div class="info-text">
                 <span class="info-label">Ubicación</span>
-                <span class="info-value">{{ event.location.city || 'Virtual' }}</span>
+                <span class="info-value">{{ ev.location.city || 'Virtual' }}</span>
               </div>
             </div>
 
@@ -192,7 +210,7 @@
               <span nz-icon nzType="dollar" nzTheme="outline"></span>
               <div class="info-text">
                 <span class="info-label">Precio</span>
-                <span class="info-value">{{ event.isFree ? 'Gratis' : '$' + event.price }}</span>
+                <span class="info-value">{{ ev.isFree ? 'Gratis' : '$' + ev.price }}</span>
               </div>
             </div>
 
@@ -200,11 +218,11 @@
 
             <div class="capacity-info-box">
               <div class="capacity-item">
-                <span class="capacity-number">{{ event.interested }}</span>
+                <span class="capacity-number">{{ ev.interestedCount }}</span>
                 <span class="capacity-label">Interesados</span>
               </div>
               <div class="capacity-item">
-                <span class="capacity-number">{{ event.capacity }}</span>
+                <span class="capacity-number">{{ ev.capacity }}</span>
                 <span class="capacity-label">Capacidad</span>
               </div>
             </div>
@@ -215,35 +233,14 @@
 
             <div class="divider"></div>
 
-            <!-- Prediction Summary -->
-            <div class="prediction-summary" *ngIf="event.prediction">
-              <div class="summary-header">
-                <span>Probabilidad</span>
-                <span class="probability-value" [style.color]="event.prediction.level === 'high' ? '#10B981' : event.prediction.level === 'medium' ? '#F59E0B' : '#EF4444'">
-                  {{ event.prediction.probability }}%
-                </span>
-              </div>
-              <app-prediction-meter
-                [probability]="event.prediction.probability"
-                [variant]="'compact'"
-                [size]="'sm'"
-                [showLabel]="false"
-              ></app-prediction-meter>
-              <p class="estimation-text">
-                Estimación: ~{{ event.prediction.estimatedAttendees.expected }} asistentes reales
-              </p>
-            </div>
-
-            <div class="divider"></div>
-
             <!-- Share -->
             <div class="share-section">
               <span class="share-label">Compartir:</span>
               <div class="share-buttons">
-                <button class="share-btn">📱</button>
-                <button class="share-btn">🐦</button>
-                <button class="share-btn">📧</button>
-                <button class="share-btn">🔗</button>
+                <button class="share-btn" (click)="showQRModal()"><span nz-icon nzType="qrcode" nzTheme="outline"></span></button>
+                <button class="share-btn"><span nz-icon nzType="twitter" nzTheme="outline"></span></button>
+                <button class="share-btn"><span nz-icon nzType="mail" nzTheme="outline"></span></button>
+                <button class="share-btn" (click)="share()"><span nz-icon nzType="link" nzTheme="outline"></span></button>
               </div>
             </div>
           </div>
@@ -255,9 +252,13 @@
   </div>
 
 </div>
-
+} @else {
 <!-- Loading State -->
-<div class="loading-container" *ngIf="isLoading">
-  <div class="spinner"></div>
+<div class="loading-container">
+  <div class="loading-logo-wrapper">
+    <img src="assets/images/Logo.png" alt="Predictify" class="loading-logo" />
+    <div class="loading-spinner"></div>
+  </div>
   <p>Cargando evento...</p>
 </div>
+}

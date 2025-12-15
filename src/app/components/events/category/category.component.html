@@ -1,0 +1,113 @@
+@if (categoryData(); as cat) {
+  <div class="category-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-left">
+          <h1 class="category-title">{{ cat.label }}</h1>
+          <div class="category-stats">
+            <span><i nz-icon nzType="calendar" nzTheme="outline"></i> {{ cat.eventCount }} eventos</span>
+            <span><i nz-icon nzType="team" nzTheme="outline"></i> {{ formatNumber(cat.subscriberCount) }} Suscriptores</span>
+          </div>
+          <p class="category-description">{{ cat.description }}</p>
+          
+          <div class="subscribe-form">
+            <input type="email" placeholder="yo@correo.com" class="subscribe-input" />
+            <button class="subscribe-btn">Suscribirse</button>
+          </div>
+        </div>
+        
+        <div class="hero-right">
+          <div class="floating-icon" [style.background]="cat.color + '22'" [style.color]="cat.color">
+            <i nz-icon [nzType]="cat.icon" nzTheme="outline"></i>
+          </div>
+          <div class="category-image-container">
+            <img [src]="cat.imageUrl" [alt]="cat.label" class="category-image" />
+            <div class="image-labels">
+              <span class="label-discover">DISCOVER</span>
+              <span class="label-category" [style.color]="cat.color">{{ cat.label | uppercase }}</span>
+              <span class="label-events">EVENTS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nearby Events Section -->
+    <section class="nearby-section">
+      <div class="nearby-header">
+        <h2>Eventos cercanos</h2>
+        <button class="search-btn">
+          <i nz-icon nzType="search" nzTheme="outline"></i>
+        </button>
+      </div>
+
+      <div class="nearby-content">
+        <div class="map-area">
+          <div class="world-map"></div>
+          
+          @if (loading()) {
+            <div class="loading-state">
+              <div class="loading-spinner"></div>
+              <p>Cargando eventos...</p>
+            </div>
+          } @else if (categoryEvents().length === 0) {
+            <div class="no-events">
+              <h3>No hay eventos cercanos</h3>
+              <p>En este momento no hay eventos relevantes cerca de ti. Puedes explorar todos los eventos en el mapa.</p>
+              <button class="explore-btn" (click)="goBack()">
+                <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+                Explorar eventos
+              </button>
+            </div>
+          } @else {
+            <div class="events-grid">
+              @for (event of categoryEvents(); track event.id) {
+                <app-event-card [event]="event" (preview)="openPreview($event)"></app-event-card>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Subscribe Card -->
+        <div class="subscribe-card">
+          <div class="subscribe-icon" [style.color]="cat.color">
+            <i nz-icon [nzType]="cat.icon" nzTheme="outline"></i>
+          </div>
+          <h3>{{ cat.label }}</h3>
+          <p>Suscríbete para mantenerte al día con los últimos eventos, calendarios y otras actualizaciones.</p>
+          <input type="email" placeholder="yo@correo.com" class="subscribe-input-card" />
+          <button class="subscribe-btn-card">Suscribirse</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="category-footer">
+      <button class="back-btn" (click)="goBack()">
+        <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+      </button>
+      <div class="footer-links">
+        <a routerLink="/events">Descubrir</a>
+        <a href="#">Precios</a>
+        <a href="#">Ayuda</a>
+      </div>
+      <div class="footer-social">
+        <a href="#"><i nz-icon nzType="twitter" nzTheme="outline"></i></a>
+        <a href="#"><i nz-icon nzType="instagram" nzTheme="outline"></i></a>
+      </div>
+      <p class="footer-brand">Organiza tu evento con <a href="#">Luma</a> ↗</p>
+    </footer>
+  </div>
+
+  <!-- Event Preview Modal -->
+  <app-event-preview-modal
+    [event]="previewEvent()"
+    [isVisible]="isPreviewOpen()"
+    (close)="closePreview()">
+  </app-event-preview-modal>
+} @else {
+  <div class="loading-page">
+    <div class="loading-spinner"></div>
+  </div>
+}

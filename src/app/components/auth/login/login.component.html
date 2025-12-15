@@ -12,15 +12,15 @@
         
         <div class="features-list">
           <div class="feature-item">
-            <span class="feature-icon">🤖</span>
+            <span class="feature-icon" nz-icon nzType="robot" nzTheme="outline"></span>
             <span class="feature-text">Predicción IA con 94% de precisión</span>
           </div>
           <div class="feature-item">
-            <span class="feature-icon">📊</span>
+            <span class="feature-icon" nz-icon nzType="bar-chart" nzTheme="outline"></span>
             <span class="feature-text">Analytics en tiempo real</span>
           </div>
           <div class="feature-item">
-            <span class="feature-icon">🎯</span>
+            <span class="feature-icon" nz-icon nzType="aim" nzTheme="outline"></span>
             <span class="feature-text">Gestión simplificada de eventos</span>
           </div>
         </div>
@@ -93,7 +93,7 @@
             <div class="input-wrapper">
               <span nz-icon nzType="lock" nzTheme="outline" class="input-icon"></span>
               <input 
-                [type]="showPassword ? 'text' : 'password'" 
+                [type]="showPassword() ? 'text' : 'password'" 
                 id="password" 
                 [(ngModel)]="password" 
                 name="password"
@@ -101,7 +101,7 @@
                 class="form-input"
               >
               <button type="button" class="toggle-password" (click)="togglePassword()">
-                <span nz-icon [nzType]="showPassword ? 'eye-invisible' : 'eye'" nzTheme="outline"></span>
+                <span nz-icon [nzType]="showPassword() ? 'eye-invisible' : 'eye'" nzTheme="outline"></span>
               </button>
             </div>
           </div>
@@ -115,14 +115,19 @@
             <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
           </div>
 
-          <div class="error-message" *ngIf="errorMessage">
+          @if (errorMessage()) {
+          <div class="error-message">
             <span nz-icon nzType="warning" nzTheme="outline"></span>
-            {{ errorMessage }}
+            {{ errorMessage() }}
           </div>
+          }
 
-          <button type="submit" class="btn-primary full-width" [disabled]="isLoading">
-            <span *ngIf="!isLoading">Iniciar Sesión</span>
-            <span *ngIf="isLoading" class="loading-spinner"></span>
+          <button type="submit" class="btn-primary full-width" [disabled]="isLoading()">
+            @if (!isLoading()) {
+              <span>Iniciar Sesión</span>
+            } @else {
+              <span class="loading-spinner"></span>
+            }
           </button>
         </form>
 
@@ -131,7 +136,8 @@
         </p>
 
         <p class="demo-hint">
-          Demo: admin&#64;predictify.com / admin123
+          <strong>Usuario:</strong> user&#64;predictify.app / User123!<br>
+          <strong>Organizador:</strong> organizer&#64;predictify.app / Organizer123!
         </p>
       </div>
     </div>
