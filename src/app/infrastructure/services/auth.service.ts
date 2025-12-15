@@ -24,9 +24,8 @@ export class AuthService {
   private readonly REFRESH_TOKEN_KEY = 'predictify_refresh_token';
   private readonly USER_KEY = 'predictify_user';
   
-  // Enable mock mode when backend is not available
-  // Set to false to use real backend authentication
-  private readonly USE_MOCK = false;
+  // Enable mock mode in development (no backend required)
+  private readonly USE_MOCK = !environment.production;
   
   private currentUser = signal<UserDTO | null>(null);
   
