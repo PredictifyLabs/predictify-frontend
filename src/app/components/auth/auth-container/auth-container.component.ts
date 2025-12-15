@@ -191,15 +191,29 @@ export class AuthContainerComponent {
     this.registerLoading = true;
     this.registerError = '';
 
-    setTimeout(() => {
-      localStorage.setItem('user', JSON.stringify({
-        name: this.registerName,
-        email: this.registerEmail,
-        role: this.isOrganizer ? 'organizer' : 'user'
-      }));
-      this.router.navigate(['/events']);
-      this.registerLoading = false;
-    }, 1500);
+    this.authService.register({
+      name: this.registerName,
+      email: this.registerEmail,
+      password: this.registerPassword
+    }).subscribe({
+      next: () => {
+        this.message.success('Cuenta creada correctamente');
+        const user = this.authService.user();
+
+        if (user?.role === 'ADMIN' || user?.role === 'ORGANIZER') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/events']);
+        }
+      },
+      error: (err) => {
+        this.registerError = err.message || 'No se pudo crear la cuenta';
+        this.registerLoading = false;
+      },
+      complete: () => {
+        this.registerLoading = false;
+      }
+    });
   }
 
   // Social login
