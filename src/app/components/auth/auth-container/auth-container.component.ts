@@ -178,8 +178,8 @@ export class AuthContainerComponent {
       return;
     }
 
-    if (this.registerPassword.length < 6) {
-      this.registerError = 'La contraseña debe tener al menos 6 caracteres';
+    if (this.registerPassword.length < 8) {
+      this.registerError = 'La contraseña debe tener al menos 8 caracteres';
       return;
     }
 
