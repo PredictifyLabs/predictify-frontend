@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { AlertService } from '../../../infrastructure/services/alert.service';
 import { EventDTO, getCategoryLabel } from '../../../domain/models/event.model';
 import { AuthService } from '../../../infrastructure/services/auth.service';
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
@@ -22,7 +22,7 @@ export class EventPreviewModalComponent implements OnChanges, OnDestroy {
   @Output() close = new EventEmitter<void>();
 
   private readonly router = inject(Router);
-  private readonly message = inject(NzMessageService);
+  private readonly alert = inject(AlertService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly authService = inject(AuthService);
 
@@ -76,7 +76,7 @@ export class EventPreviewModalComponent implements OnChanges, OnDestroy {
 
   copyLink(): void {
     navigator.clipboard.writeText(this.eventUrl).then(() => {
-      this.message.success('Enlace copiado al portapapeles');
+      this.alert.toastSuccess('Enlace copiado al portapapeles');
     });
   }
 
@@ -113,7 +113,7 @@ export class EventPreviewModalComponent implements OnChanges, OnDestroy {
       return;
     }
     // TODO: Call registration API
-    this.message.success('¡Te has inscrito al evento!');
+    this.alert.eventRegistrationSuccess(this.event?.title || 'Evento');
   }
 
   closeAuthModal(): void {
@@ -122,6 +122,6 @@ export class EventPreviewModalComponent implements OnChanges, OnDestroy {
 
   onAuthenticated(): void {
     this.showAuthModal.set(false);
-    this.message.success('¡Sesión iniciada! Ya puedes inscribirte.');
+    this.alert.toastSuccess('¡Sesión iniciada! Ya puedes inscribirte.');
   }
 }

@@ -2,21 +2,34 @@
   <!-- Sidebar -->
   <aside class="admin-sidebar">
     <div class="sidebar-header">
-      <h1 class="logo">
-        <span class="gradient-text">Predictify</span>
-      </h1>
-      <span class="admin-badge">Admin</span>
+      <div class="sidebar-logo">
+        <img src="assets/images/Logo.png" alt="Predictify Logo" class="logo-icon">
+        <div class="logo-text-container">
+          <span class="logo-title">Predictify</span>
+          <span class="logo-subtitle">AI-POWERED ATTENDANCE FORECASTING!</span>
+        </div>
+      </div>
+      <span class="admin-badge">ADMIN</span>
     </div>
 
     <nav class="sidebar-nav">
       <ul>
-        <li *ngFor="let item of sidebarItems">
-          <a 
-            [class.active]="currentSection === item.route"
-            (click)="setSection(item.route)"
-          >
-            <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
-            <span class="nav-label">{{ item.label }}</span>
+        <li>
+          <a [class.active]="currentSection === 'dashboard'" (click)="setSection('dashboard')">
+            <span nz-icon nzType="dashboard" nzTheme="outline"></span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a [class.active]="currentSection === 'users'" (click)="setSection('users')">
+            <span nz-icon nzType="team" nzTheme="outline"></span>
+            <span class="nav-label">Usuarios</span>
+          </a>
+        </li>
+        <li>
+          <a [class.active]="currentSection === 'events'" (click)="setSection('events')">
+            <span nz-icon nzType="calendar" nzTheme="outline"></span>
+            <span class="nav-label">Eventos</span>
           </a>
         </li>
       </ul>
@@ -38,17 +51,9 @@
         <h2>{{ getHeaderTitle() }}</h2>
       </div>
       <div class="header-right">
-        <button class="header-btn">
-          <span nz-icon nzType="search" nzTheme="outline"></span>
-        </button>
-        <button class="header-btn notification-btn">
-          <nz-badge [nzCount]="8">
-            <span nz-icon nzType="bell" nzTheme="outline"></span>
-          </nz-badge>
-        </button>
         <div class="admin-profile">
-          <img src="https://api.dicebear.com/7.x/initials/svg?seed=AD" alt="Admin" class="admin-avatar">
-          <span class="admin-name">Admin</span>
+          <span nz-icon nzType="user" nzTheme="outline"></span>
+          <span class="admin-name">Administrador</span>
         </div>
       </div>
     </header>
@@ -56,20 +61,17 @@
     <!-- Content Area -->
     <div class="admin-content">
       
-      <!-- Dashboard Section -->
+      <!-- ==================== DASHBOARD ==================== -->
       <div *ngIf="currentSection === 'dashboard'" class="dashboard-section">
-        
-        <!-- KPI Cards -->
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-icon blue">
               <span nz-icon nzType="calendar" nzTheme="outline"></span>
             </div>
             <div class="kpi-info">
-              <span class="kpi-number">{{ stats.totalEvents | number }}</span>
-              <span class="kpi-label">Eventos</span>
+              <span class="kpi-number">{{ stats.totalEvents }}</span>
+              <span class="kpi-label">Total Eventos</span>
             </div>
-            <span class="kpi-trend positive">+{{ stats.eventsGrowth }}% ↗</span>
           </div>
 
           <div class="kpi-card">
@@ -77,226 +79,188 @@
               <span nz-icon nzType="team" nzTheme="outline"></span>
             </div>
             <div class="kpi-info">
-              <span class="kpi-number">{{ stats.totalUsers | number }}</span>
-              <span class="kpi-label">Usuarios</span>
+              <span class="kpi-number">{{ stats.totalUsers }}</span>
+              <span class="kpi-label">Total Usuarios</span>
             </div>
-            <span class="kpi-trend positive">+{{ stats.usersGrowth }}% ↗</span>
           </div>
 
           <div class="kpi-card">
             <div class="kpi-icon purple">
-              <span nz-icon nzType="bank" nzTheme="outline"></span>
+              <span nz-icon nzType="crown" nzTheme="outline"></span>
             </div>
             <div class="kpi-info">
-              <span class="kpi-number">{{ stats.totalOrganizers | number }}</span>
-              <span class="kpi-label">Organizadores</span>
+              <span class="kpi-number">{{ stats.totalOrganizers }}</span>
+              <span class="kpi-label">Total Organizadores</span>
             </div>
-            <span class="kpi-trend positive">+{{ stats.organizersGrowth }}% ↗</span>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-icon yellow">
-              <span nz-icon nzType="dollar" nzTheme="outline"></span>
-            </div>
-            <div class="kpi-info">
-              <span class="kpi-number">${{ stats.totalRevenue | number }}</span>
-              <span class="kpi-label">Revenue</span>
-            </div>
-            <span class="kpi-trend positive">+{{ stats.revenueGrowth }}% ↗</span>
           </div>
         </div>
 
-        <!-- Main Grid -->
-        <div class="dashboard-grid">
-          
-          <!-- Alerts Panel -->
-          <div class="panel alerts-panel">
-            <h3>⚠️ Alertas Importantes</h3>
-            <div class="alerts-list">
-              <div class="alert-item" *ngFor="let alert of alerts" [style.borderLeftColor]="getAlertColor(alert.type)">
-                <span nz-icon [nzType]="getAlertIcon(alert.type)" nzTheme="outline" [style.color]="getAlertColor(alert.type)"></span>
-                <span class="alert-text">
-                  <strong *ngIf="alert.count">{{ alert.count }}</strong> {{ alert.message }}
-                </span>
+        <!-- Prediction Stats -->
+        <div class="prediction-section">
+          <h3><span nz-icon nzType="bar-chart" nzTheme="outline"></span> Predicciones de Asistencia IA</h3>
+          <div class="prediction-grid">
+            <div class="prediction-card">
+              <div class="prediction-header">
+                <span class="prediction-title">Precisión del Modelo</span>
+                <span class="prediction-badge success">Activo</span>
               </div>
+              <div class="prediction-value">87.3%</div>
+              <div class="prediction-bar">
+                <div class="prediction-fill" style="width: 87.3%"></div>
+              </div>
+              <span class="prediction-detail">Basado en 2,847 predicciones</span>
+            </div>
+
+            <div class="prediction-card">
+              <div class="prediction-header">
+                <span class="prediction-title">Predicciones Hoy</span>
+              </div>
+              <div class="prediction-value">1,247</div>
+              <span class="prediction-detail">+12% vs. ayer</span>
+            </div>
+
+            <div class="prediction-card">
+              <div class="prediction-header">
+                <span class="prediction-title">Asistencia Promedio</span>
+              </div>
+              <div class="prediction-value">78%</div>
+              <span class="prediction-detail">De capacidad total</span>
             </div>
           </div>
-
-          <!-- Activity Panel -->
-          <div class="panel activity-panel">
-            <h3>📋 Actividad Reciente</h3>
-            <div class="activity-list">
-              <div class="activity-item" *ngFor="let activity of recentActivity">
-                <div class="activity-icon" [style.background]="activity.color + '20'" [style.color]="activity.color">
-                  <span nz-icon [nzType]="activity.icon" nzTheme="outline"></span>
-                </div>
-                <div class="activity-info">
-                  <span class="activity-text">{{ activity.text }}</span>
-                  <span class="activity-time">{{ activity.time }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- AI Status Panel -->
-          <div class="panel ai-panel">
-            <h3><span nz-icon nzType="robot" nzTheme="outline"></span> Estado del Sistema IA</h3>
-            <div class="ai-status">
-              <div class="status-indicator online">
-                <span class="status-dot"></span>
-                <span class="status-text">Sistema Operativo</span>
-              </div>
-              
-              <div class="ai-metrics">
-                <div class="ai-metric">
-                  <span class="metric-label">Precisión Global</span>
-                  <span class="metric-value">87.3%</span>
-                  <div class="metric-bar">
-                    <div class="metric-fill" style="width: 87.3%"></div>
-                  </div>
-                </div>
-                
-                <div class="ai-metric">
-                  <span class="metric-label">Predicciones Hoy</span>
-                  <span class="metric-value">1,247</span>
-                </div>
-                
-                <div class="ai-metric">
-                  <span class="metric-label">Última Actualización</span>
-                  <span class="metric-value">Hace 2 horas</span>
-                </div>
-              </div>
-
-              <button class="btn-secondary">
-                <span nz-icon nzType="reload" nzTheme="outline"></span>
-                Reentrenar Modelo
-              </button>
-            </div>
-          </div>
-
-          <!-- Quick Actions Panel -->
-          <div class="panel actions-panel">
-            <h3>⚡ Acciones Rápidas</h3>
-            <div class="quick-actions">
-              <button class="quick-action-btn">
-                <span nz-icon nzType="plus" nzTheme="outline"></span>
-                Crear Evento
-              </button>
-              <button class="quick-action-btn">
-                <span nz-icon nzType="user-add" nzTheme="outline"></span>
-                Añadir Usuario
-              </button>
-              <button class="quick-action-btn">
-                <span nz-icon nzType="file-text" nzTheme="outline"></span>
-                Generar Reporte
-              </button>
-              <button class="quick-action-btn">
-                <span nz-icon nzType="mail" nzTheme="outline"></span>
-                Enviar Newsletter
-              </button>
-            </div>
-          </div>
-
         </div>
-      </div>
 
-      <!-- Events Management Section -->
-      <div *ngIf="currentSection === 'events'" class="events-section">
-        <div class="section-header">
-          <h3>Todos los Eventos</h3>
-          <button class="btn-primary" (click)="openCreateEventModal()">
-            <span nz-icon nzType="plus" nzTheme="outline"></span>
-            Crear Evento Admin
+        <!-- Top Events by Prediction -->
+        <div class="top-events-section">
+          <h3><span nz-icon nzType="aim" nzTheme="outline"></span> Top Eventos por Predicción</h3>
+          <div class="top-events-list">
+            <div class="top-event-item" *ngFor="let ev of topEventsByPrediction; let i = index">
+              <span class="top-event-rank">{{ i + 1 }}</span>
+              <div class="top-event-info">
+                <span class="top-event-title">{{ ev.title }}</span>
+                <span class="top-event-category">{{ ev.category }}</span>
+              </div>
+              <div class="top-event-stats">
+                <span class="top-event-registered">{{ ev.registered || 0 }}/{{ ev.capacity }}</span>
+                <div class="top-event-prediction" [class.high]="(ev.prediction || 0) >= 80" [class.medium]="(ev.prediction || 0) >= 50 && (ev.prediction || 0) < 80" [class.low]="(ev.prediction || 0) < 50">
+                  {{ ev.prediction || 0 }}%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-actions">
+          <button class="action-card" (click)="setSection('users')">
+            <span nz-icon nzType="user-add" nzTheme="outline"></span>
+            <span>Gestionar Usuarios</span>
+          </button>
+          <button class="action-card" (click)="setSection('events')">
+            <span nz-icon nzType="plus-circle" nzTheme="outline"></span>
+            <span>Gestionar Eventos</span>
           </button>
         </div>
 
-        <div class="filters-bar">
-          <input type="text" placeholder="Buscar eventos..." class="search-input" [(ngModel)]="eventSearch">
-          <select class="filter-select">
-            <option>Todos los Estados</option>
-            <option>Publicado</option>
-            <option>Borrador</option>
-            <option>En Revisión</option>
-            <option>Reportado</option>
-          </select>
-          <select class="filter-select">
-            <option>Todas las Categorías</option>
-            <option>Conferencia</option>
-            <option>Hackathon</option>
-            <option>Workshop</option>
-          </select>
-        </div>
+        <!-- Charts Section -->
+        <div class="charts-section">
+          <div class="charts-grid">
+            <!-- Users Activity Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4><span nz-icon nzType="rise" nzTheme="outline"></span> Usuarios Activos (Últimos 7 días)</h4>
+              </div>
+              <div class="chart-body">
+                <div class="bar-chart">
+                  <div class="bar-item" *ngFor="let day of chartData.usersActivity">
+                    <div class="bar" [style.height.%]="day.value"></div>
+                    <span class="bar-label">{{ day.label }}</span>
+                    <span class="bar-value">{{ day.value }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        <div class="data-table">
-          <div class="table-header">
-            <span>ID</span>
-            <span>Evento</span>
-            <span>Organizador</span>
-            <span>Fecha</span>
-            <span>Estado</span>
-            <span>Predicción</span>
-            <span>Acciones</span>
-          </div>
-          <div class="table-row" *ngFor="let ev of filteredEvents">
-            <span>{{ ev.id }}</span>
-            <span>{{ ev.title }}</span>
-            <span>{{ ev.organizerName }}</span>
-            <span>{{ ev.startDate }}</span>
-            <span>{{ ev.status }}</span>
-            <span class="prediction-medium">--</span>
-            <span class="actions">
-              <button class="icon-btn" (click)="deleteEvent(ev)">
-                <span nz-icon nzType="delete" nzTheme="outline"></span>
-              </button>
-            </span>
+            <!-- Events by Category Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h4><span nz-icon nzType="pie-chart" nzTheme="outline"></span> Eventos por Categoría</h4>
+              </div>
+              <div class="chart-body">
+                <div class="donut-chart-container">
+                  <div class="donut-chart">
+                    <div class="donut-segment" *ngFor="let cat of chartData.eventsByCategory; let i = index"
+                      [style.--offset]="getDonutOffset(i)"
+                      [style.--value]="cat.percentage"
+                      [style.--color]="cat.color">
+                    </div>
+                    <div class="donut-center">
+                      <span class="donut-total">{{ stats.totalEvents }}</span>
+                      <span class="donut-label">Eventos</span>
+                    </div>
+                  </div>
+                  <div class="chart-legend">
+                    <div class="legend-item" *ngFor="let cat of chartData.eventsByCategory">
+                      <span class="legend-color" [style.background]="cat.color"></span>
+                      <span class="legend-label">{{ cat.label }}</span>
+                      <span class="legend-value">{{ cat.count }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Registrations Trend -->
+            <div class="chart-card wide">
+              <div class="chart-header">
+                <h4><span nz-icon nzType="line-chart" nzTheme="outline"></span> Inscripciones Mensuales</h4>
+              </div>
+              <div class="chart-body">
+                <div class="line-chart">
+                  <div class="line-chart-grid">
+                    <div class="grid-line" *ngFor="let line of [100, 75, 50, 25, 0]">
+                      <span class="grid-label">{{ line }}</span>
+                    </div>
+                  </div>
+                  <div class="line-chart-bars">
+                    <div class="line-bar" *ngFor="let month of chartData.registrationsTrend">
+                      <div class="line-bar-fill" [style.height.%]="month.value"></div>
+                      <span class="line-bar-label">{{ month.label }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Users Management Section -->
+      <!-- ==================== USUARIOS ==================== -->
       <div *ngIf="currentSection === 'users'" class="users-section">
         <div class="section-header">
           <h3>Gestión de Usuarios</h3>
           <button class="btn-primary" (click)="openCreateUserModal()">
             <span nz-icon nzType="user-add" nzTheme="outline"></span>
-            Crear Usuario
+            Nuevo Usuario
           </button>
         </div>
 
-        <div class="user-stats">
-          <div class="user-stat-card">
-            <span class="user-stat-number">45,892</span>
-            <span class="user-stat-label">Total Usuarios</span>
-          </div>
-          <div class="user-stat-card">
-            <span class="user-stat-number">38,241</span>
-            <span class="user-stat-label">Activos</span>
-          </div>
-          <div class="user-stat-card">
-            <span class="user-stat-number">7,651</span>
-            <span class="user-stat-label">Inactivos</span>
-          </div>
-        </div>
-
         <div class="filters-bar">
-          <input type="text" placeholder="Buscar por nombre, email, ID..." class="search-input" [(ngModel)]="userSearch">
-          <select class="filter-select">
-            <option>Todos los Roles</option>
-            <option>Usuario</option>
-            <option>Organizador</option>
-            <option>Admin</option>
+          <input type="text" placeholder="Buscar por nombre, email..." class="search-input" [(ngModel)]="userSearch">
+          <select class="filter-select" [(ngModel)]="userRoleFilter">
+            <option value="">Todos los Roles</option>
+            <option value="ATTENDEE">Usuario</option>
+            <option value="ORGANIZER">Organizador</option>
+            <option value="ADMIN">Admin</option>
           </select>
-          <select class="filter-select">
-            <option>Todos los Estados</option>
-            <option>Activo</option>
-            <option>Suspendido</option>
-            <option>Baneado</option>
+          <select class="filter-select" [(ngModel)]="userStatusFilter">
+            <option value="">Todos los Estados</option>
+            <option value="ACTIVE">Activo</option>
+            <option value="BLOCKED">Bloqueado</option>
+            <option value="BANNED">Baneado</option>
           </select>
         </div>
 
         <div class="data-table">
           <div class="table-header">
-            <span>ID</span>
             <span>Usuario</span>
             <span>Email</span>
             <span>Rol</span>
@@ -304,282 +268,318 @@
             <span>Acciones</span>
           </div>
           <div class="table-row" *ngFor="let u of filteredUsers">
-            <span>{{ u.id }}</span>
             <span class="user-cell">
-              <img src="https://api.dicebear.com/7.x/initials/svg?seed={{u.name}}" alt="">
+              <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + u.name" alt="">
               {{ u.name }}
             </span>
             <span>{{ u.email }}</span>
-            <span>{{ u.role }}</span>
-            <span>{{ u.status }}</span>
+            <span>
+              <span class="role-badge" [class.organizer]="u.role === 'ORGANIZER'" [class.admin]="u.role === 'ADMIN'">
+                {{ u.role }}
+              </span>
+            </span>
+            <span>
+              <span class="status-badge" [class.active]="u.status === 'ACTIVE'" [class.blocked]="u.status === 'BLOCKED'" [class.banned]="u.status === 'BANNED'">
+                {{ u.status }}
+              </span>
+            </span>
             <span class="actions">
-              <button class="icon-btn" (click)="openUserActions(u)">
-                <span nz-icon nzType="tool" nzTheme="outline"></span>
+              <button class="icon-btn edit" title="Editar" (click)="openEditUserModal(u)">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </button>
+              <button class="icon-btn key" title="Cambiar Contraseña" (click)="openChangePasswordModal(u)">
+                <span nz-icon nzType="key" nzTheme="outline"></span>
+              </button>
+              <button class="icon-btn" [class.ban]="u.status !== 'BANNED'" [class.unban]="u.status === 'BANNED'" title="Banear/Desbanear" (click)="toggleBanUserDirect(u)">
+                <span nz-icon nzType="stop" nzTheme="outline"></span>
+              </button>
+              <button class="icon-btn delete" title="Eliminar" (click)="deleteUserDirect(u)">
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
               </button>
             </span>
+          </div>
+          <div class="empty-state" *ngIf="filteredUsers.length === 0">
+            <span nz-icon nzType="inbox" nzTheme="outline"></span>
+            <p>No se encontraron usuarios</p>
           </div>
         </div>
       </div>
 
-      <!-- Settings Section -->
-      <div *ngIf="currentSection === 'settings'" class="settings-section">
+      <!-- ==================== EVENTOS ==================== -->
+      <div *ngIf="currentSection === 'events'" class="events-section">
         <div class="section-header">
-          <h3>Configuración</h3>
-          <div class="settings-actions">
-            <button class="btn-secondary" (click)="resetSettings()">Restaurar</button>
-            <button class="btn-primary" (click)="saveSettings()">Guardar</button>
-          </div>
+          <h3>Gestión de Eventos</h3>
+          <button class="btn-primary" (click)="openCreateEventModal()">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>
+            Nuevo Evento
+          </button>
         </div>
 
-        <div class="panel">
-          <div class="form-grid">
-            <label class="custom-checkbox">
-              <input type="checkbox" [(ngModel)]="settings.maintenanceMode" />
-              Modo mantenimiento
-            </label>
+        <div class="filters-bar">
+          <input type="text" placeholder="Buscar eventos..." class="search-input" [(ngModel)]="eventSearch">
+          <select class="filter-select" [(ngModel)]="eventStatusFilter">
+            <option value="">Todos los Estados</option>
+            <option value="DRAFT">Borrador</option>
+            <option value="PUBLISHED">Publicado</option>
+            <option value="CANCELLED">Cancelado</option>
+            <option value="COMPLETED">Completado</option>
+          </select>
+        </div>
 
-            <label class="custom-checkbox">
-              <input type="checkbox" [(ngModel)]="settings.notificationsEnabled" />
-              Notificaciones habilitadas
-            </label>
+        <div class="data-table events-table">
+          <div class="table-header">
+            <span>Evento</span>
+            <span>Categoría</span>
+            <span>Organizador</span>
+            <span>Registrados</span>
+            <span>Predicción</span>
+            <span>Estado</span>
+            <span>Acciones</span>
+          </div>
+          <div class="table-row" *ngFor="let ev of filteredEvents">
+            <span class="event-title">{{ ev.title }}</span>
+            <span>
+              <span class="category-badge">{{ ev.category || 'N/A' }}</span>
+            </span>
+            <span>{{ ev.organizerName }}</span>
+            <span>{{ ev.registered || 0 }}/{{ ev.capacity }}</span>
+            <span>
+              <span class="prediction-badge" [class.high]="(ev.prediction || 0) >= 80" [class.medium]="(ev.prediction || 0) >= 50 && (ev.prediction || 0) < 80" [class.low]="(ev.prediction || 0) < 50">
+                {{ ev.prediction || 0 }}%
+              </span>
+            </span>
+            <span>
+              <span class="status-badge" [class.draft]="ev.status === 'DRAFT'" [class.published]="ev.status === 'PUBLISHED'" [class.cancelled]="ev.status === 'CANCELLED'">
+                {{ ev.status }}
+              </span>
+            </span>
+            <span class="actions">
+              <button class="icon-btn edit" title="Editar" (click)="openEditEventModal(ev)">
+                <span nz-icon nzType="edit" nzTheme="outline"></span>
+              </button>
+              <button class="icon-btn delete" title="Eliminar" (click)="deleteEvent(ev)">
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+              </button>
+            </span>
+          </div>
+          <div class="empty-state" *ngIf="filteredEvents.length === 0">
+            <span nz-icon nzType="inbox" nzTheme="outline"></span>
+            <p>No se encontraron eventos</p>
+          </div>
+        </div>
+      </div>
 
-            <label class="custom-checkbox">
-              <input type="checkbox" [(ngModel)]="settings.aiAutoRetrain" />
-              Reentrenamiento IA automático
-            </label>
+      <!-- ==================== MODALES ==================== -->
+      
+      <!-- Create/Edit User Modal -->
+      <div *ngIf="isCreateUserModalOpen" class="modal-backdrop" (click)="closeCreateUserModal()"></div>
+      <div *ngIf="isCreateUserModalOpen" class="modal">
+        <div class="modal-header">
+          <h3>{{ editingUser ? 'Editar Usuario' : 'Nuevo Usuario' }}</h3>
+          <button class="close-btn" (click)="closeCreateUserModal()">
+            <span nz-icon nzType="close" nzTheme="outline"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="createUserForm.name" placeholder="Nombre completo">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="createUserForm.email" placeholder="correo@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label>Rol</label>
+            <select [(ngModel)]="createUserForm.role">
+              <option value="ATTENDEE">Usuario</option>
+              <option value="ORGANIZER">Organizador</option>
+              <option value="ADMIN">Administrador</option>
+            </select>
+          </div>
+          <div class="form-group" *ngIf="!editingUser">
+            <label>Contraseña</label>
+            <input type="text" [(ngModel)]="createUserForm.password" placeholder="Contraseña">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeCreateUserModal()">Cancelar</button>
+          <button class="btn-primary" (click)="saveUser()">{{ editingUser ? 'Guardar' : 'Crear' }}</button>
+        </div>
+      </div>
 
-            <div class="input-group">
-              <label>Zona horaria por defecto</label>
-              <select class="filter-select" [(ngModel)]="settings.defaultTimezone">
-                <option value="America/Bogota">America/Bogota</option>
-                <option value="America/Mexico_City">America/Mexico_City</option>
-                <option value="America/Madrid">Europe/Madrid</option>
-                <option value="UTC">UTC</option>
+      <!-- Create/Edit Event Modal -->
+      <div *ngIf="isCreateEventModalOpen" class="modal-backdrop" (click)="closeCreateEventModal()"></div>
+      <div *ngIf="isCreateEventModalOpen" class="modal modal-lg">
+        <div class="modal-header">
+          <h3>{{ editingEvent ? 'Editar Evento' : 'Nuevo Evento' }}</h3>
+          <button class="close-btn" (click)="closeCreateEventModal()">
+            <span nz-icon nzType="close" nzTheme="outline"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Título</label>
+              <input type="text" [(ngModel)]="createEventForm.title" placeholder="Nombre del evento">
+            </div>
+            <div class="form-group">
+              <label>Organizador</label>
+              <select [(ngModel)]="createEventForm.organizerName">
+                <option value="">Seleccionar organizador...</option>
+                <option *ngFor="let org of organizers" [value]="org.name">{{ org.name }}</option>
               </select>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- AI Reports Section -->
-      <div *ngIf="currentSection === 'ai-reports'" class="ai-reports-section">
-        <div class="section-header">
-          <h3>Reportes de IA</h3>
-          <button class="btn-primary" (click)="generateAiReport()">
-            <span nz-icon nzType="plus" nzTheme="outline"></span>
-            Generar Reporte
-          </button>
-        </div>
-
-        <div class="panel" *ngIf="reports.length === 0">
-          <p>No hay reportes todavía. Genera uno para empezar.</p>
-        </div>
-
-        <div class="data-table" *ngIf="reports.length > 0">
-          <div class="table-header">
-            <span>ID</span>
-            <span>Fecha</span>
-            <span>Modelo</span>
-            <span>Precisión</span>
-            <span>Predicciones hoy</span>
-            <span>Acciones</span>
-          </div>
-
-          <div class="table-row" *ngFor="let rpt of reports">
-            <span>{{ rpt.id }}</span>
-            <span>{{ rpt.createdAt | date: 'short' }}</span>
-            <span>{{ rpt.modelVersion }}</span>
-            <span>{{ rpt.globalAccuracy }}%</span>
-            <span>{{ rpt.predictionsToday | number }}</span>
-            <span class="actions">
-              <button class="icon-btn" (click)="downloadReportJson(rpt)">
-                <span nz-icon nzType="download" nzTheme="outline"></span>
-              </button>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Create User Modal -->
-      <div *ngIf="isCreateUserModalOpen" class="admin-modal-backdrop" (click)="closeCreateUserModal()"></div>
-      <div *ngIf="isCreateUserModalOpen" class="admin-modal" role="dialog" aria-modal="true">
-        <div class="admin-modal-header">
-          <h3>Crear Usuario</h3>
-          <button class="icon-btn" (click)="closeCreateUserModal()">
-            <span nz-icon nzType="close" nzTheme="outline"></span>
-          </button>
-        </div>
-        <div class="admin-modal-body">
-          <div class="input-group">
-            <label>Nombre</label>
-            <input class="search-input" type="text" [(ngModel)]="createUserForm.name" />
-          </div>
-          <div class="input-group">
-            <label>Email</label>
-            <input class="search-input" type="email" [(ngModel)]="createUserForm.email" />
-          </div>
-          <div class="input-group">
-            <label>Rol</label>
-            <select class="filter-select" [(ngModel)]="createUserForm.role">
-              <option value="ATTENDEE">USER</option>
-              <option value="ORGANIZER">ORGANIZER</option>
-              <option value="ADMIN">ADMIN</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label>Contraseña</label>
-            <input class="search-input" type="text" [(ngModel)]="createUserForm.password" />
-          </div>
-        </div>
-        <div class="admin-modal-footer">
-          <button class="btn-secondary" (click)="closeCreateUserModal()">Cancelar</button>
-          <button class="btn-primary" (click)="createUser()">Crear</button>
-        </div>
-      </div>
-
-      <!-- Create Event Modal -->
-      <div *ngIf="isCreateEventModalOpen" class="admin-modal-backdrop" (click)="closeCreateEventModal()"></div>
-      <div *ngIf="isCreateEventModalOpen" class="admin-modal" role="dialog" aria-modal="true">
-        <div class="admin-modal-header">
-          <h3>Crear Evento</h3>
-          <button class="icon-btn" (click)="closeCreateEventModal()">
-            <span nz-icon nzType="close" nzTheme="outline"></span>
-          </button>
-        </div>
-        <div class="admin-modal-body">
-          <div class="input-group">
-            <label>Título</label>
-            <input class="search-input" type="text" [(ngModel)]="createEventForm.title" />
-          </div>
-          <div class="input-group">
+          <div class="form-group">
             <label>Descripción</label>
-            <textarea class="search-input" rows="4" [(ngModel)]="createEventForm.description"></textarea>
+            <textarea [(ngModel)]="createEventForm.description" rows="3" placeholder="Descripción del evento"></textarea>
           </div>
-          <div class="input-group">
-            <label>Categoría</label>
-            <select class="filter-select" [(ngModel)]="createEventForm.category">
-              <option value="CONFERENCE">CONFERENCE</option>
-              <option value="HACKATHON">HACKATHON</option>
-              <option value="WORKSHOP">WORKSHOP</option>
-              <option value="MEETUP">MEETUP</option>
-              <option value="NETWORKING">NETWORKING</option>
-              <option value="BOOTCAMP">BOOTCAMP</option>
-              <option value="WEBINAR">WEBINAR</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Categoría</label>
+              <select [(ngModel)]="createEventForm.category">
+                <option value="CONFERENCE">Conferencia</option>
+                <option value="WORKSHOP">Workshop</option>
+                <option value="MEETUP">Meetup</option>
+                <option value="HACKATHON">Hackathon</option>
+                <option value="WEBINAR">Webinar</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tipo</label>
+              <select [(ngModel)]="createEventForm.type">
+                <option value="PRESENCIAL">Presencial</option>
+                <option value="VIRTUAL">Virtual</option>
+                <option value="HIBRIDO">Híbrido</option>
+              </select>
+            </div>
           </div>
-          <div class="input-group">
-            <label>Tipo</label>
-            <select class="filter-select" [(ngModel)]="createEventForm.type">
-              <option value="PRESENCIAL">PRESENCIAL</option>
-              <option value="VIRTUAL">VIRTUAL</option>
-              <option value="HIBRIDO">HIBRIDO</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" [(ngModel)]="createEventForm.startDate">
+            </div>
+            <div class="form-group">
+              <label>Hora</label>
+              <input type="time" [(ngModel)]="createEventForm.startTime">
+            </div>
+            <div class="form-group">
+              <label>Capacidad</label>
+              <input type="number" [(ngModel)]="createEventForm.capacity" min="1">
+            </div>
           </div>
-          <div class="input-group">
-            <label>Organizador</label>
-            <input class="search-input" type="text" [(ngModel)]="createEventForm.organizerName" />
-          </div>
-          <div class="input-group">
-            <label>Fecha inicio</label>
-            <input class="search-input" type="date" [(ngModel)]="createEventForm.startDate" />
-          </div>
-          <div class="input-group">
-            <label>Hora inicio</label>
-            <input class="search-input" type="time" [(ngModel)]="createEventForm.startTime" />
-          </div>
-          <div class="input-group">
+          <div class="form-group">
             <label>Estado</label>
-            <select class="filter-select" [(ngModel)]="createEventForm.status">
-              <option value="DRAFT">DRAFT</option>
-              <option value="PUBLISHED">PUBLISHED</option>
-              <option value="CANCELLED">CANCELLED</option>
-              <option value="COMPLETED">COMPLETED</option>
+            <select [(ngModel)]="createEventForm.status">
+              <option value="DRAFT">Borrador</option>
+              <option value="PUBLISHED">Publicado</option>
             </select>
           </div>
-          <div class="input-group">
-            <label>Capacidad</label>
-            <input class="search-input" type="number" [(ngModel)]="createEventForm.capacity" />
+
+          <!-- Approval Toggle -->
+          <div class="form-group toggle-group">
+            <div class="toggle-container">
+              <label class="toggle-label">
+                <span nz-icon nzType="safety-certificate" nzTheme="outline"></span>
+                ¿Requiere Aprobación?
+              </label>
+              <p class="toggle-description">Si está activado, los asistentes deberán ser aprobados antes de confirmar su inscripción.</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" [(ngModel)]="createEventForm.requiresApproval">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          
+          <!-- Location Section -->
+          <div class="location-section">
+            <h4><span nz-icon nzType="environment" nzTheme="outline"></span> Ubicación del Evento</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Dirección</label>
+                <input type="text" [(ngModel)]="createEventForm.address" placeholder="Ej: Carrera 7 #32-16">
+              </div>
+              <div class="form-group">
+                <label>Ciudad</label>
+                <input type="text" [(ngModel)]="createEventForm.city" placeholder="Ej: Bogotá">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Lugar / Venue</label>
+              <input type="text" [(ngModel)]="createEventForm.venue" placeholder="Ej: Centro de Convenciones">
+            </div>
+            
+            <div class="map-toggle">
+              <button type="button" class="btn-map" (click)="toggleMapPicker()">
+                <span nz-icon nzType="environment" nzTheme="outline"></span>
+                {{ showMapPicker ? 'Ocultar Mapa' : 'Seleccionar en Mapa' }}
+              </button>
+              <span class="coordinates" *ngIf="createEventForm.latitude && createEventForm.longitude">
+                Lat: {{ createEventForm.latitude.toFixed(4) }}, Lng: {{ createEventForm.longitude.toFixed(4) }}
+              </span>
+            </div>
+            
+            <div class="map-container" *ngIf="showMapPicker">
+              <iframe 
+                [src]="'https://www.openstreetmap.org/export/embed.html?bbox=' + (createEventForm.longitude - 0.01) + ',' + (createEventForm.latitude - 0.01) + ',' + (createEventForm.longitude + 0.01) + ',' + (createEventForm.latitude + 0.01) + '&layer=mapnik&marker=' + createEventForm.latitude + ',' + createEventForm.longitude | safe"
+                width="100%" 
+                height="250" 
+                frameborder="0" 
+                style="border-radius: 12px;">
+              </iframe>
+              <p class="map-hint">Ingresa las coordenadas manualmente o busca la dirección en Google Maps</p>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Latitud</label>
+                  <input type="number" [(ngModel)]="createEventForm.latitude" step="0.0001">
+                </div>
+                <div class="form-group">
+                  <label>Longitud</label>
+                  <input type="number" [(ngModel)]="createEventForm.longitude" step="0.0001">
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="admin-modal-footer">
+        <div class="modal-footer">
           <button class="btn-secondary" (click)="closeCreateEventModal()">Cancelar</button>
-          <button class="btn-primary" (click)="createEvent()">Crear</button>
+          <button class="btn-primary" (click)="saveEvent()">{{ editingEvent ? 'Guardar' : 'Crear' }}</button>
         </div>
       </div>
 
-      <!-- User Actions Modal -->
-      <div *ngIf="isUserActionsModalOpen" class="admin-modal-backdrop" (click)="closeUserActions()"></div>
-      <div *ngIf="isUserActionsModalOpen" class="admin-modal" role="dialog" aria-modal="true">
-        <div class="admin-modal-header">
-          <h3>Acciones de Usuario</h3>
-          <button class="icon-btn" (click)="closeUserActions()">
-            <span nz-icon nzType="close" nzTheme="outline"></span>
-          </button>
-        </div>
-        <div class="admin-modal-body" *ngIf="selectedUser as su">
-          <p><strong>{{ su.name }}</strong> ({{ su.email }})</p>
-          <p>Rol: {{ su.role }} | Estado: {{ su.status }}</p>
-
-          <div class="input-group">
-            <label>Cambiar rol</label>
-            <select class="filter-select" [ngModel]="su.role" (ngModelChange)="setUserRole($event)">
-              <option value="ATTENDEE">USER</option>
-              <option value="ORGANIZER">ORGANIZER</option>
-              <option value="ADMIN">ADMIN</option>
-            </select>
-          </div>
-
-          <div class="quick-actions">
-            <button class="quick-action-btn" (click)="toggleBlockUser()">
-              <span nz-icon nzType="stop" nzTheme="outline"></span>
-              {{ su.status === 'BLOCKED' ? 'Desbloquear' : 'Bloquear' }}
+      <!-- Password Change Modal -->
+      <div class="modal-overlay" *ngIf="isPasswordModalOpen" (click)="closePasswordModal()">
+        <div class="modal-content small" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3><span nz-icon nzType="lock" nzTheme="outline"></span> Cambiar Contraseña</h3>
+            <button class="modal-close" (click)="closePasswordModal()">
+              <span nz-icon nzType="close" nzTheme="outline"></span>
             </button>
-            <button class="quick-action-btn" (click)="toggleBanUser()">
+          </div>
+          <div class="modal-body">
+            <p class="password-user-info">
+              Cambiar contraseña para: <strong>{{ passwordChangeUser?.name }}</strong>
+            </p>
+            <div class="form-group">
+              <label>Nueva Contraseña</label>
+              <input type="password" [(ngModel)]="newPassword" placeholder="Ingresa la nueva contraseña" minlength="6">
+            </div>
+            <div class="form-group">
+              <label>Confirmar Contraseña</label>
+              <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirma la nueva contraseña">
+            </div>
+            <p class="password-hint" *ngIf="newPassword && confirmPassword && newPassword !== confirmPassword">
               <span nz-icon nzType="warning" nzTheme="outline"></span>
-              {{ su.status === 'BANNED' ? 'Desbanear' : 'Banear' }}
-            </button>
-            <button class="quick-action-btn" (click)="resetUserPassword()">
-              <span nz-icon nzType="reload" nzTheme="outline"></span>
-              Reset Password
-            </button>
-            <button class="quick-action-btn" (click)="openChangePasswordModal()">
-              <span nz-icon nzType="key" nzTheme="outline"></span>
-              Cambiar Password
-            </button>
-            <button class="quick-action-btn" (click)="deleteSelectedUser()">
-              <span nz-icon nzType="delete" nzTheme="outline"></span>
-              Eliminar
+              Las contraseñas no coinciden
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary" (click)="closePasswordModal()">Cancelar</button>
+            <button class="btn-primary" (click)="savePassword()" [disabled]="!newPassword || newPassword !== confirmPassword">
+              Guardar Contraseña
             </button>
           </div>
-
-          <div class="panel" *ngIf="lastGeneratedPassword">
-            <p><strong>Nueva contraseña temporal:</strong> {{ lastGeneratedPassword }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Change Password Modal -->
-      <div *ngIf="isChangePasswordModalOpen" class="admin-modal-backdrop" (click)="closeChangePasswordModal()"></div>
-      <div *ngIf="isChangePasswordModalOpen" class="admin-modal" role="dialog" aria-modal="true">
-        <div class="admin-modal-header">
-          <h3>Cambiar Contraseña</h3>
-          <button class="icon-btn" (click)="closeChangePasswordModal()">
-            <span nz-icon nzType="close" nzTheme="outline"></span>
-          </button>
-        </div>
-        <div class="admin-modal-body">
-          <div class="input-group">
-            <label>Nueva contraseña</label>
-            <input class="search-input" type="text" [(ngModel)]="changePasswordForm.newPassword" />
-          </div>
-          <div class="input-group">
-            <label>Confirmar contraseña</label>
-            <input class="search-input" type="text" [(ngModel)]="changePasswordForm.confirmPassword" />
-          </div>
-        </div>
-        <div class="admin-modal-footer">
-          <button class="btn-secondary" (click)="closeChangePasswordModal()">Cancelar</button>
-          <button class="btn-primary" (click)="changeUserPassword()">Guardar</button>
         </div>
       </div>
 

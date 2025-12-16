@@ -1,42 +1,43 @@
-import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, computed, signal, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { CommonModule } from '@angular/common';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../infrastructure/services/auth.service';
+import { TranslateService } from '../../infrastructure/services/translate.service';
 import { getRoleLabel } from '../../domain/models/user.model';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [
-    NzMenuModule,
-    NzBadgeModule,
-    NzLayoutModule,
-    NzInputModule,
-    FormsModule,
+    CommonModule,
     NzButtonModule,
     NzIconModule,
     NzDropDownModule,
+    NzMenuModule,
     NzAvatarModule,
   ],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './navbar.css'
 })
-export class Navbar {
+export class Navbar implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  readonly translateService = inject(TranslateService);
+  private timeInterval: ReturnType<typeof setInterval> | null = null;
 
   // Expose auth signals to template
   readonly isAuthenticated = this.authService.isAuthenticated;
   readonly user = this.authService.user;
+  
+  // Time display
+  readonly currentTime = signal('');
+  readonly timezone = signal('');
   
   // Computed signals for UI
   readonly userName = computed(() => this.user()?.name || 'Usuario');
@@ -49,31 +50,37 @@ export class Navbar {
     const role = this.user()?.role;
     return role === 'ADMIN' || role === 'ORGANIZER';
   });
+  
+  // Language
+  readonly currentLang = this.translateService.currentLang;
+  readonly isEnglish = this.translateService.isEnglish;
 
-  selectedCategory = 'all';
-  searchQuery = '';
-
-  selectCategory(category: string): void {
-    this.selectedCategory = category;
-    this.router.navigate(['/events'], { queryParams: { category } });
+  ngOnInit(): void {
+    this.updateTime();
+    this.timeInterval = setInterval(() => this.updateTime(), 1000);
   }
 
-  filterByType(type: string): void {
-    this.router.navigate(['/events'], { queryParams: { type } });
+  ngOnDestroy(): void {
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
   }
 
-  filterByLocation(location: string): void {
-    this.router.navigate(['/events'], { queryParams: { location } });
+  private updateTime(): void {
+    const now = new Date();
+    this.currentTime.set(now.toLocaleTimeString('es', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }));
+    
+    const offset = -now.getTimezoneOffset() / 60;
+    const sign = offset >= 0 ? '+' : '';
+    this.timezone.set(`GMT${sign}${offset}`);
   }
 
   navigate(route: string): void {
     this.router.navigate(['/' + route]);
-  }
-
-  search(): void {
-    if (this.searchQuery.trim()) {
-      this.router.navigate(['/events'], { queryParams: { q: this.searchQuery } });
-    }
   }
 
   logout(): void {
@@ -82,5 +89,19 @@ export class Navbar {
 
   goToLogin(): void {
     this.router.navigate(['/auth']);
+  }
+
+  goToRegister(): void {
+    this.router.navigate(['/auth'], { queryParams: { mode: 'register' } });
+  }
+
+  toggleLanguage(): void {
+    this.translateService.toggleLanguage();
+    // Force page reload to apply translations globally
+    window.location.reload();
+  }
+
+  t(key: string): string {
+    return this.translateService.t(key);
   }
 }

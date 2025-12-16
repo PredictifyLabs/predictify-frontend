@@ -6,6 +6,8 @@ import { EventService } from '../../../infrastructure/services/event.service';
 import { EventDTO, EventCategory, CATEGORIES_DATA, CategoryData } from '../../../domain/models/event.model';
 import { EventCard } from '../event-card/event-card';
 import { EventPreviewModalComponent } from '../../shared/event-preview-modal/event-preview-modal.component';
+import { Navbar } from '../../navbar/navbar';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-category',
@@ -13,9 +15,11 @@ import { EventPreviewModalComponent } from '../../shared/event-preview-modal/eve
   imports: [
     CommonModule,
     RouterLink,
+    FormsModule,
     NzIconModule,
     EventCard,
-    EventPreviewModalComponent
+    EventPreviewModalComponent,
+    Navbar
   ],
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css'],
@@ -35,10 +39,25 @@ export class CategoryComponent implements OnInit {
   readonly isPreviewOpen = signal(false);
 
   // Get events filtered by category
+  // Search and filter state
+  readonly searchQuery = signal('');
+  
   readonly categoryEvents = computed(() => {
     const catId = this.categoryId();
+    const query = this.searchQuery().toLowerCase().trim();
     if (!catId) return [];
-    return this.eventService.events().filter(e => e.category === catId);
+    
+    let events = this.eventService.events().filter(e => e.category === catId);
+    
+    // Apply search filter
+    if (query) {
+      events = events.filter(e => 
+        e.title.toLowerCase().includes(query) ||
+        e.description?.toLowerCase().includes(query)
+      );
+    }
+    
+    return events;
   });
 
   ngOnInit(): void {
@@ -88,5 +107,13 @@ export class CategoryComponent implements OnInit {
       return (num / 1000).toFixed(1) + ' mil';
     }
     return num.toString();
+  }
+
+  onSearchChange(query: string): void {
+    this.searchQuery.set(query);
+  }
+
+  clearSearch(): void {
+    this.searchQuery.set('');
   }
 }

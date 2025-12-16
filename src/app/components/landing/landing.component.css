@@ -22,6 +22,14 @@
   object-fit: cover; /* Mantiene proporciones sin distorsión */
 }
 
+/* --- Navbar Override for Full Width --- */
+:host ::ng-deep app-navbar {
+	display: block;
+	margin-left: calc(-9rem - 5rem);
+	margin-right: calc(-9rem - 5rem);
+	width: calc(100% + 9rem + 5rem + 9rem + 5rem);
+}
+
 /* --- Navbar Mejorado --- */
 .navbar {
 	padding: 1.5rem 0rem;

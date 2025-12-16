@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { Navbar } from '../navbar/navbar';
 
 @Component({
     selector: 'app-landing',
     standalone: true,
-    imports: [CommonModule, NzButtonModule, NzIconModule, RouterLink],
+    imports: [CommonModule, NzButtonModule, NzIconModule, RouterLink, Navbar],
     templateUrl: './landing.component.html',
     styleUrls: ['./landing.component.css']
 })

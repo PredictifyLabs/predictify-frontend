@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { AlertService } from '../../../infrastructure/services/alert.service';
+import { TranslateService } from '../../../infrastructure/services/translate.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { AuthService } from '../../../infrastructure/services/auth.service';
 
@@ -76,7 +77,12 @@ export class AuthContainerComponent {
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly message = inject(NzMessageService);
+  private readonly alert = inject(AlertService);
+  readonly ts = inject(TranslateService);
+
+  t(key: string): string {
+    return this.ts.t(key);
+  }
 
   // Toggle between login and register
   toggleMode() {
@@ -117,19 +123,19 @@ export class AuthContainerComponent {
       email: this.loginEmail, 
       password: this.loginPassword 
     }).subscribe({
-      next: () => {
-        this.message.success('¡Bienvenido!');
-        const user = this.authService.user();
-        
-        // Redirect based on role
-        if (user?.role === 'ADMIN' || user?.role === 'ORGANIZER') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/events']);
-        }
+      next: (user) => {
+        this.alert.welcomeUser(user?.name || 'Usuario').then(() => {
+          if (user?.role === 'ADMIN') {
+            this.router.navigate(['/admin']);
+          } else if (user?.role === 'ORGANIZER') {
+            this.router.navigate(['/organizer']);
+          } else {
+            this.router.navigate(['/events']);
+          }
+        });
       },
       error: (err) => {
-        this.loginError = err.message || 'Credenciales incorrectas';
+        this.alert.error('Error de autenticación', err.error?.message || err.message || 'Credenciales incorrectas');
         this.loginLoading = false;
       },
       complete: () => {
@@ -194,20 +200,24 @@ export class AuthContainerComponent {
     this.authService.register({
       name: this.registerName,
       email: this.registerEmail,
-      password: this.registerPassword
+      password: this.registerPassword,
+      role: 'ATTENDEE'
     }).subscribe({
       next: () => {
-        this.message.success('Cuenta creada correctamente');
-        const user = this.authService.user();
-
-        if (user?.role === 'ADMIN' || user?.role === 'ORGANIZER') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/events']);
-        }
+        this.alert.registrationSuccess(this.registerEmail).then(() => {
+          const user = this.authService.user();
+          if (user?.role === 'ADMIN') {
+            this.router.navigate(['/admin']);
+          } else if (user?.role === 'ORGANIZER') {
+            this.router.navigate(['/organizer']);
+          } else {
+            this.router.navigate(['/events']);
+          }
+        });
       },
       error: (err) => {
-        this.registerError = err.message || 'No se pudo crear la cuenta';
+        const errorMsg = err.error?.message || err.message || 'No se pudo crear la cuenta';
+        this.alert.error('Error en el registro', errorMsg);
         this.registerLoading = false;
       },
       complete: () => {

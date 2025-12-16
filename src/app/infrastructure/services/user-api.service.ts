@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export type BackendRole = 'attendee' | 'organizer' | 'admin';
+export type BackendRole = 'ATTENDEE' | 'ORGANIZER' | 'ADMIN';
 
 export interface BackendRegisterRequest {
   name: string;

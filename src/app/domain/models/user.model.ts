@@ -3,6 +3,7 @@
  */
 
 export type UserRole = 'ATTENDEE' | 'ORGANIZER' | 'ADMIN';
+export type UserStatus = 'ACTIVE' | 'BLOCKED' | 'BANNED';
 
 export interface UserDTO {
   id: string;
@@ -12,6 +13,7 @@ export interface UserDTO {
   bio?: string;
   location?: string;
   role: UserRole;
+  status?: UserStatus;
   isVerified: boolean;
   emailVerifiedAt?: string;
   lastLoginAt?: string;
@@ -23,10 +25,13 @@ export interface AuthenticationRequest {
   password: string;
 }
 
+export type BackendRole = 'ATTENDEE' | 'ORGANIZER' | 'ADMIN';
+
 export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
+  role?: BackendRole;
 }
 
 export interface AuthenticationResponse {

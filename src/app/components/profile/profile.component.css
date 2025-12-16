@@ -1,7 +1,109 @@
 .profile-page {
   min-height: 100vh;
   background: #0A0A0A;
-  padding: 32px;
+  padding-top: 0;
+  padding-bottom: 32px;
+}
+
+/* ===== NAVIGATION BAR ===== */
+.profile-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 32px;
+}
+
+.navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: #9ca3af;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+  color: #fff;
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-logout {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: scale(1.05);
 }
 
 .profile-container {
@@ -10,6 +112,24 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+/* ===== PROFILE BANNER ===== */
+.profile-banner {
+  position: relative;
+  height: 280px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 24px 24px 0 0;
+  overflow: hidden;
+  margin: 0 32px;
+}
+
+.profile-banner .banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(10, 10, 10, 0.9) 100%);
 }
 
 /* ===== Background ====== */
@@ -78,9 +198,12 @@
 /* ===== HEADER ===== */
 .profile-header {
   position: relative;
-  border-radius: 24px;
+  border-radius: 0 0 24px 24px;
   overflow: hidden;
   margin-bottom: 24px;
+  margin-top: -100px;
+  background: transparent;
+  padding-top: 20px;
 }
 
 .header-background {
@@ -92,10 +215,8 @@
   display: flex;
   align-items: flex-end;
   gap: 24px;
-  padding: 0 1rem 7rem;
-  margin-top: -60px;
+  padding: 20px 32px 24px;
   position: relative;
-  top: 5rem;
 }
 
 .avatar-section {
@@ -143,6 +264,7 @@
   font-weight: 700;
   color: #FFFFFF;
   margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .name-input {
@@ -160,22 +282,34 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+  backdrop-filter: blur(10px);
 }
 
 .role-badge.user {
-  background: rgba(64, 112, 244, 0.15);
-  color: #4070F4;
+  background: rgba(64, 112, 244, 0.3);
+  color: #93c5fd;
 }
 
 .role-badge.organizer {
-  background: rgba(124, 58, 237, 0.15);
-  color: #7C3AED;
+  background: rgba(124, 58, 237, 0.3);
+  color: #c4b5fd;
 }
 
 .user-email {
   font-size: 15px;
-  color: #888888;
+  color: #e5e7eb;
   margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.user-location {
+  font-size: 14px;
+  color: #d1d5db;
+  margin: 4px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .header-actions {
@@ -501,6 +635,213 @@
 
 .btn-danger:hover {
   background: rgba(239, 68, 68, 0.2);
+}
+
+/* ===== EDIT PROFILE MODAL ===== */
+.edit-profile-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.banner-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.banner-upload-section label,
+.avatar-upload-section label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.banner-preview {
+  position: relative;
+  height: 120px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.banner-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(139, 92, 246, 0.6));
+  z-index: 0;
+}
+
+.banner-preview .upload-btn {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s;
+}
+
+.banner-preview .upload-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.avatar-preview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar-preview nz-avatar {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.avatar-upload-btn {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  border: none !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+  transition: all 0.2s;
+}
+
+.avatar-upload-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+}
+
+.edit-profile-modal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-profile-modal .form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.edit-profile-modal .form-group label .size-hint {
+  font-weight: 400;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.edit-profile-modal .form-group input,
+.edit-profile-modal .form-group textarea {
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.edit-profile-modal .form-group input:focus,
+.edit-profile-modal .form-group textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.edit-profile-modal .form-group input::placeholder,
+.edit-profile-modal .form-group textarea::placeholder {
+  color: #6b7280;
+}
+
+/* Modal Global Overrides - Dark Theme */
+::ng-deep .ant-modal-content {
+  border-radius: 16px !important;
+  overflow: hidden;
+  background: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+::ng-deep .ant-modal-header {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: transparent !important;
+}
+
+::ng-deep .ant-modal-title {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+}
+
+::ng-deep .ant-modal-close {
+  color: #9ca3af !important;
+}
+
+::ng-deep .ant-modal-close:hover {
+  color: #fff !important;
+}
+
+::ng-deep .ant-modal-body {
+  padding: 24px !important;
+  background: transparent !important;
+}
+
+::ng-deep .ant-modal-footer {
+  padding: 16px 24px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: transparent !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+::ng-deep .ant-modal-footer .ant-btn {
+  border-radius: 8px !important;
+  height: 40px !important;
+  padding: 0 20px !important;
+  font-weight: 500 !important;
+}
+
+::ng-deep .ant-modal-footer .ant-btn-default {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #e5e7eb !important;
+}
+
+::ng-deep .ant-modal-footer .ant-btn-default:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+::ng-deep .ant-modal-footer .ant-btn-primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  border: none !important;
+}
+
+::ng-deep .ant-modal-footer .ant-btn-primary:hover {
+  opacity: 0.9;
 }
 
 /* ===== RESPONSIVE ===== */

@@ -3,192 +3,183 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { SafePipe } from '../../ui/pipes/safe.pipe';
 import { AuthService } from '../../infrastructure/services/auth.service';
+import { AlertService } from '../../infrastructure/services/alert.service';
 import { UserApiService } from '../../infrastructure/services/user-api.service';
 import { EventApiService, CreateEventDTOBackend } from '../../infrastructure/services/event-api.service';
-import { switchMap } from 'rxjs';
+import { switchMap, of } from 'rxjs';
 
-type AdminSection = 'dashboard' | 'users' | 'events' | 'settings' | 'ai-reports';
-
-interface SidebarItem {
-  icon: string;
-  label: string;
-  route: AdminSection;
-}
-
-interface AdminStats {
-  totalEvents: number;
-  totalUsers: number;
-  totalOrganizers: number;
-  totalRevenue: number;
-  eventsGrowth: number;
-  usersGrowth: number;
-  organizersGrowth: number;
-  revenueGrowth: number;
-}
-
-interface Alert {
-  type: 'error' | 'warning' | 'success' | 'info';
-  message: string;
-  count?: number;
-}
-
-interface AdminSettings {
-  maintenanceMode: boolean;
-  notificationsEnabled: boolean;
-  defaultTimezone: string;
-  aiAutoRetrain: boolean;
-}
-
-interface AiReport {
-  id: string;
-  createdAt: string;
-  modelVersion: string;
-  globalAccuracy: number;
-  predictionsToday: number;
-  notes: string;
-}
-
+type AdminSection = 'dashboard' | 'users' | 'events';
 type AdminUserStatus = 'ACTIVE' | 'BLOCKED' | 'BANNED';
+type AdminUserRole = 'ATTENDEE' | 'ORGANIZER' | 'ADMIN';
+type AdminEventStatus = 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED';
 
 interface AdminUser {
   id: string;
   name: string;
   email: string;
-  role: AdminSectionUserRole;
+  role: AdminUserRole;
   status: AdminUserStatus;
   password: string;
   createdAt: string;
 }
 
-type AdminSectionUserRole = 'ATTENDEE' | 'ORGANIZER' | 'ADMIN';
-
-type AdminEventStatus = 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED';
-
 interface AdminEvent {
   id: string;
   title: string;
   organizerName: string;
+  description?: string;
+  category?: string;
+  type?: string;
   startDate: string;
+  startTime?: string;
   status: AdminEventStatus;
   capacity: number;
+  registered?: number;
+  prediction?: number;
+  address?: string;
+  city?: string;
+  venue?: string;
+  latitude?: number;
+  longitude?: number;
+  requiresApproval?: boolean;
   createdAt: string;
 }
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzIconModule, NzBadgeModule],
+  imports: [CommonModule, FormsModule, NzIconModule, SafePipe],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
   currentSection: AdminSection = 'dashboard';
-  readonly allowedSections: AdminSection[] = ['dashboard', 'users', 'events', 'settings', 'ai-reports'];
-  private readonly SETTINGS_KEY = 'predictify_admin_settings';
+  
   private readonly ADMIN_USERS_KEY = 'predictify_admin_users';
   private readonly ADMIN_EVENTS_KEY = 'predictify_admin_events';
 
-  stats: AdminStats = {
-    totalEvents: 1247,
-    totalUsers: 45892,
-    totalOrganizers: 892,
-    totalRevenue: 127845,
-    eventsGrowth: 12,
-    usersGrowth: 8,
-    organizersGrowth: 15,
-    revenueGrowth: 23
+  // Stats
+  stats = {
+    totalEvents: 0,
+    totalUsers: 0,
+    totalOrganizers: 0
   };
 
-  alerts: Alert[] = [
-    { type: 'error', message: 'eventos reportados por usuarios', count: 3 },
-    { type: 'warning', message: 'organizadores pendientes de validar', count: 5 },
-    { type: 'success', message: 'Sistema IA funcionando óptimamente' },
-    { type: 'info', message: 'Mantenimiento programado: 2 días' }
-  ];
-
-  recentActivity = [
-    { icon: 'plus-circle', text: 'Nuevo evento: Tech Summit 2025', time: 'Hace 5 min', color: '#10B981' },
-    { icon: 'user-add', text: 'Nuevo usuario registrado', time: 'Hace 12 min', color: '#3B82F6' },
-    { icon: 'check-circle', text: 'Pago procesado: $299', time: 'Hace 25 min', color: '#10B981' },
-    { icon: 'warning', text: 'Reporte recibido', time: 'Hace 1 hora', color: '#F59E0B' },
-    { icon: 'robot', text: 'Modelo IA reentrenado', time: 'Hace 2 horas', color: '#7C3AED' }
-  ];
-
-  sidebarItems: SidebarItem[] = [
-    { icon: 'dashboard', label: 'Dashboard General', route: 'dashboard' },
-    { icon: 'calendar', label: 'Control de Eventos', route: 'events' },
-    { icon: 'team', label: 'Control de Usuarios', route: 'users' },
-    { icon: 'setting', label: 'Configuración', route: 'settings' },
-    { icon: 'robot', label: 'Reportes de IA', route: 'ai-reports' }
-  ];
-
-  settings: AdminSettings = {
-    maintenanceMode: false,
-    notificationsEnabled: true,
-    defaultTimezone: 'America/Bogota',
-    aiAutoRetrain: false
+  // Chart Data
+  chartData = {
+    usersActivity: [
+      { label: 'Lun', value: 65 },
+      { label: 'Mar', value: 78 },
+      { label: 'Mié', value: 85 },
+      { label: 'Jue', value: 72 },
+      { label: 'Vie', value: 90 },
+      { label: 'Sáb', value: 45 },
+      { label: 'Dom', value: 38 }
+    ],
+    eventsByCategory: [
+      { label: 'Conferencias', count: 12, percentage: 30, color: '#7C3AED' },
+      { label: 'Workshops', count: 8, percentage: 20, color: '#10B981' },
+      { label: 'Hackathons', count: 5, percentage: 12.5, color: '#F59E0B' },
+      { label: 'Meetups', count: 10, percentage: 25, color: '#3B82F6' },
+      { label: 'Otros', count: 5, percentage: 12.5, color: '#6B7280' }
+    ],
+    registrationsTrend: [
+      { label: 'Ene', value: 45 },
+      { label: 'Feb', value: 52 },
+      { label: 'Mar', value: 68 },
+      { label: 'Abr', value: 75 },
+      { label: 'May', value: 82 },
+      { label: 'Jun', value: 90 },
+      { label: 'Jul', value: 78 },
+      { label: 'Ago', value: 85 },
+      { label: 'Sep', value: 92 },
+      { label: 'Oct', value: 88 },
+      { label: 'Nov', value: 95 },
+      { label: 'Dic', value: 100 }
+    ]
   };
 
-  reports: AiReport[] = [];
+  getDonutOffset(index: number): number {
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+      offset += this.chartData.eventsByCategory[i].percentage;
+    }
+    return offset;
+  }
 
+  // Data
   users: AdminUser[] = [];
   events: AdminEvent[] = [];
 
+  // Filters
   userSearch = '';
+  userRoleFilter = '';
+  userStatusFilter = '';
   eventSearch = '';
+  eventStatusFilter = '';
 
+  // Modals
   isCreateUserModalOpen = false;
-  isUserActionsModalOpen = false;
   isCreateEventModalOpen = false;
-  isChangePasswordModalOpen = false;
+  isPasswordModalOpen = false;
+  editingUser: AdminUser | null = null;
+  editingEvent: AdminEvent | null = null;
+  passwordChangeUser: AdminUser | null = null;
+  newPassword = '';
+  confirmPassword = '';
 
-  selectedUser: AdminUser | null = null;
-  lastGeneratedPassword = '';
-
+  // Forms
   createUserForm = {
     name: '',
     email: '',
-    role: 'ATTENDEE' as AdminSectionUserRole,
+    role: 'ATTENDEE' as AdminUserRole,
     password: ''
   };
 
   createEventForm = {
     title: '',
     description: '',
-    category: 'MEETUP' as string,
-    type: 'PRESENCIAL' as string,
+    category: 'CONFERENCE',
+    type: 'PRESENCIAL',
     organizerName: '',
     startDate: '',
     startTime: '09:00',
     status: 'DRAFT' as AdminEventStatus,
-    capacity: 100
+    capacity: 100,
+    address: '',
+    city: '',
+    venue: '',
+    latitude: 4.6097,
+    longitude: -74.0817,
+    requiresApproval: false
   };
-
-  changePasswordForm = {
-    newPassword: '',
-    confirmPassword: ''
-  };
+  
+  // Map state
+  showMapPicker = false;
 
   constructor(
     private router: Router,
+    private alertService: AlertService,
     private authService: AuthService,
     private userApi: UserApiService,
     private eventApi: EventApiService
   ) {}
 
   ngOnInit() {
-    this.loadSettings();
     this.loadUsers();
     this.loadEvents();
+    this.updateStats();
+  }
+
+  // ==================== NAVIGATION ====================
+  
+  get isAdmin(): boolean {
+    return this.authService.user()?.role === 'ADMIN';
   }
 
   setSection(section: AdminSection) {
-    if (!this.allowedSections.includes(section)) {
-      this.currentSection = 'dashboard';
-      return;
-    }
     this.currentSection = section;
   }
 
@@ -198,70 +189,43 @@ export class AdminComponent implements OnInit {
 
   getHeaderTitle(): string {
     switch (this.currentSection) {
-      case 'dashboard':
-        return 'Dashboard General';
-      case 'events':
-        return 'Control de Eventos';
-      case 'users':
-        return 'Control de Usuarios';
-      case 'settings':
-        return 'Configuración';
-      case 'ai-reports':
-        return 'Reportes de IA';
-      default:
-        return 'Dashboard';
+      case 'dashboard': return 'Dashboard';
+      case 'users': return 'Gestión de Usuarios';
+      case 'events': return 'Gestión de Eventos';
+      default: return 'Dashboard';
     }
   }
 
-  private loadSettings(): void {
-    try {
-      const raw = localStorage.getItem(this.SETTINGS_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as Partial<AdminSettings>;
-      this.settings = {
-        ...this.settings,
-        ...parsed
-      };
-    } catch {
-      localStorage.removeItem(this.SETTINGS_KEY);
-    }
+  // ==================== STATS ====================
+
+  private updateStats(): void {
+    this.stats.totalUsers = this.users.length;
+    this.stats.totalEvents = this.events.length;
+    this.stats.totalOrganizers = this.users.filter(u => u.role === 'ORGANIZER').length;
   }
 
-  saveSettings(): void {
-    localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(this.settings));
+  get topEventsByPrediction(): AdminEvent[] {
+    return [...this.events]
+      .filter(e => e.prediction !== undefined)
+      .sort((a, b) => (b.prediction || 0) - (a.prediction || 0))
+      .slice(0, 5);
   }
 
-  resetSettings(): void {
-    localStorage.removeItem(this.SETTINGS_KEY);
-    this.settings = {
-      maintenanceMode: false,
-      notificationsEnabled: true,
-      defaultTimezone: 'America/Bogota',
-      aiAutoRetrain: false
-    };
+  // ==================== USERS ====================
+
+  get organizers(): AdminUser[] {
+    return this.users.filter(u => u.role === 'ORGANIZER');
   }
 
-  generateAiReport(): void {
-    const now = new Date();
-    const report: AiReport = {
-      id: `rpt_${now.getTime()}`,
-      createdAt: now.toISOString(),
-      modelVersion: 'v2.3.1',
-      globalAccuracy: 87.3,
-      predictionsToday: 1247,
-      notes: 'Reporte generado en modo desarrollo (mock).'
-    };
-    this.reports = [report, ...this.reports];
-  }
-
-  downloadReportJson(report: AiReport): void {
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `predictify-ai-report-${report.id}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  get filteredUsers(): AdminUser[] {
+    return this.users.filter(u => {
+      const matchSearch = !this.userSearch || 
+        u.name.toLowerCase().includes(this.userSearch.toLowerCase()) ||
+        u.email.toLowerCase().includes(this.userSearch.toLowerCase());
+      const matchRole = !this.userRoleFilter || u.role === this.userRoleFilter;
+      const matchStatus = !this.userStatusFilter || u.status === this.userStatusFilter;
+      return matchSearch && matchRole && matchStatus;
+    });
   }
 
   private loadUsers(): void {
@@ -277,24 +241,9 @@ export class AdminComponent implements OnInit {
     if (this.users.length === 0) {
       const now = new Date().toISOString();
       this.users = [
-        {
-          id: 'usr_1001',
-          name: 'John Doe',
-          email: 'john@email.com',
-          role: 'ATTENDEE',
-          status: 'ACTIVE',
-          password: 'User123!',
-          createdAt: now
-        },
-        {
-          id: 'usr_1002',
-          name: 'Jane Smith',
-          email: 'jane@email.com',
-          role: 'ORGANIZER',
-          status: 'ACTIVE',
-          password: 'Organizer123!',
-          createdAt: now
-        }
+        { id: 'usr_1', name: 'Carlos García', email: 'carlos@email.com', role: 'ATTENDEE', status: 'ACTIVE', password: 'pass123', createdAt: now },
+        { id: 'usr_2', name: 'María López', email: 'maria@email.com', role: 'ORGANIZER', status: 'ACTIVE', password: 'pass123', createdAt: now },
+        { id: 'usr_3', name: 'Juan Pérez', email: 'juan@email.com', role: 'ATTENDEE', status: 'ACTIVE', password: 'pass123', createdAt: now }
       ];
       this.saveUsers();
     }
@@ -302,6 +251,144 @@ export class AdminComponent implements OnInit {
 
   private saveUsers(): void {
     localStorage.setItem(this.ADMIN_USERS_KEY, JSON.stringify(this.users));
+    this.updateStats();
+  }
+
+  openCreateUserModal(): void {
+    this.editingUser = null;
+    this.createUserForm = { name: '', email: '', role: 'ATTENDEE', password: '' };
+    this.isCreateUserModalOpen = true;
+  }
+
+  openEditUserModal(user: AdminUser): void {
+    this.editingUser = user;
+    this.createUserForm = { name: user.name, email: user.email, role: user.role, password: '' };
+    this.isCreateUserModalOpen = true;
+  }
+
+  closeCreateUserModal(): void {
+    this.isCreateUserModalOpen = false;
+    this.editingUser = null;
+  }
+
+  saveUser(): void {
+    const { name, email, role, password } = this.createUserForm;
+    if (!name.trim() || !email.trim()) {
+      this.alertService.error('Error', 'Nombre y email son requeridos');
+      return;
+    }
+
+    if (this.editingUser) {
+      // Update existing user
+      const oldEmail = this.editingUser.email;
+      this.users = this.users.map(u => 
+        u.id === this.editingUser!.id ? { ...u, name: name.trim(), email: email.trim(), role } : u
+      );
+      this.saveUsers();
+      
+      // Sincronizar cambio de rol con el sistema de autenticación
+      this.authService.syncUserUpdate(oldEmail, { role: role as any });
+      
+      this.closeCreateUserModal();
+      this.alertService.toastSuccess('Usuario actualizado');
+    } else {
+      // Create new user
+      if (!password.trim()) {
+        this.alertService.error('Error', 'La contraseña es requerida');
+        return;
+      }
+      
+      this.userApi.registerUser({ name: name.trim(), email: email.trim(), password: password.trim(), role }).subscribe({
+        next: () => {
+          const newUser: AdminUser = {
+            id: `usr_${Date.now()}`,
+            name: name.trim(),
+            email: email.trim(),
+            role,
+            status: 'ACTIVE',
+            password: password.trim(),
+            createdAt: new Date().toISOString()
+          };
+          this.users = [newUser, ...this.users];
+          this.saveUsers();
+          this.closeCreateUserModal();
+          this.alertService.toastSuccess('Usuario creado exitosamente');
+        },
+        error: (err) => {
+          this.alertService.error('Error', err.error?.message || 'No se pudo crear el usuario');
+        }
+      });
+    }
+  }
+
+  toggleBanUserDirect(user: AdminUser): void {
+    const newStatus: AdminUserStatus = user.status === 'BANNED' ? 'ACTIVE' : 'BANNED';
+    this.users = this.users.map(u => u.id === user.id ? { ...u, status: newStatus } : u);
+    this.saveUsers();
+    
+    // Sincronizar con el sistema de autenticación
+    this.authService.syncUserUpdate(user.email, { status: newStatus });
+    
+    this.alertService.toastSuccess(newStatus === 'BANNED' ? 'Usuario baneado' : 'Usuario desbaneado');
+  }
+
+  // ==================== PASSWORD CHANGE ====================
+
+  openChangePasswordModal(user: AdminUser): void {
+    this.passwordChangeUser = user;
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.isPasswordModalOpen = true;
+  }
+
+  closePasswordModal(): void {
+    this.isPasswordModalOpen = false;
+    this.passwordChangeUser = null;
+    this.newPassword = '';
+    this.confirmPassword = '';
+  }
+
+  savePassword(): void {
+    if (!this.newPassword || this.newPassword !== this.confirmPassword) {
+      this.alertService.error('Error', 'Las contraseñas no coinciden');
+      return;
+    }
+
+    if (this.newPassword.length < 6) {
+      this.alertService.error('Error', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    if (this.passwordChangeUser) {
+      this.users = this.users.map(u => 
+        u.id === this.passwordChangeUser!.id ? { ...u, password: this.newPassword } : u
+      );
+      this.saveUsers();
+      this.closePasswordModal();
+      this.alertService.toastSuccess('Contraseña actualizada exitosamente');
+    }
+  }
+
+  deleteUserDirect(user: AdminUser): void {
+    this.alertService.deleteConfirm(user.name, 'usuario').then(result => {
+      if (result.isConfirmed) {
+        this.users = this.users.filter(u => u.id !== user.id);
+        this.saveUsers();
+        this.alertService.toastSuccess('Usuario eliminado');
+      }
+    });
+  }
+
+  // ==================== EVENTS ====================
+
+  get filteredEvents(): AdminEvent[] {
+    return this.events.filter(e => {
+      const matchSearch = !this.eventSearch || 
+        e.title.toLowerCase().includes(this.eventSearch.toLowerCase()) ||
+        e.organizerName.toLowerCase().includes(this.eventSearch.toLowerCase());
+      const matchStatus = !this.eventStatusFilter || e.status === this.eventStatusFilter;
+      return matchSearch && matchStatus;
+    });
   }
 
   private loadEvents(): void {
@@ -317,24 +404,16 @@ export class AdminComponent implements OnInit {
     if (this.events.length === 0) {
       const now = new Date();
       this.events = [
-        {
-          id: 'evt_101',
-          title: 'Tech Summit 2025',
-          organizerName: 'TechMadrid',
-          startDate: new Date(now.getFullYear(), now.getMonth(), 15).toISOString().slice(0, 10),
-          status: 'PUBLISHED',
-          capacity: 500,
-          createdAt: now.toISOString()
-        },
-        {
-          id: 'evt_102',
-          title: 'AI Workshop Pro',
-          organizerName: 'AI Global',
-          startDate: new Date(now.getFullYear(), now.getMonth(), 20).toISOString().slice(0, 10),
-          status: 'DRAFT',
-          capacity: 120,
-          createdAt: now.toISOString()
-        }
+        { id: 'evt_1', title: 'Tech Summit 2025', organizerName: 'María López', category: 'CONFERENCE', type: 'PRESENCIAL', startDate: '2025-01-15', status: 'PUBLISHED', capacity: 500, registered: 423, prediction: 92, createdAt: now.toISOString() },
+        { id: 'evt_2', title: 'Angular Masterclass', organizerName: 'Carlos García', category: 'WORKSHOP', type: 'VIRTUAL', startDate: '2025-01-20', status: 'PUBLISHED', capacity: 100, registered: 87, prediction: 95, createdAt: now.toISOString() },
+        { id: 'evt_3', title: 'Hackathon AI 2025', organizerName: 'TechLab', category: 'HACKATHON', type: 'HIBRIDO', startDate: '2025-02-01', status: 'PUBLISHED', capacity: 200, registered: 156, prediction: 78, createdAt: now.toISOString() },
+        { id: 'evt_4', title: 'Startup Networking Night', organizerName: 'StartupHub', category: 'NETWORKING', type: 'PRESENCIAL', startDate: '2025-02-10', status: 'PUBLISHED', capacity: 150, registered: 98, prediction: 65, createdAt: now.toISOString() },
+        { id: 'evt_5', title: 'React vs Vue Debate', organizerName: 'DevCommunity', category: 'MEETUP', type: 'VIRTUAL', startDate: '2025-02-15', status: 'PUBLISHED', capacity: 300, registered: 245, prediction: 88, createdAt: now.toISOString() },
+        { id: 'evt_6', title: 'Full Stack Bootcamp', organizerName: 'CodeAcademy', category: 'BOOTCAMP', type: 'PRESENCIAL', startDate: '2025-03-01', status: 'DRAFT', capacity: 50, registered: 12, prediction: 45, createdAt: now.toISOString() },
+        { id: 'evt_7', title: 'Cloud Architecture Webinar', organizerName: 'AWS Partners', category: 'WEBINAR', type: 'VIRTUAL', startDate: '2025-02-20', status: 'PUBLISHED', capacity: 1000, registered: 756, prediction: 82, createdAt: now.toISOString() },
+        { id: 'evt_8', title: 'UX Design Conference', organizerName: 'DesignLab', category: 'CONFERENCE', type: 'HIBRIDO', startDate: '2025-03-15', status: 'PUBLISHED', capacity: 400, registered: 312, prediction: 71, createdAt: now.toISOString() },
+        { id: 'evt_9', title: 'Python Data Science Workshop', organizerName: 'DataScientists', category: 'WORKSHOP', type: 'VIRTUAL', startDate: '2025-02-25', status: 'PUBLISHED', capacity: 80, registered: 78, prediction: 98, createdAt: now.toISOString() },
+        { id: 'evt_10', title: 'Blockchain Meetup', organizerName: 'CryptoDevs', category: 'MEETUP', type: 'PRESENCIAL', startDate: '2025-03-05', status: 'CANCELLED', capacity: 120, registered: 34, prediction: 28, createdAt: now.toISOString() }
       ];
       this.saveEvents();
     }
@@ -342,287 +421,135 @@ export class AdminComponent implements OnInit {
 
   private saveEvents(): void {
     localStorage.setItem(this.ADMIN_EVENTS_KEY, JSON.stringify(this.events));
-  }
-
-  get filteredUsers(): AdminUser[] {
-    const q = this.userSearch.trim().toLowerCase();
-    if (!q) return this.users;
-    return this.users.filter(u =>
-      u.name.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.id.toLowerCase().includes(q)
-    );
-  }
-
-  get filteredEvents(): AdminEvent[] {
-    const q = this.eventSearch.trim().toLowerCase();
-    if (!q) return this.events;
-    return this.events.filter(e =>
-      e.title.toLowerCase().includes(q) ||
-      e.organizerName.toLowerCase().includes(q) ||
-      e.id.toLowerCase().includes(q)
-    );
-  }
-
-  openCreateUserModal(): void {
-    this.isCreateUserModalOpen = true;
-    this.createUserForm = {
-      name: '',
-      email: '',
-      role: 'ATTENDEE',
-      password: ''
-    };
-  }
-
-  closeCreateUserModal(): void {
-    this.isCreateUserModalOpen = false;
-  }
-
-  createUser(): void {
-    const name = this.createUserForm.name.trim();
-    const email = this.createUserForm.email.trim().toLowerCase();
-    const password = this.createUserForm.password.trim();
-
-    if (!name || !email || !password) return;
-    if (this.users.some(u => u.email === email)) return;
-
-    const roleMap: Record<AdminSectionUserRole, 'attendee' | 'organizer' | 'admin'> = {
-      ATTENDEE: 'attendee',
-      ORGANIZER: 'organizer',
-      ADMIN: 'admin'
-    };
-
-    this.userApi.registerUser({
-      name,
-      email,
-      password,
-      role: roleMap[this.createUserForm.role]
-    }).subscribe({
-      next: () => {
-        const now = new Date().toISOString();
-        const user: AdminUser = {
-          id: `usr_${Math.floor(Date.now() / 10)}`,
-          name,
-          email,
-          role: this.createUserForm.role,
-          status: 'ACTIVE',
-          password,
-          createdAt: now
-        };
-
-        this.users = [user, ...this.users];
-        this.saveUsers();
-        this.closeCreateUserModal();
-      },
-      error: () => {
-        const now = new Date().toISOString();
-        const user: AdminUser = {
-          id: `usr_${Math.floor(Date.now() / 10)}`,
-          name,
-          email,
-          role: this.createUserForm.role,
-          status: 'ACTIVE',
-          password,
-          createdAt: now
-        };
-
-        this.users = [user, ...this.users];
-        this.saveUsers();
-        this.closeCreateUserModal();
-      }
-    });
-  }
-
-  openUserActions(user: AdminUser): void {
-    this.selectedUser = user;
-    this.isUserActionsModalOpen = true;
-    this.lastGeneratedPassword = '';
-  }
-
-  closeUserActions(): void {
-    this.isUserActionsModalOpen = false;
-    this.selectedUser = null;
-    this.lastGeneratedPassword = '';
-  }
-
-  setUserRole(role: AdminSectionUserRole): void {
-    if (!this.selectedUser) return;
-    this.users = this.users.map(u => u.id === this.selectedUser!.id ? { ...u, role } : u);
-    this.selectedUser = this.users.find(u => u.id === this.selectedUser!.id) || null;
-    this.saveUsers();
-  }
-
-  toggleBlockUser(): void {
-    if (!this.selectedUser) return;
-    const nextStatus: AdminUserStatus = this.selectedUser.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED';
-    this.users = this.users.map(u => u.id === this.selectedUser!.id ? { ...u, status: nextStatus } : u);
-    this.selectedUser = this.users.find(u => u.id === this.selectedUser!.id) || null;
-    this.saveUsers();
-  }
-
-  toggleBanUser(): void {
-    if (!this.selectedUser) return;
-    const nextStatus: AdminUserStatus = this.selectedUser.status === 'BANNED' ? 'ACTIVE' : 'BANNED';
-    this.users = this.users.map(u => u.id === this.selectedUser!.id ? { ...u, status: nextStatus } : u);
-    this.selectedUser = this.users.find(u => u.id === this.selectedUser!.id) || null;
-    this.saveUsers();
-  }
-
-  deleteSelectedUser(): void {
-    if (!this.selectedUser) return;
-    this.users = this.users.filter(u => u.id !== this.selectedUser!.id);
-    this.saveUsers();
-    this.closeUserActions();
-  }
-
-  resetUserPassword(): void {
-    if (!this.selectedUser) return;
-    const temp = this.generatePassword();
-    this.lastGeneratedPassword = temp;
-    this.users = this.users.map(u => u.id === this.selectedUser!.id ? { ...u, password: temp } : u);
-    this.selectedUser = this.users.find(u => u.id === this.selectedUser!.id) || null;
-    this.saveUsers();
-  }
-
-  openChangePasswordModal(): void {
-    if (!this.selectedUser) return;
-    this.isChangePasswordModalOpen = true;
-    this.changePasswordForm = { newPassword: '', confirmPassword: '' };
-  }
-
-  closeChangePasswordModal(): void {
-    this.isChangePasswordModalOpen = false;
-    this.changePasswordForm = { newPassword: '', confirmPassword: '' };
-  }
-
-  changeUserPassword(): void {
-    if (!this.selectedUser) return;
-    const p1 = this.changePasswordForm.newPassword.trim();
-    const p2 = this.changePasswordForm.confirmPassword.trim();
-    if (!p1 || p1 !== p2) return;
-    this.users = this.users.map(u => u.id === this.selectedUser!.id ? { ...u, password: p1 } : u);
-    this.selectedUser = this.users.find(u => u.id === this.selectedUser!.id) || null;
-    this.saveUsers();
-    this.closeChangePasswordModal();
+    this.updateStats();
   }
 
   openCreateEventModal(): void {
-    this.isCreateEventModalOpen = true;
+    this.editingEvent = null;
     this.createEventForm = {
-      title: '',
-      description: '',
-      category: 'MEETUP',
-      type: 'PRESENCIAL',
-      organizerName: '',
-      startDate: '',
-      startTime: '09:00',
-      status: 'DRAFT',
-      capacity: 100
+      title: '', description: '', category: 'CONFERENCE', type: 'PRESENCIAL',
+      organizerName: '', startDate: '', startTime: '09:00', status: 'DRAFT', capacity: 100,
+      address: '', city: '', venue: '', latitude: 4.6097, longitude: -74.0817, requiresApproval: false
     };
+    this.showMapPicker = false;
+    this.isCreateEventModalOpen = true;
+  }
+  
+  toggleMapPicker(): void {
+    this.showMapPicker = !this.showMapPicker;
+  }
+  
+  onMapClick(lat: number, lng: number): void {
+    this.createEventForm.latitude = lat;
+    this.createEventForm.longitude = lng;
+  }
+
+  openEditEventModal(event: AdminEvent): void {
+    this.editingEvent = event;
+    this.createEventForm = {
+      title: event.title,
+      description: event.description || '',
+      category: event.category || 'CONFERENCE',
+      type: event.type || 'PRESENCIAL',
+      organizerName: event.organizerName,
+      startDate: event.startDate,
+      startTime: event.startTime || '09:00',
+      status: event.status,
+      capacity: event.capacity,
+      address: event.address || '',
+      city: event.city || '',
+      venue: event.venue || '',
+      latitude: event.latitude || 4.6097,
+      longitude: event.longitude || -74.0817,
+      requiresApproval: event.requiresApproval || false
+    };
+    this.showMapPicker = false;
+    this.isCreateEventModalOpen = true;
   }
 
   closeCreateEventModal(): void {
     this.isCreateEventModalOpen = false;
+    this.editingEvent = null;
   }
 
-  createEvent(): void {
-    const title = this.createEventForm.title.trim();
-    const description = this.createEventForm.description.trim();
-    const category = String(this.createEventForm.category || '').trim();
-    const type = String(this.createEventForm.type || '').trim();
-    const organizerName = this.createEventForm.organizerName.trim();
-    const startDate = this.createEventForm.startDate;
-    const startTime = this.createEventForm.startTime;
-    const capacity = Number(this.createEventForm.capacity);
+  saveEvent(): void {
+    const { title, description, category, type, organizerName, startDate, startTime, status, capacity } = this.createEventForm;
+    
+    if (!title.trim() || !startDate || !capacity) {
+      this.alertService.error('Error', 'Título, fecha y capacidad son requeridos');
+      return;
+    }
 
-    if (!title || !description || !category || !type || !startDate || !startTime || !capacity || capacity <= 0) return;
-
-    const payload: CreateEventDTOBackend = {
-      title,
-      description,
-      category,
-      type,
-      startDate,
-      startTime,
-      capacity,
-      isFree: true,
-      currency: 'USD',
-      location: null
-    };
-
-    this.eventApi.createEventEnsuringOrganizer(payload, organizerName || undefined).pipe(
-      switchMap(created => {
-        if (this.createEventForm.status === 'PUBLISHED') {
-          return this.eventApi.publishEvent(created.id as string);
-        }
-        return [created];
-      })
-    ).subscribe({
-      next: (created) => {
-        const now = new Date().toISOString();
-        const event: AdminEvent = {
-          id: created.id,
-          title: created.title,
-          organizerName: created.organizer?.displayName || organizerName || 'Organizer',
-          startDate: String(created.startDate),
-          status: String(created.status) as AdminEventStatus,
-          capacity: Number(created.capacity),
-          createdAt: String(created.createdAt || now)
-        };
-        this.events = [event, ...this.events];
-        this.saveEvents();
-        this.closeCreateEventModal();
-      },
-      error: () => {
-        const now = new Date().toISOString();
-        const event: AdminEvent = {
-          id: `evt_${Math.floor(Date.now() / 10)}`,
-          title,
-          organizerName: organizerName || 'Organizer',
+    if (this.editingEvent) {
+      // Update existing event
+      this.events = this.events.map(e => 
+        e.id === this.editingEvent!.id ? {
+          ...e,
+          title: title.trim(),
+          description: description.trim(),
+          category,
+          type,
+          organizerName: organizerName.trim(),
           startDate,
-          status: this.createEventForm.status,
-          capacity,
-          createdAt: now
-        };
+          startTime,
+          status,
+          capacity: Number(capacity)
+        } : e
+      );
+      this.saveEvents();
+      this.closeCreateEventModal();
+      this.alertService.toastSuccess('Evento actualizado');
+    } else {
+      // Create new event via API
+      const payload: CreateEventDTOBackend = {
+        title: title.trim(),
+        description: description.trim(),
+        category,
+        type,
+        startDate,
+        startTime,
+        capacity: Number(capacity),
+        isFree: true,
+        currency: 'USD',
+        location: null
+      };
 
-        this.events = [event, ...this.events];
-        this.saveEvents();
-        this.closeCreateEventModal();
-      }
-    });
+      this.eventApi.createEventEnsuringOrganizer(payload, organizerName || undefined).pipe(
+        switchMap(created => status === 'PUBLISHED' ? this.eventApi.publishEvent(created.id as string) : of(created))
+      ).subscribe({
+        next: (created) => {
+          const newEvent: AdminEvent = {
+            id: created.id || `evt_${Date.now()}`,
+            title: title.trim(),
+            description: description.trim(),
+            category,
+            type,
+            organizerName: created.organizer?.displayName || organizerName || 'Sin asignar',
+            startDate,
+            startTime,
+            status: (created.status as AdminEventStatus) || status,
+            capacity: Number(capacity),
+            createdAt: new Date().toISOString()
+          };
+          this.events = [newEvent, ...this.events];
+          this.saveEvents();
+          this.closeCreateEventModal();
+          this.alertService.toastSuccess('Evento creado exitosamente');
+        },
+        error: (err) => {
+          this.alertService.error('Error', err.error?.message || 'No se pudo crear el evento');
+        }
+      });
+    }
   }
 
   deleteEvent(event: AdminEvent): void {
-    this.events = this.events.filter(e => e.id !== event.id);
-    this.saveEvents();
-  }
-
-  private generatePassword(): string {
-    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
-    let out = '';
-    for (let i = 0; i < 10; i++) {
-      out += alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-    return out + '!';
-  }
-
-  getAlertIcon(type: string): string {
-    const icons: Record<string, string> = {
-      'error': 'close-circle',
-      'warning': 'exclamation-circle',
-      'success': 'check-circle',
-      'info': 'info-circle'
-    };
-    return icons[type] || 'info-circle';
-  }
-
-  getAlertColor(type: string): string {
-    const colors: Record<string, string> = {
-      'error': '#EF4444',
-      'warning': '#F59E0B',
-      'success': '#10B981',
-      'info': '#3B82F6'
-    };
-    return colors[type] || '#6B7280';
+    this.alertService.deleteConfirm(event.title, 'evento').then(result => {
+      if (result.isConfirmed) {
+        this.events = this.events.filter(e => e.id !== event.id);
+        this.saveEvents();
+        this.alertService.toastSuccess('Evento eliminado');
+      }
+    });
   }
 }
