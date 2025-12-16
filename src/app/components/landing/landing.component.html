@@ -1,0 +1,146 @@
+<div class="landing-container">
+  <div class="subcontainer-landing">
+    <!-- Navbar Mejorado -->
+    <nav class="navbar">
+      <div class="nav-left">
+        <span class="logo">predictify<span class="degree">°</span></span>
+      </div>
+      <div class="nav-right">
+        <a routerLink="/auth/login" class="nav-link">Iniciar Sesión</a>
+        <a routerLink="/auth/register" class="btn-nav-primary">Crear Cuenta</a>
+      </div>
+    </nav>
+
+    <!-- Hero Section Mejorado -->
+    <main class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-icon" nz-icon nzType="robot" nzTheme="outline"></span>
+          <span class="badge-text">Predicción IA con 94% de precisión</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="title-line">Descubre eventos tech</span>
+          <span class="title-line gradient-text-animated">con predicción IA</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          La plataforma líder que predice la asistencia real a tus eventos.
+          Toma decisiones informadas y maximiza el éxito de cada encuentro.
+        </p>
+
+        <div class="hero-ctas">
+          <button class="btn-hero-primary" (click)="navigateToApp()">
+            Explorar Eventos
+            <span nz-icon nzType="arrow-right" nzTheme="outline"></span>
+          </button>
+          <a routerLink="/auth/register" class="btn-hero-secondary">
+            Crear Evento Gratis
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">1,500+</span>
+            <span class="stat-label">Eventos Activos</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">50K+</span>
+            <span class="stat-label">Usuarios</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">94%</span>
+            <span class="stat-label">Precisión IA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Side -->
+      <div>
+        <video autoplay muted loop playsinline class="video-background" poster="">
+          <source src="assets/videos/simple-apple-macbook-air-m2-13.mp4" type="video/mp4">
+          <source src="assets/videos/simple-apple-macbook-air-m2-13.webm" type="video/webm">
+          Tu navegador no soporta la reproducción de video.
+        </video>
+      </div>
+    </main>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <h2 class="section-title">¿Por qué Predictify?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><span nz-icon nzType="robot" nzTheme="outline"></span></div>
+          <h3>Predicción IA</h3>
+          <p>Algoritmos que analizan +15 factores para predecir asistencia real</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><span nz-icon nzType="bar-chart" nzTheme="outline"></span></div>
+          <h3>Analytics Real-time</h3>
+          <p>Datos actualizados cada hora para decisiones informadas</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><span nz-icon nzType="bulb" nzTheme="outline"></span></div>
+          <h3>Insights Detallados</h3>
+          <p>Entiende los factores que impulsan o afectan tu evento</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><span nz-icon nzType="star" nzTheme="outline"></span></div>
+          <h3>Gestión Simple</h3>
+          <p>Crea y administra eventos en minutos, no en horas</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>Comienza a predecir hoy</h2>
+        <p>Únete a miles de organizadores que ya usan Predictify</p>
+        <div class="cta-buttons">
+          <a routerLink="/auth/register" class="btn-cta-primary">
+            Crear Cuenta Gratis
+            <span nz-icon nzType="arrow-right" nzTheme="outline"></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <hr class="linea-footer">
+    <!-- Footer -->
+    <footer class="footer-new">
+      <div class="footer-separator"></div>
+      <div class="footer-container">
+        <!-- Fila Superior: Logo + Links Principales + Iconos -->
+        <div class="footer-top">
+          <div class="left-section">
+            <span class="footer-logo">predictify<span class="degree">°</span></span>
+            <nav class="footer-nav">
+              <a href="#">Explorar</a>
+              <a href="#">Precios</a>
+              <a href="#">Ayuda</a>
+            </nav>
+          </div>
+          <div class="right-section social-icons">
+            <!-- Iconos específicos de NG-ZORRO -->
+            <i nz-icon nzType="mail" nzTheme="outline"></i>
+            <i nz-icon nzType="apple" nzTheme="fill"></i>
+            <i nz-icon nzType="twitter" nzTheme="outline"></i>
+            <i nz-icon nzType="instagram" nzTheme="outline"></i>
+          </div>
+        </div>
+        <!-- Fila Inferior: Links Legales -->
+        <div class="footer-bottom">
+          <nav class="legal-nav">
+            <a href="#">Términos</a>
+            <a href="#">Privacidad</a>
+            <a href="#">Seguridad</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>

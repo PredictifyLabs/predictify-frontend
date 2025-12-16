@@ -1,0 +1,428 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== VARIABLES CSS GLOBALES ===== */
+:root {
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-light: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-light: rgba(255, 255, 255, 0.05);
+  --glass-blur: blur(12px);
+  --glass-blur-heavy: blur(20px);
+  
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow-blue: 0 0 40px rgba(64, 112, 244, 0.3);
+  --shadow-glow-purple: 0 0 40px rgba(168, 85, 247, 0.3);
+  --shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.3);
+  --shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.5);
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-bounce: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+}
+
+/* ===== ESTILOS BASE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #0A0A0A;
+  color: #FFFFFF;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== CLASES UTILITARIAS PERSONALIZADAS ===== */
+@layer utilities {
+  /* Glassmorphism */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+  }
+  
+  .glass-light {
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+  }
+  
+  /* Gradiente de texto */
+  .gradient-text {
+    background: linear-gradient(90deg, #a855f7 0%, #3b82f6 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .gradient-text-animated {
+    background: linear-gradient(
+      90deg,
+      #4070F4 0%,
+      #7C3AED 25%,
+      #a855f7 50%,
+      #7C3AED 75%,
+      #4070F4 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  
+  /* Hover elevado */
+  .hover-elevate {
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  }
+  
+  .hover-elevate:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+  }
+  
+  /* Scroll suave */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+  
+  /* Hide scrollbar pero mantener funcionalidad */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ===== COMPONENTES REUTILIZABLES ===== */
+@layer components {
+  /* Botón primario con gradiente */
+  .btn-primary {
+    @apply px-6 py-3 rounded-xl font-semibold text-white;
+    background: linear-gradient(90deg, #4070F4 0%, #5B8DEF 100%);
+    transition: all var(--transition-normal);
+    box-shadow: 0 4px 12px rgba(64, 112, 244, 0.3);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(64, 112, 244, 0.4);
+  }
+  
+  /* Botón secundario glassmorphism */
+  .btn-secondary {
+    @apply px-6 py-3 rounded-xl font-semibold text-white glass;
+    transition: all var(--transition-normal);
+  }
+  
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  /* Card con glassmorphism */
+  .card-glass {
+    @apply glass rounded-2xl p-6;
+    box-shadow: var(--shadow-card);
+  }
+  
+  /* Input estilizado */
+  .input-glass {
+    @apply w-full px-4 py-3 rounded-xl text-white;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-fast);
+  }
+  
+  .input-glass:focus {
+    outline: none;
+    border-color: #4070F4;
+    box-shadow: 0 0 0 3px rgba(64, 112, 244, 0.1);
+  }
+  
+  .input-glass::placeholder {
+    color: #666666;
+  }
+}
+
+/* ===== ANIMACIONES PERSONALIZADAS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* ===== SCROLLBAR PERSONALIZADO ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2E2E2E;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3E3E3E;
+}
+
+/* ===== NG-ZORRO OVERLAYS (DARK THEME) ===== */
+.cdk-overlay-container .ant-select-dropdown,
+.cdk-overlay-container .ant-dropdown-menu,
+.cdk-overlay-container .ant-picker-dropdown,
+.cdk-overlay-container .ant-cascader-menu,
+.cdk-overlay-container .ant-tooltip-inner {
+  background: rgba(18, 18, 18, 0.96) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #FFFFFF !important;
+}
+
+.cdk-overlay-container .ant-select-item,
+.cdk-overlay-container .ant-dropdown-menu-item,
+.cdk-overlay-container .ant-dropdown-menu-submenu-title {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.cdk-overlay-container .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+.cdk-overlay-container .ant-dropdown-menu-item:hover,
+.cdk-overlay-container .ant-dropdown-menu-submenu-title:hover {
+  background: rgba(124, 58, 237, 0.16) !important;
+}
+
+.cdk-overlay-container .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background: rgba(64, 112, 244, 0.18) !important;
+}
+
+.cdk-overlay-container .ant-empty-description,
+.cdk-overlay-container .ant-select-empty {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ===== QR MODAL CUSTOM ===== */
+.qr-modal-custom .ant-modal-content {
+  background: linear-gradient(135deg, rgba(20, 20, 30, 0.98), rgba(15, 15, 25, 0.99)) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 24px !important;
+  overflow: hidden;
+}
+
+.qr-modal-custom .ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 24px;
+}
+
+.qr-modal-custom .ant-modal-title {
+  color: #FFFFFF !important;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.qr-modal-custom .ant-modal-body {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.qr-modal-custom .ant-modal-confirm-body-wrapper {
+  padding: 0;
+}
+
+.qr-modal-custom .ant-modal-confirm-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-modal-custom .ant-modal-confirm-title {
+  color: #FFFFFF !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  text-align: center;
+  width: 100%;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.qr-modal-custom .anticon-info-circle {
+  display: none !important;
+}
+
+.qr-modal-custom .ant-modal-confirm-content {
+  margin: 0 !important;
+  width: 100%;
+  max-width: 100%;
+}
+
+.qr-modal-custom .ant-modal-confirm-content > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 30px;
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
+}
+
+.qr-modal-custom .ant-modal-confirm-content img {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(99, 102, 241, 0.5);
+}
+
+ .qr-modal-custom .ant-modal-confirm-content {
+   background: white;
+   padding: 20px;
+   border-radius: 16px;
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+ }
+
+ .qr-modal-custom .ant-modal-confirm-content{
+   background: transparent;
+   padding: 0;
+   border-radius: 8px;
+   box-shadow: none;
+ }
+
+ .qr-code-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 20px 20px 20px;
+ }
+
+.qr-modal-custom .ant-modal-confirm-content p {
+  color: #B3B3B3 !important;
+  margin-top: 24px !important;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.qr-modal-custom .ant-modal-confirm-btns {
+  margin-top: 0 !important;
+  padding: 20px 24px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+}
+
+.qr-modal-custom .ant-btn-primary {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
+  border: none !important;
+  border-radius: 14px !important;
+  height: 48px !important;
+  padding: 0 40px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5) !important;
+  transition: all 0.3s ease !important;
+}
+
+.qr-modal-custom .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #818CF8, #A78BFA) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6) !important;
+}

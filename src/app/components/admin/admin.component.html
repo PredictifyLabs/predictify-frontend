@@ -1,0 +1,588 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h1 class="logo">
+        <span class="gradient-text">Predictify</span>
+      </h1>
+      <span class="admin-badge">Admin</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li *ngFor="let item of sidebarItems">
+          <a 
+            [class.active]="currentSection === item.route"
+            (click)="setSection(item.route)"
+          >
+            <span nz-icon [nzType]="item.icon" nzTheme="outline"></span>
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <span nz-icon nzType="logout" nzTheme="outline"></span>
+        Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Top Bar -->
+    <header class="admin-header">
+      <div class="header-left">
+        <h2>{{ getHeaderTitle() }}</h2>
+      </div>
+      <div class="header-right">
+        <button class="header-btn">
+          <span nz-icon nzType="search" nzTheme="outline"></span>
+        </button>
+        <button class="header-btn notification-btn">
+          <nz-badge [nzCount]="8">
+            <span nz-icon nzType="bell" nzTheme="outline"></span>
+          </nz-badge>
+        </button>
+        <div class="admin-profile">
+          <img src="https://api.dicebear.com/7.x/initials/svg?seed=AD" alt="Admin" class="admin-avatar">
+          <span class="admin-name">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="admin-content">
+      
+      <!-- Dashboard Section -->
+      <div *ngIf="currentSection === 'dashboard'" class="dashboard-section">
+        
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon blue">
+              <span nz-icon nzType="calendar" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">{{ stats.totalEvents | number }}</span>
+              <span class="kpi-label">Eventos</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.eventsGrowth }}% ↗</span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon green">
+              <span nz-icon nzType="team" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">{{ stats.totalUsers | number }}</span>
+              <span class="kpi-label">Usuarios</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.usersGrowth }}% ↗</span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon purple">
+              <span nz-icon nzType="bank" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">{{ stats.totalOrganizers | number }}</span>
+              <span class="kpi-label">Organizadores</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.organizersGrowth }}% ↗</span>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon yellow">
+              <span nz-icon nzType="dollar" nzTheme="outline"></span>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-number">${{ stats.totalRevenue | number }}</span>
+              <span class="kpi-label">Revenue</span>
+            </div>
+            <span class="kpi-trend positive">+{{ stats.revenueGrowth }}% ↗</span>
+          </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="dashboard-grid">
+          
+          <!-- Alerts Panel -->
+          <div class="panel alerts-panel">
+            <h3>⚠️ Alertas Importantes</h3>
+            <div class="alerts-list">
+              <div class="alert-item" *ngFor="let alert of alerts" [style.borderLeftColor]="getAlertColor(alert.type)">
+                <span nz-icon [nzType]="getAlertIcon(alert.type)" nzTheme="outline" [style.color]="getAlertColor(alert.type)"></span>
+                <span class="alert-text">
+                  <strong *ngIf="alert.count">{{ alert.count }}</strong> {{ alert.message }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Panel -->
+          <div class="panel activity-panel">
+            <h3>📋 Actividad Reciente</h3>
+            <div class="activity-list">
+              <div class="activity-item" *ngFor="let activity of recentActivity">
+                <div class="activity-icon" [style.background]="activity.color + '20'" [style.color]="activity.color">
+                  <span nz-icon [nzType]="activity.icon" nzTheme="outline"></span>
+                </div>
+                <div class="activity-info">
+                  <span class="activity-text">{{ activity.text }}</span>
+                  <span class="activity-time">{{ activity.time }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Status Panel -->
+          <div class="panel ai-panel">
+            <h3><span nz-icon nzType="robot" nzTheme="outline"></span> Estado del Sistema IA</h3>
+            <div class="ai-status">
+              <div class="status-indicator online">
+                <span class="status-dot"></span>
+                <span class="status-text">Sistema Operativo</span>
+              </div>
+              
+              <div class="ai-metrics">
+                <div class="ai-metric">
+                  <span class="metric-label">Precisión Global</span>
+                  <span class="metric-value">87.3%</span>
+                  <div class="metric-bar">
+                    <div class="metric-fill" style="width: 87.3%"></div>
+                  </div>
+                </div>
+                
+                <div class="ai-metric">
+                  <span class="metric-label">Predicciones Hoy</span>
+                  <span class="metric-value">1,247</span>
+                </div>
+                
+                <div class="ai-metric">
+                  <span class="metric-label">Última Actualización</span>
+                  <span class="metric-value">Hace 2 horas</span>
+                </div>
+              </div>
+
+              <button class="btn-secondary">
+                <span nz-icon nzType="reload" nzTheme="outline"></span>
+                Reentrenar Modelo
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Actions Panel -->
+          <div class="panel actions-panel">
+            <h3>⚡ Acciones Rápidas</h3>
+            <div class="quick-actions">
+              <button class="quick-action-btn">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                Crear Evento
+              </button>
+              <button class="quick-action-btn">
+                <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                Añadir Usuario
+              </button>
+              <button class="quick-action-btn">
+                <span nz-icon nzType="file-text" nzTheme="outline"></span>
+                Generar Reporte
+              </button>
+              <button class="quick-action-btn">
+                <span nz-icon nzType="mail" nzTheme="outline"></span>
+                Enviar Newsletter
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Events Management Section -->
+      <div *ngIf="currentSection === 'events'" class="events-section">
+        <div class="section-header">
+          <h3>Todos los Eventos</h3>
+          <button class="btn-primary" (click)="openCreateEventModal()">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>
+            Crear Evento Admin
+          </button>
+        </div>
+
+        <div class="filters-bar">
+          <input type="text" placeholder="Buscar eventos..." class="search-input" [(ngModel)]="eventSearch">
+          <select class="filter-select">
+            <option>Todos los Estados</option>
+            <option>Publicado</option>
+            <option>Borrador</option>
+            <option>En Revisión</option>
+            <option>Reportado</option>
+          </select>
+          <select class="filter-select">
+            <option>Todas las Categorías</option>
+            <option>Conferencia</option>
+            <option>Hackathon</option>
+            <option>Workshop</option>
+          </select>
+        </div>
+
+        <div class="data-table">
+          <div class="table-header">
+            <span>ID</span>
+            <span>Evento</span>
+            <span>Organizador</span>
+            <span>Fecha</span>
+            <span>Estado</span>
+            <span>Predicción</span>
+            <span>Acciones</span>
+          </div>
+          <div class="table-row" *ngFor="let ev of filteredEvents">
+            <span>{{ ev.id }}</span>
+            <span>{{ ev.title }}</span>
+            <span>{{ ev.organizerName }}</span>
+            <span>{{ ev.startDate }}</span>
+            <span>{{ ev.status }}</span>
+            <span class="prediction-medium">--</span>
+            <span class="actions">
+              <button class="icon-btn" (click)="deleteEvent(ev)">
+                <span nz-icon nzType="delete" nzTheme="outline"></span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Management Section -->
+      <div *ngIf="currentSection === 'users'" class="users-section">
+        <div class="section-header">
+          <h3>Gestión de Usuarios</h3>
+          <button class="btn-primary" (click)="openCreateUserModal()">
+            <span nz-icon nzType="user-add" nzTheme="outline"></span>
+            Crear Usuario
+          </button>
+        </div>
+
+        <div class="user-stats">
+          <div class="user-stat-card">
+            <span class="user-stat-number">45,892</span>
+            <span class="user-stat-label">Total Usuarios</span>
+          </div>
+          <div class="user-stat-card">
+            <span class="user-stat-number">38,241</span>
+            <span class="user-stat-label">Activos</span>
+          </div>
+          <div class="user-stat-card">
+            <span class="user-stat-number">7,651</span>
+            <span class="user-stat-label">Inactivos</span>
+          </div>
+        </div>
+
+        <div class="filters-bar">
+          <input type="text" placeholder="Buscar por nombre, email, ID..." class="search-input" [(ngModel)]="userSearch">
+          <select class="filter-select">
+            <option>Todos los Roles</option>
+            <option>Usuario</option>
+            <option>Organizador</option>
+            <option>Admin</option>
+          </select>
+          <select class="filter-select">
+            <option>Todos los Estados</option>
+            <option>Activo</option>
+            <option>Suspendido</option>
+            <option>Baneado</option>
+          </select>
+        </div>
+
+        <div class="data-table">
+          <div class="table-header">
+            <span>ID</span>
+            <span>Usuario</span>
+            <span>Email</span>
+            <span>Rol</span>
+            <span>Estado</span>
+            <span>Acciones</span>
+          </div>
+          <div class="table-row" *ngFor="let u of filteredUsers">
+            <span>{{ u.id }}</span>
+            <span class="user-cell">
+              <img src="https://api.dicebear.com/7.x/initials/svg?seed={{u.name}}" alt="">
+              {{ u.name }}
+            </span>
+            <span>{{ u.email }}</span>
+            <span>{{ u.role }}</span>
+            <span>{{ u.status }}</span>
+            <span class="actions">
+              <button class="icon-btn" (click)="openUserActions(u)">
+                <span nz-icon nzType="tool" nzTheme="outline"></span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <div *ngIf="currentSection === 'settings'" class="settings-section">
+        <div class="section-header">
+          <h3>Configuración</h3>
+          <div class="settings-actions">
+            <button class="btn-secondary" (click)="resetSettings()">Restaurar</button>
+            <button class="btn-primary" (click)="saveSettings()">Guardar</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="form-grid">
+            <label class="custom-checkbox">
+              <input type="checkbox" [(ngModel)]="settings.maintenanceMode" />
+              Modo mantenimiento
+            </label>
+
+            <label class="custom-checkbox">
+              <input type="checkbox" [(ngModel)]="settings.notificationsEnabled" />
+              Notificaciones habilitadas
+            </label>
+
+            <label class="custom-checkbox">
+              <input type="checkbox" [(ngModel)]="settings.aiAutoRetrain" />
+              Reentrenamiento IA automático
+            </label>
+
+            <div class="input-group">
+              <label>Zona horaria por defecto</label>
+              <select class="filter-select" [(ngModel)]="settings.defaultTimezone">
+                <option value="America/Bogota">America/Bogota</option>
+                <option value="America/Mexico_City">America/Mexico_City</option>
+                <option value="America/Madrid">Europe/Madrid</option>
+                <option value="UTC">UTC</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Reports Section -->
+      <div *ngIf="currentSection === 'ai-reports'" class="ai-reports-section">
+        <div class="section-header">
+          <h3>Reportes de IA</h3>
+          <button class="btn-primary" (click)="generateAiReport()">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>
+            Generar Reporte
+          </button>
+        </div>
+
+        <div class="panel" *ngIf="reports.length === 0">
+          <p>No hay reportes todavía. Genera uno para empezar.</p>
+        </div>
+
+        <div class="data-table" *ngIf="reports.length > 0">
+          <div class="table-header">
+            <span>ID</span>
+            <span>Fecha</span>
+            <span>Modelo</span>
+            <span>Precisión</span>
+            <span>Predicciones hoy</span>
+            <span>Acciones</span>
+          </div>
+
+          <div class="table-row" *ngFor="let rpt of reports">
+            <span>{{ rpt.id }}</span>
+            <span>{{ rpt.createdAt | date: 'short' }}</span>
+            <span>{{ rpt.modelVersion }}</span>
+            <span>{{ rpt.globalAccuracy }}%</span>
+            <span>{{ rpt.predictionsToday | number }}</span>
+            <span class="actions">
+              <button class="icon-btn" (click)="downloadReportJson(rpt)">
+                <span nz-icon nzType="download" nzTheme="outline"></span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create User Modal -->
+      <div *ngIf="isCreateUserModalOpen" class="admin-modal-backdrop" (click)="closeCreateUserModal()"></div>
+      <div *ngIf="isCreateUserModalOpen" class="admin-modal" role="dialog" aria-modal="true">
+        <div class="admin-modal-header">
+          <h3>Crear Usuario</h3>
+          <button class="icon-btn" (click)="closeCreateUserModal()">
+            <span nz-icon nzType="close" nzTheme="outline"></span>
+          </button>
+        </div>
+        <div class="admin-modal-body">
+          <div class="input-group">
+            <label>Nombre</label>
+            <input class="search-input" type="text" [(ngModel)]="createUserForm.name" />
+          </div>
+          <div class="input-group">
+            <label>Email</label>
+            <input class="search-input" type="email" [(ngModel)]="createUserForm.email" />
+          </div>
+          <div class="input-group">
+            <label>Rol</label>
+            <select class="filter-select" [(ngModel)]="createUserForm.role">
+              <option value="ATTENDEE">USER</option>
+              <option value="ORGANIZER">ORGANIZER</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Contraseña</label>
+            <input class="search-input" type="text" [(ngModel)]="createUserForm.password" />
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button class="btn-secondary" (click)="closeCreateUserModal()">Cancelar</button>
+          <button class="btn-primary" (click)="createUser()">Crear</button>
+        </div>
+      </div>
+
+      <!-- Create Event Modal -->
+      <div *ngIf="isCreateEventModalOpen" class="admin-modal-backdrop" (click)="closeCreateEventModal()"></div>
+      <div *ngIf="isCreateEventModalOpen" class="admin-modal" role="dialog" aria-modal="true">
+        <div class="admin-modal-header">
+          <h3>Crear Evento</h3>
+          <button class="icon-btn" (click)="closeCreateEventModal()">
+            <span nz-icon nzType="close" nzTheme="outline"></span>
+          </button>
+        </div>
+        <div class="admin-modal-body">
+          <div class="input-group">
+            <label>Título</label>
+            <input class="search-input" type="text" [(ngModel)]="createEventForm.title" />
+          </div>
+          <div class="input-group">
+            <label>Descripción</label>
+            <textarea class="search-input" rows="4" [(ngModel)]="createEventForm.description"></textarea>
+          </div>
+          <div class="input-group">
+            <label>Categoría</label>
+            <select class="filter-select" [(ngModel)]="createEventForm.category">
+              <option value="CONFERENCE">CONFERENCE</option>
+              <option value="HACKATHON">HACKATHON</option>
+              <option value="WORKSHOP">WORKSHOP</option>
+              <option value="MEETUP">MEETUP</option>
+              <option value="NETWORKING">NETWORKING</option>
+              <option value="BOOTCAMP">BOOTCAMP</option>
+              <option value="WEBINAR">WEBINAR</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Tipo</label>
+            <select class="filter-select" [(ngModel)]="createEventForm.type">
+              <option value="PRESENCIAL">PRESENCIAL</option>
+              <option value="VIRTUAL">VIRTUAL</option>
+              <option value="HIBRIDO">HIBRIDO</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Organizador</label>
+            <input class="search-input" type="text" [(ngModel)]="createEventForm.organizerName" />
+          </div>
+          <div class="input-group">
+            <label>Fecha inicio</label>
+            <input class="search-input" type="date" [(ngModel)]="createEventForm.startDate" />
+          </div>
+          <div class="input-group">
+            <label>Hora inicio</label>
+            <input class="search-input" type="time" [(ngModel)]="createEventForm.startTime" />
+          </div>
+          <div class="input-group">
+            <label>Estado</label>
+            <select class="filter-select" [(ngModel)]="createEventForm.status">
+              <option value="DRAFT">DRAFT</option>
+              <option value="PUBLISHED">PUBLISHED</option>
+              <option value="CANCELLED">CANCELLED</option>
+              <option value="COMPLETED">COMPLETED</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Capacidad</label>
+            <input class="search-input" type="number" [(ngModel)]="createEventForm.capacity" />
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button class="btn-secondary" (click)="closeCreateEventModal()">Cancelar</button>
+          <button class="btn-primary" (click)="createEvent()">Crear</button>
+        </div>
+      </div>
+
+      <!-- User Actions Modal -->
+      <div *ngIf="isUserActionsModalOpen" class="admin-modal-backdrop" (click)="closeUserActions()"></div>
+      <div *ngIf="isUserActionsModalOpen" class="admin-modal" role="dialog" aria-modal="true">
+        <div class="admin-modal-header">
+          <h3>Acciones de Usuario</h3>
+          <button class="icon-btn" (click)="closeUserActions()">
+            <span nz-icon nzType="close" nzTheme="outline"></span>
+          </button>
+        </div>
+        <div class="admin-modal-body" *ngIf="selectedUser as su">
+          <p><strong>{{ su.name }}</strong> ({{ su.email }})</p>
+          <p>Rol: {{ su.role }} | Estado: {{ su.status }}</p>
+
+          <div class="input-group">
+            <label>Cambiar rol</label>
+            <select class="filter-select" [ngModel]="su.role" (ngModelChange)="setUserRole($event)">
+              <option value="ATTENDEE">USER</option>
+              <option value="ORGANIZER">ORGANIZER</option>
+              <option value="ADMIN">ADMIN</option>
+            </select>
+          </div>
+
+          <div class="quick-actions">
+            <button class="quick-action-btn" (click)="toggleBlockUser()">
+              <span nz-icon nzType="stop" nzTheme="outline"></span>
+              {{ su.status === 'BLOCKED' ? 'Desbloquear' : 'Bloquear' }}
+            </button>
+            <button class="quick-action-btn" (click)="toggleBanUser()">
+              <span nz-icon nzType="warning" nzTheme="outline"></span>
+              {{ su.status === 'BANNED' ? 'Desbanear' : 'Banear' }}
+            </button>
+            <button class="quick-action-btn" (click)="resetUserPassword()">
+              <span nz-icon nzType="reload" nzTheme="outline"></span>
+              Reset Password
+            </button>
+            <button class="quick-action-btn" (click)="openChangePasswordModal()">
+              <span nz-icon nzType="key" nzTheme="outline"></span>
+              Cambiar Password
+            </button>
+            <button class="quick-action-btn" (click)="deleteSelectedUser()">
+              <span nz-icon nzType="delete" nzTheme="outline"></span>
+              Eliminar
+            </button>
+          </div>
+
+          <div class="panel" *ngIf="lastGeneratedPassword">
+            <p><strong>Nueva contraseña temporal:</strong> {{ lastGeneratedPassword }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Password Modal -->
+      <div *ngIf="isChangePasswordModalOpen" class="admin-modal-backdrop" (click)="closeChangePasswordModal()"></div>
+      <div *ngIf="isChangePasswordModalOpen" class="admin-modal" role="dialog" aria-modal="true">
+        <div class="admin-modal-header">
+          <h3>Cambiar Contraseña</h3>
+          <button class="icon-btn" (click)="closeChangePasswordModal()">
+            <span nz-icon nzType="close" nzTheme="outline"></span>
+          </button>
+        </div>
+        <div class="admin-modal-body">
+          <div class="input-group">
+            <label>Nueva contraseña</label>
+            <input class="search-input" type="text" [(ngModel)]="changePasswordForm.newPassword" />
+          </div>
+          <div class="input-group">
+            <label>Confirmar contraseña</label>
+            <input class="search-input" type="text" [(ngModel)]="changePasswordForm.confirmPassword" />
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button class="btn-secondary" (click)="closeChangePasswordModal()">Cancelar</button>
+          <button class="btn-primary" (click)="changeUserPassword()">Guardar</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

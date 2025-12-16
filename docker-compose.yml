@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  predictify-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: predictify-frontend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - predictify-network
+
+networks:
+  predictify-network:
+    driver: bridge

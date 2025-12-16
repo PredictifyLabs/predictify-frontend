@@ -1,0 +1,365 @@
+<div class="events-page">
+  <!-- Ambient Background -->
+  <div class="ambient-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="events-nav">
+    <div class="nav-content">
+      <a routerLink="/" class="nav-logo">
+        <img src="assets/images/Logo.png" alt="Logo Predictify" class="logo-image">
+        <div class="container-title-logo">
+          <span class="logo-text">Predictify</span>
+          <span>AI-POWERED ATTENDANCE FORECASTING!</span>
+        </div>
+      </a>
+      <div class="nav-right">
+        <!-- Current Time -->
+        <div class="nav-time">
+          <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
+          <span class="time-display">{{ currentTime() }}</span>
+          <span class="timezone">{{ timezone() }}</span>
+        </div>
+        <!-- Auth Buttons -->
+        <div class="nav-auth">
+          @if (isAuthenticated()) {
+            <!-- User Menu -->
+            <div class="user-menu" nz-dropdown [nzDropdownMenu]="userMenu" nzTrigger="click">
+              @if (userAvatar()) {
+                <nz-avatar [nzSrc]="userAvatar()" nzSize="small"></nz-avatar>
+              } @else {
+                <nz-avatar nzIcon="user" nzSize="small"></nz-avatar>
+              }
+              <span class="user-name">{{ userName() }}</span>
+              <i nz-icon nzType="down" nzTheme="outline"></i>
+            </div>
+            <nz-dropdown-menu #userMenu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item disabled class="user-role-item">
+                  <span class="role-badge">{{ userRole() }}</span>
+                </li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item (click)="goToProfile()">
+                  <i nz-icon nzType="user" nzTheme="outline"></i> Mi Perfil
+                </li>
+                <li nz-menu-item (click)="goToDashboard()">
+                  <i nz-icon nzType="dashboard" nzTheme="outline"></i> Dashboard
+                </li>
+                @if (isAdmin()) {
+                  <li nz-menu-item (click)="goToAdmin()">
+                    <i nz-icon nzType="setting" nzTheme="outline"></i> Administración
+                  </li>
+                }
+                <li nz-menu-divider></li>
+                <li nz-menu-item nzDanger (click)="logout()">
+                  <i nz-icon nzType="logout" nzTheme="outline"></i> Cerrar Sesión
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          } @else {
+            <a routerLink="/auth/login" class="btn-login">Iniciar Sesión</a>
+            <a routerLink="/auth/register" class="btn-register">Registrarse</a>
+          }
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Más de 2,500 eventos disponibles</span>
+      </div>
+      <h1 class="hero-title">
+        Descubre eventos
+        <span class="title-highlight">tech increíbles</span>
+      </h1>
+      <p class="hero-description">
+        Conecta con la comunidad, aprende de expertos y potencia tu carrera con eventos seleccionados por IA
+      </p>
+      
+      <!-- Search Box -->
+      <div class="search-box">
+        <div class="search-icon">
+          <i nz-icon nzType="search" nzTheme="outline"></i>
+        </div>
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Buscar eventos, speakers, ubicaciones..."
+          [ngModel]="searchQuery()" (ngModelChange)="onSearchChange($event)"
+        />
+        <button class="search-btn">Buscar</button>
+      </div>
+
+      <!-- Quick Filters -->
+      <div class="quick-filters">
+        <span class="filter-label">Popular:</span>
+        <button class="quick-filter" (click)="filterByCategory('CONFERENCE')">Conferencias</button>
+        <button class="quick-filter" (click)="filterByCategory('WORKSHOP')">Workshops</button>
+        <button class="quick-filter" (click)="filterByCategory('HACKATHON')">Hackathons</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Event -->
+  <section class="featured-section">
+    <div class="featured-card">
+      <div class="featured-image">
+        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800" alt="Featured Event">
+        <div class="featured-overlay"></div>
+        <div class="featured-badge-top">
+          <i nz-icon nzType="fire" nzTheme="fill"></i>
+          Destacado
+        </div>
+      </div>
+      <div class="featured-content">
+        <div class="featured-category">Conferencia</div>
+        <h2 class="featured-title">AI & Machine Learning Summit 2025</h2>
+        <p class="featured-desc">
+          El evento más importante del año sobre inteligencia artificial. 
+          Tres días de conferencias, workshops y networking con los mejores expertos del mundo.
+        </p>
+        <div class="featured-details">
+          <div class="detail-item">
+            <i nz-icon nzType="calendar" nzTheme="outline"></i>
+            <span>15-17 Marzo, 2025</span>
+          </div>
+          <div class="detail-item">
+            <i nz-icon nzType="environment" nzTheme="outline"></i>
+            <span>Madrid, España</span>
+          </div>
+          <div class="detail-item">
+            <i nz-icon nzType="team" nzTheme="outline"></i>
+            <span>2,500+ asistentes</span>
+          </div>
+        </div>
+        <div class="featured-footer">
+          <div class="prediction-mini">
+            <div class="prediction-ring" style="--progress: 87">
+              <span class="prediction-value">87%</span>
+            </div>
+            <div class="prediction-info">
+              <span class="prediction-label">Predicción IA</span>
+              <span class="prediction-text">Alta asistencia</span>
+            </div>
+          </div>
+          <button class="btn-featured">
+            Ver Evento
+            <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="main-content">
+    <!-- Sidebar Filters -->
+    <aside class="filters-sidebar">
+      <div class="filter-group">
+        <h3 class="filter-title">Categoría</h3>
+        <div class="filter-options">
+          <button 
+            class="filter-option" 
+            [class.active]="selectedCategory() === 'ALL'"
+            (click)="filterByCategory('ALL')">
+            <i nz-icon nzType="appstore" nzTheme="outline"></i>
+            <span>Todos</span>
+            <span class="filter-count">{{ events().length }}</span>
+          </button>
+          <button 
+            class="filter-option"
+            [class.active]="selectedCategory() === 'CONFERENCE'"
+            (click)="filterByCategory('CONFERENCE')">
+            <i nz-icon nzType="sound" nzTheme="outline"></i>
+            <span>Conferencias</span>
+          </button>
+          <button 
+            class="filter-option"
+            [class.active]="selectedCategory() === 'WORKSHOP'"
+            (click)="filterByCategory('WORKSHOP')">
+            <i nz-icon nzType="tool" nzTheme="outline"></i>
+            <span>Workshops</span>
+          </button>
+          <button 
+            class="filter-option"
+            [class.active]="selectedCategory() === 'HACKATHON'"
+            (click)="filterByCategory('HACKATHON')">
+            <i nz-icon nzType="trophy" nzTheme="outline"></i>
+            <span>Hackathons</span>
+          </button>
+          <button 
+            class="filter-option"
+            [class.active]="selectedCategory() === 'NETWORKING'"
+            (click)="filterByCategory('NETWORKING')">
+            <i nz-icon nzType="team" nzTheme="outline"></i>
+            <span>Networking</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3 class="filter-title">Predicción IA</h3>
+        <div class="prediction-filters">
+          <button class="pred-filter high">
+            <span class="pred-dot"></span>
+            Alta (70%+)
+          </button>
+          <button class="pred-filter medium">
+            <span class="pred-dot"></span>
+            Media (40-70%)
+          </button>
+          <button class="pred-filter low">
+            <span class="pred-dot"></span>
+            Baja (-40%)
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3 class="filter-title">Fecha</h3>
+        <div class="date-filters">
+          <button class="date-filter active">Esta semana</button>
+          <button class="date-filter">Este mes</button>
+          <button class="date-filter">Próximos 3 meses</button>
+        </div>
+      </div>
+
+      <!-- Stats Card -->
+      <div class="stats-card">
+        <div class="stats-header">
+          <i nz-icon nzType="line-chart" nzTheme="outline"></i>
+          <span>Estadísticas</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number">2.5k</span>
+            <span class="stat-label">Eventos</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">15k</span>
+            <span class="stat-label">Usuarios</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">89%</span>
+            <span class="stat-label">Precisión IA</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">350+</span>
+            <span class="stat-label">Ciudades</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Events Grid -->
+    <div class="events-content">
+      <div class="content-header">
+        <div class="results-info">
+          <h2 class="results-title">Eventos disponibles</h2>
+          <span class="results-count">{{ events().length }} resultados</span>
+        </div>
+        <div class="view-options">
+          <button 
+            class="view-btn" 
+            [class.active]="viewMode() === 'grid'"
+            (click)="setViewMode('grid')">
+            <i nz-icon nzType="appstore" nzTheme="outline"></i>
+          </button>
+          <button 
+            class="view-btn"
+            [class.active]="viewMode() === 'list'"
+            (click)="setViewMode('list')">
+            <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Events Grid View -->
+      <div class="events-grid" *ngIf="viewMode() === 'grid'">
+        <app-event-card *ngFor="let event of events()" [event]="event" (preview)="openPreview($event)"></app-event-card>
+      </div>
+
+      <!-- Events List View -->
+      <div class="events-list" *ngIf="viewMode() === 'list'">
+        <div class="event-row" *ngFor="let event of events()" (click)="navigateToEvent(event.id)">
+          <div class="event-row-image">
+            <img [src]="event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=200'" [alt]="event.title">
+          </div>
+          <div class="event-row-content">
+            <div class="event-row-header">
+              <span class="event-row-category">{{ getCategoryDisplayLabel(event.category) }}</span>
+              <span class="event-row-date">
+                <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                {{ event.startDate | date:'d MMM yyyy' }}
+              </span>
+            </div>
+            <h3 class="event-row-title">{{ event.title }}</h3>
+            <p class="event-row-location">
+              <i nz-icon nzType="environment" nzTheme="outline"></i>
+              {{ event.location.city || 'Virtual' }}
+            </p>
+          </div>
+          <div class="event-row-actions">
+            <button class="btn-row-action">
+              <i nz-icon nzType="heart" nzTheme="outline"></i>
+            </button>
+            <button class="btn-row-action primary">
+              Ver más
+              <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="events().length === 0">
+        <div class="empty-illustration">
+          <i nz-icon nzType="inbox" nzTheme="outline"></i>
+        </div>
+        <h3>No se encontraron eventos</h3>
+        <p>Prueba a ajustar los filtros o busca algo diferente</p>
+        <button class="btn-reset" (click)="filterByCategory('ALL')">Ver todos los eventos</button>
+      </div>
+
+      <!-- Load More -->
+      <div class="load-more" *ngIf="events().length > 0">
+        <button class="btn-load-more">
+          Cargar más eventos
+          <i nz-icon nzType="down" nzTheme="outline"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories-section">
+    <h2 class="categories-title">Explorar por categoría</h2>
+    <div class="categories-grid-luma">
+      @for (cat of categoriesData; track cat.id) {
+        <div class="category-card-luma" (click)="goToCategory(cat)">
+          <div class="category-icon-luma" [style.color]="cat.color">
+            <i nz-icon [nzType]="cat.icon" nzTheme="outline"></i>
+          </div>
+          <div class="category-info">
+            <h3>{{ cat.label }}</h3>
+            <span>{{ cat.eventCount | number }} eventos</span>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Event Preview Modal -->
+  <app-event-preview-modal
+    [event]="previewEvent()"
+    [isVisible]="isPreviewOpen()"
+    (close)="closePreview()">
+  </app-event-preview-modal>
+</div>

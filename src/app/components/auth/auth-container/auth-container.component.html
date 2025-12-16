@@ -1,0 +1,248 @@
+<div class="auth-page">
+  <!-- ===== BACKGROUND BLOBS (LoginAngular-inspired) ===== -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="auth-shell" [class.register-mode]="!isLoginMode()">
+
+    <!-- ===== PANEL IZQUIERDO - BRANDING ===== -->
+    <div class="branding-panel">
+      <div class="branding-inner">
+        <div class="brand-top">
+          <img class="brand-logo" src="assets/images/Logo.png" alt="Predictify" />
+          <div class="brand-name">
+            <span class="brand-title">Predictify</span>
+            <span class="brand-subtitle">AI-Powered Attendance Forecasting</span>
+          </div>
+        </div>
+
+        <div class="container-left">
+          <h1 class="brand-headline">
+            Predicción inteligente<br />
+            para <span class="gradient-text">eventos tech</span>
+          </h1>
+          <p class="brand-tagline">Accede y gestiona tus eventos con una experiencia moderna y segura.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PANEL DERECHO - FORMULARIOS (sin cambio de ruta) ===== -->
+    <div class="form-panel">
+
+      <!-- Header con logo y toggle -->
+      <div class="form-header">
+        <div class="logo">
+          <img class="logo-image" src="assets/images/Logo.png" alt="Predictify" />
+          <span class="logo-text">Predictify</span>
+        </div>
+
+        <button class="toggle-btn" type="button" (click)="toggleMode()">
+          <span nz-icon [nzType]="isLoginMode() ? 'user-add' : 'login'" nzTheme="outline"></span>
+          {{ isLoginMode() ? 'Registrarse' : 'Iniciar Sesión' }}
+        </button>
+      </div>
+
+      <!-- Contenedor de formularios con animación (slide) -->
+      <div class="forms-slider">
+        <div class="forms-track">
+
+          <!-- LOGIN FORM -->
+          <div class="form-wrapper">
+            <div class="form-title">
+              <h3>Iniciar Sesión</h3>
+              <p>Ingresa tus credenciales para acceder</p>
+            </div>
+
+            @if (loginError) {
+              <div class="alert-error">
+                <span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>
+                <span>{{ loginError }}</span>
+              </div>
+            }
+
+            <form (ngSubmit)="login()" class="form-body">
+              <div class="input-group">
+                <label for="loginEmail">Correo Electrónico</label>
+                <input
+                  id="loginEmail"
+                  name="loginEmail"
+                  type="email"
+                  [(ngModel)]="loginEmail"
+                  placeholder="tu@ejemplo.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="loginPassword">Contraseña</label>
+                <div class="input-with-action">
+                  <input
+                    id="loginPassword"
+                    name="loginPassword"
+                    [type]="showLoginPassword ? 'text' : 'password'"
+                    [(ngModel)]="loginPassword"
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                    required
+                  />
+                  <button type="button" class="toggle-pass" (click)="toggleLoginPassword()">
+                    <span nz-icon [nzType]="showLoginPassword ? 'eye-invisible' : 'eye'" nzTheme="outline"></span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="row-between">
+                <label class="remember">
+                  <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" />
+                  <span>Mantener sesión iniciada</span>
+                </label>
+                <a class="link" href="#">¿Olvidaste tu contraseña?</a>
+              </div>
+
+              <button class="btn-submit" type="submit" [disabled]="loginLoading">
+                @if (loginLoading) {
+                  <span class="spinner"></span>
+                } @else {
+                  <span nz-icon nzType="login" nzTheme="outline"></span>
+                  Iniciar Sesión
+                }
+              </button>
+
+              <div class="divider">
+                <span>¿Nuevo en Predictify?</span>
+              </div>
+
+              <button class="btn-secondary" type="button" (click)="showRegister()">
+                <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                Crear una cuenta nueva
+              </button>
+            </form>
+          </div>
+
+          <!-- REGISTER FORM -->
+          <div class="form-wrapper">
+            <div class="form-title">
+              <h3>Crear Cuenta</h3>
+              <p>Regístrate en segundos y empieza a descubrir eventos</p>
+            </div>
+
+            @if (registerError) {
+              <div class="alert-error">
+                <span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>
+                <span>{{ registerError }}</span>
+              </div>
+            }
+
+            <form (ngSubmit)="register()" class="form-body">
+              <div class="input-group">
+                <label for="registerName">Nombre completo</label>
+                <input
+                  id="registerName"
+                  name="registerName"
+                  type="text"
+                  [(ngModel)]="registerName"
+                  placeholder="Tu nombre"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="registerEmail">Correo Electrónico</label>
+                <input
+                  id="registerEmail"
+                  name="registerEmail"
+                  type="email"
+                  [(ngModel)]="registerEmail"
+                  placeholder="tu@ejemplo.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+
+              <div class="input-group">
+                <label for="registerPassword">Contraseña</label>
+                <div class="input-with-action">
+                  <input
+                    id="registerPassword"
+                    name="registerPassword"
+                    [type]="showRegisterPassword ? 'text' : 'password'"
+                    [(ngModel)]="registerPassword"
+                    placeholder="Mínimo 6 caracteres"
+                    autocomplete="new-password"
+                    (input)="checkPasswordStrength()"
+                    required
+                  />
+                  <button type="button" class="toggle-pass" (click)="toggleRegisterPassword()">
+                    <span nz-icon [nzType]="showRegisterPassword ? 'eye-invisible' : 'eye'" nzTheme="outline"></span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label for="registerConfirmPassword">Confirmar contraseña</label>
+                <input
+                  id="registerConfirmPassword"
+                  name="registerConfirmPassword"
+                  type="password"
+                  [(ngModel)]="registerConfirmPassword"
+                  placeholder="Repite tu contraseña"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+
+              @if (registerPassword.length > 0) {
+                <div class="password-strength">
+                  <div class="strength-track">
+                    <div class="strength-fill" [style.width.%]="passwordStrength() * 20" [style.background]="passwordStrengthColor()"></div>
+                  </div>
+                  <span class="strength-label" [style.color]="passwordStrengthColor()">{{ passwordStrengthText() }}</span>
+                </div>
+              }
+
+              <label class="remember">
+                <input type="checkbox" [(ngModel)]="isOrganizer" name="isOrganizer" />
+                <span>Quiero crear eventos (Organizador)</span>
+              </label>
+
+              <label class="remember">
+                <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" />
+                <span>Acepto los <a class="link" href="#">términos</a> y <a class="link" href="#">privacidad</a></span>
+              </label>
+
+              <button class="btn-submit" type="submit" [disabled]="registerLoading">
+                @if (registerLoading) {
+                  <span class="spinner"></span>
+                } @else {
+                  <span nz-icon nzType="user-add" nzTheme="outline"></span>
+                  Crear Cuenta
+                }
+              </button>
+
+              <div class="divider">
+                <span>¿Ya tienes cuenta?</span>
+              </div>
+
+              <button class="btn-secondary" type="button" (click)="showLogin()">
+                <span nz-icon nzType="login" nzTheme="outline"></span>
+                Volver a iniciar sesión
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="form-footer">
+        <span>© 2025 Predictify</span>
+      </div>
+    </div>
+
+  </div>
+</div>

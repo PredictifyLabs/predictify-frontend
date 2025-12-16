@@ -1,0 +1,250 @@
+<div class="profile-page">
+  <div class="ambient-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
+  <div class="profile-container">
+    <!-- Banner -->
+    <div class="profile-banner" [style.background-image]="'url(' + userBanner() + ')'">
+      <div class="banner-overlay"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="profile-header">
+      <div class="header-content">
+        <div class="avatar-section">
+          <nz-avatar 
+            [nzSrc]="userAvatar()" 
+            [nzSize]="120" 
+            nzIcon="user"
+            class="profile-avatar">
+          </nz-avatar>
+        </div>
+        
+        <div class="user-info">
+          <div class="user-main">
+            <h1>{{ userName() }}</h1>
+            <span class="role-badge" [class.organizer]="isOrganizer()">
+              {{ userRole() }}
+            </span>
+          </div>
+          <p class="user-email">{{ userEmail() }}</p>
+          <p class="user-location">
+            <span nz-icon nzType="environment" nzTheme="outline"></span>
+            {{ userLocation() }}
+          </p>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn-primary" (click)="openEditModal()">
+            <span nz-icon nzType="edit" nzTheme="outline"></span>
+            Editar Perfil
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container-main-profile">
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-number">{{ attendedEvents().length }}</span>
+          <span class="stat-label">Eventos Asistidos</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">{{ savedEvents().length }}</span>
+          <span class="stat-label">Eventos Guardados</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">{{ memberSince() }}</span>
+          <span class="stat-label">Miembro desde</span>
+        </div>
+      </div>
+      <!-- Main Content -->
+      <div class="profile-content">
+        <!-- Left Column - About -->
+        <div class="about-section card-glass">
+          <h3>Sobre mí</h3>
+          <div class="about-content">
+            <p class="bio">{{ userBio() }}</p>
+      
+            <div class="info-item">
+              <span nz-icon nzType="environment" nzTheme="outline"></span>
+              <span>{{ userLocation() }}</span>
+            </div>
+      
+            <div class="info-item">
+              <span nz-icon nzType="calendar" nzTheme="outline"></span>
+              <span>Miembro desde {{ memberSince() }}</span>
+            </div>
+            @if (isOrganizer()) {
+              <div class="organizer-badge">
+                <span nz-icon nzType="star" nzTheme="fill"></span>
+                <span>Puede crear eventos</span>
+              </div>
+            }
+          </div>
+        </div>
+        <!-- Right Column - Tabs -->
+        <div class="events-section">
+          <nz-tabset>
+            <nz-tab nzTitle="Eventos Guardados">
+              <div class="events-grid">
+                @for (event of savedEvents(); track event.id) {
+                  <div class="event-card" (click)="navigateToEvent(event.id)">
+                    <div class="event-image">
+                      <img [src]="event.image" [alt]="event.title">
+                      <button class="remove-btn" (click)="removeFromSaved(event.id); $event.stopPropagation()">
+                        <span nz-icon nzType="close" nzTheme="outline"></span>
+                      </button>
+                    </div>
+                    <div class="event-info">
+                      <h4>{{ event.title }}</h4>
+                      <p class="event-meta">
+                        <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                        {{ event.date | date:'d MMM yyyy' }}
+                      </p>
+                      <p class="event-meta">
+                        <span nz-icon nzType="environment" nzTheme="outline"></span>
+                        {{ event.location }}
+                      </p>
+                      <div class="prediction-badge" [style.color]="getPredictionColor(event.prediction)">
+                        <span nz-icon nzType="line-chart" nzTheme="outline"></span>
+                        {{ event.prediction }}%
+                      </div>
+                    </div>
+                  </div>
+                } @empty {
+                  <div class="empty-state">
+                    <span nz-icon nzType="heart" nzTheme="outline"></span>
+                    <p>No tienes eventos guardados</p>
+                    <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
+                  </div>
+                }
+              </div>
+            </nz-tab>
+            <nz-tab nzTitle="Historial de Asistencia">
+              <div class="events-grid">
+                @for (event of attendedEvents(); track event.id) {
+                  <div class="event-card attended" (click)="navigateToEvent(event.id)">
+                    <div class="event-image">
+                      <img [src]="event.image" [alt]="event.title">
+                      <span class="attended-badge">
+                        <span nz-icon nzType="check-circle" nzTheme="fill"></span>
+                        Asistido
+                      </span>
+                    </div>
+                    <div class="event-info">
+                      <h4>{{ event.title }}</h4>
+                      <p class="event-meta">
+                        <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                        {{ event.date | date:'d MMM yyyy' }}
+                      </p>
+                      <p class="event-meta">
+                        <span nz-icon nzType="environment" nzTheme="outline"></span>
+                        {{ event.location }}
+                      </p>
+                    </div>
+                  </div>
+                } @empty {
+                  <div class="empty-state">
+                    <span nz-icon nzType="calendar" nzTheme="outline"></span>
+                    <p>No has asistido a ningún evento todavía</p>
+                    <a routerLink="/events" class="btn-primary">Explorar Eventos</a>
+                  </div>
+                }
+              </div>
+            </nz-tab>
+          </nz-tabset>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="profile-actions">
+      <button class="btn-danger" (click)="logout()">
+        <span nz-icon nzType="logout" nzTheme="outline"></span>
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <nz-modal
+    [nzVisible]="isEditModalVisible()"
+    nzTitle="Editar Perfil"
+    nzWidth="600px"
+    [nzFooter]="modalFooter"
+    (nzOnCancel)="closeEditModal()">
+    
+    <ng-container *nzModalContent>
+      <div class="edit-profile-modal">
+        <!-- Banner Upload -->
+        <div class="banner-upload-section">
+          <label>Banner de Perfil</label>
+          <div class="banner-preview" [style.background-image]="'url(' + editForm().banner + ')'">
+            <nz-upload
+              [nzBeforeUpload]="handleBannerUpload"
+              [nzShowUploadList]="false"
+              nzAccept="image/*">
+              <button nz-button nzType="default" class="upload-btn">
+                <span nz-icon nzType="camera" nzTheme="outline"></span>
+                Cambiar Banner
+              </button>
+            </nz-upload>
+          </div>
+        </div>
+
+        <!-- Avatar Upload -->
+        <div class="avatar-upload-section">
+          <label>Foto de Perfil</label>
+          <div class="avatar-preview">
+            <nz-avatar [nzSrc]="editForm().avatar" [nzSize]="100" nzIcon="user"></nz-avatar>
+            <nz-upload
+              [nzBeforeUpload]="handleAvatarUpload"
+              [nzShowUploadList]="false"
+              nzAccept="image/*">
+              <button nz-button nzType="default" nzShape="circle" class="avatar-upload-btn">
+                <span nz-icon nzType="camera" nzTheme="outline"></span>
+              </button>
+            </nz-upload>
+          </div>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="form-group">
+          <label>Nombre</label>
+          <input nz-input 
+            [ngModel]="editForm().name" 
+            (ngModelChange)="updateFormField('name', $event)"
+            placeholder="Tu nombre">
+        </div>
+
+        <div class="form-group">
+          <label>Biografía</label>
+          <textarea nz-input 
+            [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+            [ngModel]="editForm().bio" 
+            (ngModelChange)="updateFormField('bio', $event)"
+            placeholder="Cuéntanos sobre ti..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Ubicación</label>
+          <input nz-input 
+            [ngModel]="editForm().location" 
+            (ngModelChange)="updateFormField('location', $event)"
+            placeholder="Tu ciudad">
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #modalFooter>
+      <button nz-button nzType="default" (click)="closeEditModal()">Cancelar</button>
+      <button nz-button nzType="primary" [nzLoading]="isSaving()" (click)="saveProfile()">
+        Guardar Cambios
+      </button>
+    </ng-template>
+  </nz-modal>
+</div>

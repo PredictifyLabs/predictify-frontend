@@ -1,0 +1,19 @@
+# Predictify - Robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://predictify.app/sitemap.xml
+
+# Disallow admin and auth pages from indexing
+Disallow: /admin
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /profile
+
+# Allow search engines to index events
+Allow: /events
+Allow: /events/*
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
