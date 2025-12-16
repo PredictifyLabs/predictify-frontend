@@ -8,6 +8,7 @@ import { AuthService } from '../../infrastructure/services/auth.service';
 import { AlertService } from '../../infrastructure/services/alert.service';
 import { UserApiService } from '../../infrastructure/services/user-api.service';
 import { EventApiService, CreateEventDTOBackend } from '../../infrastructure/services/event-api.service';
+import { EventService } from '../../infrastructure/services/event.service';
 import { switchMap, of } from 'rxjs';
 
 type AdminSection = 'dashboard' | 'users' | 'events';
@@ -164,7 +165,8 @@ export class AdminComponent implements OnInit {
     private alertService: AlertService,
     private authService: AuthService,
     private userApi: UserApiService,
-    private eventApi: EventApiService
+    private eventApi: EventApiService,
+    private eventService: EventService
   ) {}
 
   ngOnInit() {
@@ -422,6 +424,8 @@ export class AdminComponent implements OnInit {
   private saveEvents(): void {
     localStorage.setItem(this.ADMIN_EVENTS_KEY, JSON.stringify(this.events));
     this.updateStats();
+    // Refresh public events list
+    this.eventService.refreshEvents();
   }
 
   openCreateEventModal(): void {

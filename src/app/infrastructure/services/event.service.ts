@@ -73,9 +73,10 @@ export class EventService {
     
     if (this.USE_MOCK) {
       of(MOCK_EVENTS).pipe(delay(500)).subscribe(events => {
-        // Merge with organizer-created events from localStorage
+        // Merge with organizer and admin created events from localStorage
         const organizerEvents = this.getOrganizerEvents();
-        const allEvents = [...events, ...organizerEvents];
+        const adminEvents = this.getAdminEvents();
+        const allEvents = [...events, ...organizerEvents, ...adminEvents];
         this._events.set(allEvents);
         this._loading.set(false);
       });
@@ -92,9 +93,10 @@ export class EventService {
         })
       )
       .subscribe(events => {
-        // Merge with organizer-created events from localStorage
+        // Merge with organizer and admin created events from localStorage
         const organizerEvents = this.getOrganizerEvents();
-        const allEvents = [...events, ...organizerEvents];
+        const adminEvents = this.getAdminEvents();
+        const allEvents = [...events, ...organizerEvents, ...adminEvents];
         this._events.set(allEvents);
         this._loading.set(false);
       });
@@ -266,6 +268,61 @@ export class EventService {
             displayName: 'Organizador',
             avatar: '',
             isVerified: false,
+            eventsCount: 1
+          },
+          createdAt: e.createdAt || new Date().toISOString()
+        }));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Get admin-created events from localStorage and convert to EventDTO format
+   */
+  private getAdminEvents(): EventDTO[] {
+    try {
+      const stored = localStorage.getItem('predictify_admin_events');
+      if (!stored) return [];
+      
+      const adminEvents = JSON.parse(stored);
+      return adminEvents
+        .filter((e: any) => e.status === 'PUBLISHED')
+        .map((e: any): EventDTO => ({
+          id: e.id,
+          title: e.title,
+          slug: e.title.toLowerCase().replace(/\s+/g, '-'),
+          description: e.description || '',
+          shortDescription: e.description?.substring(0, 100) || '',
+          category: (e.category as EventCategory) || 'CONFERENCE',
+          type: (e.type as EventType) || 'PRESENCIAL',
+          status: 'PUBLISHED',
+          imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600',
+          startDate: e.startDate || new Date().toISOString(),
+          endDate: e.startDate || new Date().toISOString(),
+          startTime: e.startTime || '09:00',
+          endTime: '18:00',
+          timezone: 'America/Bogota',
+          location: {
+            type: e.city === 'Virtual' ? 'VIRTUAL' : 'PHYSICAL',
+            venue: e.venue || e.city || 'Venue',
+            address: e.address || '',
+            city: e.city || 'Colombia',
+            country: 'Colombia',
+            latitude: e.latitude,
+            longitude: e.longitude
+          },
+          capacity: e.capacity || 100,
+          interestedCount: 0,
+          registeredCount: e.registered || 0,
+          isFree: true,
+          isFeatured: false,
+          isTrending: false,
+          organizer: {
+            id: 'admin',
+            displayName: e.organizerName || 'Administrador',
+            avatar: '',
+            isVerified: true,
             eventsCount: 1
           },
           createdAt: e.createdAt || new Date().toISOString()
