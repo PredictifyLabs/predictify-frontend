@@ -2,7 +2,21 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.7.
 
-## Development server
+## 🛠️ Tech Stack
+
+- Angular
+- TypeScript
+- ng-zorro
+- Tailwind CSS
+
+## 📌 Funcionalidades
+
+- Panel administrativo
+- Tablas de empleados y ausencias
+- Gráficas y reportes
+- Conexión al backend vía REST API
+
+## ▶️ Development server
 
 To start a local development server, run:
 
