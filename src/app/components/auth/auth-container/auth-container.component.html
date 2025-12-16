@@ -21,10 +21,10 @@
 
         <div class="container-left">
           <h1 class="brand-headline">
-            Predicción inteligente<br />
-            para <span class="gradient-text">eventos tech</span>
+            {{ t('auth.headline1') }}<br />
+            {{ t('auth.headline2') }} <span class="gradient-text">{{ t('auth.headline3') }}</span>
           </h1>
-          <p class="brand-tagline">Accede y gestiona tus eventos con una experiencia moderna y segura.</p>
+          <p class="brand-tagline">{{ t('auth.tagline') }}</p>
         </div>
       </div>
     </div>
@@ -41,7 +41,7 @@
 
         <button class="toggle-btn" type="button" (click)="toggleMode()">
           <span nz-icon [nzType]="isLoginMode() ? 'user-add' : 'login'" nzTheme="outline"></span>
-          {{ isLoginMode() ? 'Registrarse' : 'Iniciar Sesión' }}
+          {{ isLoginMode() ? t('nav.register') : t('nav.login') }}
         </button>
       </div>
 
@@ -52,8 +52,8 @@
           <!-- LOGIN FORM -->
           <div class="form-wrapper">
             <div class="form-title">
-              <h3>Iniciar Sesión</h3>
-              <p>Ingresa tus credenciales para acceder</p>
+              <h3>{{ t('auth.signIn') }}</h3>
+              <p>{{ t('auth.enterCredentials') }}</p>
             </div>
 
             @if (loginError) {
@@ -65,7 +65,7 @@
 
             <form (ngSubmit)="login()" class="form-body">
               <div class="input-group">
-                <label for="loginEmail">Correo Electrónico</label>
+                <label for="loginEmail">{{ t('auth.email') }}</label>
                 <input
                   id="loginEmail"
                   name="loginEmail"
@@ -78,7 +78,7 @@
               </div>
 
               <div class="input-group">
-                <label for="loginPassword">Contraseña</label>
+                <label for="loginPassword">{{ t('auth.password') }}</label>
                 <div class="input-with-action">
                   <input
                     id="loginPassword"
@@ -98,9 +98,9 @@
               <div class="row-between">
                 <label class="remember">
                   <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" />
-                  <span>Mantener sesión iniciada</span>
+                  <span>{{ t('auth.rememberMe') }}</span>
                 </label>
-                <a class="link" href="#">¿Olvidaste tu contraseña?</a>
+                <a class="link" href="#">{{ t('auth.forgotPassword') }}</a>
               </div>
 
               <button class="btn-submit" type="submit" [disabled]="loginLoading">
@@ -108,17 +108,17 @@
                   <span class="spinner"></span>
                 } @else {
                   <span nz-icon nzType="login" nzTheme="outline"></span>
-                  Iniciar Sesión
+                  {{ t('auth.signIn') }}
                 }
               </button>
 
               <div class="divider">
-                <span>¿Nuevo en Predictify?</span>
+                <span>{{ t('auth.noAccount') }}</span>
               </div>
 
               <button class="btn-secondary" type="button" (click)="showRegister()">
                 <span nz-icon nzType="user-add" nzTheme="outline"></span>
-                Crear una cuenta nueva
+                {{ t('auth.createAccount') }}
               </button>
             </form>
           </div>
@@ -126,8 +126,8 @@
           <!-- REGISTER FORM -->
           <div class="form-wrapper">
             <div class="form-title">
-              <h3>Crear Cuenta</h3>
-              <p>Regístrate en segundos y empieza a descubrir eventos</p>
+              <h3>{{ t('auth.createAccount') }}</h3>
+              <p>{{ t('auth.registerSubtitle') }}</p>
             </div>
 
             @if (registerError) {
@@ -139,7 +139,7 @@
 
             <form (ngSubmit)="register()" class="form-body">
               <div class="input-group">
-                <label for="registerName">Nombre completo</label>
+                <label for="registerName">{{ t('auth.name') }}</label>
                 <input
                   id="registerName"
                   name="registerName"
@@ -152,7 +152,7 @@
               </div>
 
               <div class="input-group">
-                <label for="registerEmail">Correo Electrónico</label>
+                <label for="registerEmail">{{ t('auth.email') }}</label>
                 <input
                   id="registerEmail"
                   name="registerEmail"
@@ -165,7 +165,7 @@
               </div>
 
               <div class="input-group">
-                <label for="registerPassword">Contraseña</label>
+                <label for="registerPassword">{{ t('auth.password') }}</label>
                 <div class="input-with-action">
                   <input
                     id="registerPassword"
@@ -184,7 +184,7 @@
               </div>
 
               <div class="input-group">
-                <label for="registerConfirmPassword">Confirmar contraseña</label>
+                <label for="registerConfirmPassword">{{ t('auth.confirmPassword') }}</label>
                 <input
                   id="registerConfirmPassword"
                   name="registerConfirmPassword"
@@ -207,12 +207,12 @@
 
               <label class="remember">
                 <input type="checkbox" [(ngModel)]="isOrganizer" name="isOrganizer" />
-                <span>Quiero crear eventos (Organizador)</span>
+                <span>{{ t('auth.wantOrganizer') }}</span>
               </label>
 
               <label class="remember">
                 <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" />
-                <span>Acepto los <a class="link" href="#">términos</a> y <a class="link" href="#">privacidad</a></span>
+                <span>{{ t('auth.termsAgree') }}</span>
               </label>
 
               <button class="btn-submit" type="submit" [disabled]="registerLoading">
@@ -220,17 +220,17 @@
                   <span class="spinner"></span>
                 } @else {
                   <span nz-icon nzType="user-add" nzTheme="outline"></span>
-                  Crear Cuenta
+                  {{ t('auth.createAccount') }}
                 }
               </button>
 
               <div class="divider">
-                <span>¿Ya tienes cuenta?</span>
+                <span>{{ t('auth.hasAccount') }}</span>
               </div>
 
               <button class="btn-secondary" type="button" (click)="showLogin()">
                 <span nz-icon nzType="login" nzTheme="outline"></span>
-                Volver a iniciar sesión
+                {{ t('auth.backToLogin') }}
               </button>
             </form>
           </div>

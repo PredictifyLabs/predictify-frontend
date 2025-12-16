@@ -1,177 +1,248 @@
-.layout {
-      background: #ffffff;
-      height: 80vh;
-    }
+/* ===== NAVBAR ===== */
+.navbar {
+  background: linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
 
-    /* Header Principal */
-    .main-header {
-      background: #ffffff;
-      border-bottom: 1px solid #e8e8e8;
-      padding: 0;
-      height: 64px;
-      line-height: 64px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
+.navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .header-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
-    }
+/* Logo Section */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 20px;
-      font-weight: 600;
-      color: #1890ff;
-      cursor: pointer;
-    }
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
 
-    .logo-text {
-      color: #262626;
-    }
+.logo-text-container {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+.logo-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
 
-    .search-input {
-      width: 350px;
-    }
+.logo-subtitle {
+  font-size: 10px;
+  font-weight: 500;
+  color: #888888;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
 
-    .btn-notifications,
-    .btn-user {
-      height: 40px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid #d9d9d9;
-      background: #ffffff;
-    }
+/* Right Section */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-    .btn-notifications {
-      padding: 0 12px;
-    }
+/* Language Toggle */
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-    .btn-user {
-      padding: 0 16px;
-    }
+.lang-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(124, 58, 237, 0.3);
+}
 
-    /* Barra de Categorías */
-    .categories-bar {
-      background: #fafafa;
-      border-bottom: 1px solid #e8e8e8;
-      padding: 12px 0;
-    }
+.lang-flag {
+  font-size: 16px;
+}
 
-    .categories-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+.lang-code {
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFFFFF;
+  letter-spacing: 0.5px;
+}
 
-    .category-btn {
-      height: 36px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 4px;
-      font-size: 14px;
-      transition: all 0.3s;
-    }
+/* Time Display */
+.time-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #888888;
+  font-size: 13px;
+}
 
-    .filter-btn {
-      margin-left: auto;
-    }
+.time-display span[nz-icon] {
+  font-size: 14px;
+}
 
-    ::ng-deep .ant-btn-primary {
-      background: #1890ff;
-      border-color: #1890ff;
-    }
+.time {
+  color: #ffffff;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
 
-    ::ng-deep .ant-btn-primary:hover {
-      background: #40a9ff;
-      border-color: #40a9ff;
-    }
+.timezone {
+  color: #666666;
+}
 
-    ::ng-deep .ant-btn-default {
-      background: #ffffff;
-      border-color: #d9d9d9;
-      color: #595959;
-    }
+/* Auth Buttons */
+.btn-login {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-    ::ng-deep .ant-btn-default:hover {
-      color: #1890ff;
-      border-color: #1890ff;
-    }
+.btn-login:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
 
-    ::ng-deep .ant-input-affix-wrapper {
-      background: #f5f5f5;
-      border-color: #d9d9d9;
-    }
+.btn-register {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #7C3AED, #6366F1);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
 
-    ::ng-deep .ant-input-affix-wrapper:focus-within {
-      background: #ffffff;
-      border-color: #1890ff;
-    }
+.btn-register:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+}
 
-    ::ng-deep .ant-badge-count {
-      background: #ff4d4f;
-    }
+/* User Button */
+.btn-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-    /* Responsive */
-    @media (max-width: 1200px) {
-      .search-input {
-        width: 280px;
-      }
+.btn-user:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
 
-      .categories-content {
-        gap: 8px;
-      }
+.btn-user .user-name {
+  color: #e5e7eb;
+}
 
-      .category-btn {
-        padding: 0 12px;
-        font-size: 13px;
-      }
-    }
+.btn-user span[nz-icon] {
+  color: #888888;
+  font-size: 12px;
+}
 
-    @media (max-width: 768px) {
-      .header-content {
-        flex-wrap: wrap;
-        height: auto;
-        padding: 12px 16px;
-      }
+/* Dropdown Menu Overrides */
+::ng-deep .user-dropdown {
+  background: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 8px !important;
+}
 
-      .logo {
-        font-size: 18px;
-      }
+::ng-deep .user-dropdown .ant-dropdown-menu-item {
+  color: #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+}
 
-      .search-input {
-        width: 100%;
-        order: 3;
-        margin-top: 12px;
-      }
+::ng-deep .user-dropdown .ant-dropdown-menu-item:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
 
-      .categories-content {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding: 0 16px;
-      }
+::ng-deep .user-dropdown .ant-dropdown-menu-item-disabled {
+  opacity: 1 !important;
+}
 
-      .category-btn {
-        white-space: nowrap;
-      }
-    }
+::ng-deep .user-dropdown .ant-dropdown-menu-item-danger {
+  color: #ef4444 !important;
+}
+
+::ng-deep .user-dropdown .ant-dropdown-menu-item-danger:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+::ng-deep .user-dropdown .ant-dropdown-menu-item-divider {
+  background: rgba(255, 255, 255, 0.08) !important;
+  margin: 8px 0 !important;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(124, 58, 237, 0.15);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a78bfa;
+  text-transform: uppercase;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-content {
+    padding: 12px 20px;
+  }
+
+  .logo-subtitle {
+    display: none;
+  }
+
+  .time-display {
+    display: none;
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}

@@ -16,6 +16,7 @@ import { AuthService } from '../../infrastructure/services/auth.service';
 import { EventCategory, EventDTO, getCategoryLabel, CATEGORIES_DATA, CategoryData } from '../../domain/models/event.model';
 import { EventPreviewModalComponent } from '../shared/event-preview-modal/event-preview-modal.component';
 import { getRoleLabel } from '../../domain/models/user.model';
+import { Navbar } from '../navbar/navbar';
 
 @Component({
   selector: 'app-events',
@@ -33,7 +34,8 @@ import { getRoleLabel } from '../../domain/models/user.model';
     NzDropDownModule,
     NzAvatarModule,
     NzMenuModule,
-    EventPreviewModalComponent
+    EventPreviewModalComponent,
+    Navbar
   ],
   templateUrl: './events.html',
   styleUrl: './events.css',
@@ -68,6 +70,10 @@ export class Events implements OnInit, OnDestroy {
   readonly previewEvent = signal<EventDTO | null>(null);
   readonly isPreviewOpen = signal(false);
   
+  // Pagination
+  readonly currentPage = signal(1);
+  readonly eventsPerPage = 6;
+  
   // Categories data
   readonly categoriesData = CATEGORIES_DATA;
   
@@ -78,6 +84,24 @@ export class Events implements OnInit, OnDestroy {
   readonly searchQuery = this.eventService.searchQuery;
   readonly selectedCategory = this.eventService.selectedCategory;
   
+  // Paginated events
+  readonly paginatedEvents = computed(() => {
+    const allEvents = this.events();
+    const page = this.currentPage();
+    const start = (page - 1) * this.eventsPerPage;
+    const end = start + this.eventsPerPage;
+    return allEvents.slice(start, end);
+  });
+  
+  readonly totalPages = computed(() => {
+    return Math.ceil(this.events().length / this.eventsPerPage);
+  });
+  
+  readonly pageNumbers = computed(() => {
+    const total = this.totalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  });
+  
   // Categories for filter
   readonly categories: (EventCategory | 'ALL')[] = [
     'ALL', 'CONFERENCE', 'HACKATHON', 'WORKSHOP', 'MEETUP', 'NETWORKING', 'BOOTCAMP', 'WEBINAR'
@@ -87,6 +111,26 @@ export class Events implements OnInit, OnDestroy {
 
   setViewMode(mode: 'grid' | 'list'): void {
     this.viewMode.set(mode);
+  }
+  
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) {
+      this.currentPage.set(page);
+      window.scrollTo({ top: 400, behavior: 'smooth' });
+    }
+  }
+  
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      this.goToPage(this.currentPage() + 1);
+    }
+  }
+  
+  prevPage(): void {
+    if (this.currentPage() > 1) {
+      this.goToPage(this.currentPage() - 1);
+    }
   }
 
   navigateToEvent(eventId: string): void {
@@ -152,6 +196,7 @@ export class Events implements OnInit, OnDestroy {
 
   filterByCategory(category: EventCategory | 'ALL'): void {
     this.eventService.setSelectedCategory(category);
+    this.currentPage.set(1);
   }
   
   getCategoryDisplayLabel(category: EventCategory | 'ALL'): string {

@@ -8,9 +8,10 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzUploadModule, NzUploadFile } from 'ng-zorro-antd/upload';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { AlertService } from '../../infrastructure/services/alert.service';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { AuthService } from '../../infrastructure/services/auth.service';
+import { Navbar } from '../navbar/navbar';
 import { UserDTO, getRoleLabel } from '../../domain/models/user.model';
 
 interface SavedEvent {
@@ -43,7 +44,8 @@ interface EditProfileForm {
     NzButtonModule,
     NzInputModule,
     NzUploadModule,
-    NzAvatarModule
+    NzAvatarModule,
+    Navbar
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
@@ -53,7 +55,9 @@ export class ProfileComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly modal = inject(NzModalService);
-  private readonly message = inject(NzMessageService);
+  private readonly alert = inject(AlertService);
+  
+  private readonly BANNER_KEY = 'predictify_user_banner';
 
   // Auth signals
   readonly user = this.authService.user;
@@ -62,7 +66,7 @@ export class ProfileComponent {
   // Computed user info
   readonly userName = computed(() => this.user()?.name || 'Usuario');
   readonly userEmail = computed(() => this.user()?.email || '');
-  readonly userAvatar = computed(() => this.user()?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=User');
+  readonly userAvatar = computed(() => this.user()?.avatar || '');
   readonly userBio = computed(() => this.user()?.bio || 'Sin biografía');
   readonly userLocation = computed(() => this.user()?.location || 'Sin ubicación');
   readonly userRole = computed(() => {
@@ -82,8 +86,8 @@ export class ProfileComponent {
     });
   });
 
-  // Profile banner
-  readonly userBanner = signal('https://images.unsplash.com/photo-1557683316-973673baf926?w=1200&h=300&fit=crop');
+  // Profile banner - load from localStorage
+  readonly userBanner = signal(this.loadBannerFromStorage());
   
   // Modal state
   readonly isEditModalVisible = signal(false);
@@ -127,35 +131,54 @@ export class ProfileComponent {
     this.isEditModalVisible.set(false);
   }
 
+  // Load banner from localStorage
+  private loadBannerFromStorage(): string {
+    try {
+      const saved = localStorage.getItem(this.BANNER_KEY);
+      return saved || 'https://images.unsplash.com/photo-1557683316-973673baf926?w=1200&h=300&fit=crop';
+    } catch {
+      return 'https://images.unsplash.com/photo-1557683316-973673baf926?w=1200&h=300&fit=crop';
+    }
+  }
+
+  // Save banner to localStorage
+  private saveBannerToStorage(banner: string): void {
+    try {
+      localStorage.setItem(this.BANNER_KEY, banner);
+    } catch (e) {
+      console.error('Error saving banner:', e);
+    }
+  }
+
   // Save profile changes
   saveProfile(): void {
     this.isSaving.set(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      const form = this.editForm();
-      
-      // Update local storage (mock implementation)
-      const currentUser = this.user();
-      if (currentUser) {
-        const updatedUser: UserDTO = {
-          ...currentUser,
-          name: form.name,
-          bio: form.bio,
-          location: form.location,
-          avatar: form.avatar
-        };
-        
-        localStorage.setItem('predictify_user', JSON.stringify(updatedUser));
-        // Force reload to update signals
-        window.location.reload();
-      }
-      
+    const form = this.editForm();
+    
+    // Save banner to localStorage first
+    if (form.banner) {
+      this.saveBannerToStorage(form.banner);
       this.userBanner.set(form.banner);
-      this.isSaving.set(false);
-      this.isEditModalVisible.set(false);
-      this.message.success('Perfil actualizado correctamente');
-    }, 1000);
+    }
+    
+    // Update user data in localStorage
+    const currentUser = this.user();
+    if (currentUser) {
+      const updatedUser: UserDTO = {
+        ...currentUser,
+        name: form.name,
+        bio: form.bio,
+        location: form.location,
+        avatar: form.avatar
+      };
+      
+      localStorage.setItem('predictify_user', JSON.stringify(updatedUser));
+    }
+    
+    this.isSaving.set(false);
+    this.isEditModalVisible.set(false);
+    this.alert.toastSuccess('Perfil actualizado correctamente');
   }
 
   // Handle avatar upload

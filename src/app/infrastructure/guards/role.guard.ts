@@ -48,6 +48,6 @@ export function roleGuard(...allowedRoles: UserRole[]): CanActivateFn {
 /**
  * Pre-configured guards for common use cases
  */
-export const adminGuard: CanActivateFn = roleGuard('ADMIN', 'ORGANIZER');
-export const organizerGuard: CanActivateFn = roleGuard('ORGANIZER', 'ADMIN');
+export const adminGuard: CanActivateFn = roleGuard('ADMIN'); // Solo ADMIN
+export const organizerGuard: CanActivateFn = roleGuard('ORGANIZER', 'ADMIN'); // ORGANIZER y ADMIN
 export const attendeeGuard: CanActivateFn = roleGuard('ATTENDEE', 'ORGANIZER', 'ADMIN');

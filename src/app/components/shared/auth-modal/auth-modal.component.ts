@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService } from '../../../infrastructure/services/auth.service';
+import { AlertService } from '../../../infrastructure/services/alert.service';
 
 @Component({
   selector: 'app-auth-modal',
@@ -20,6 +21,7 @@ export class AuthModalComponent {
 
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly alert = inject(AlertService);
 
   mode: 'options' | 'login' | 'register' = 'options';
   
@@ -88,12 +90,13 @@ export class AuthModalComponent {
     }).subscribe({
       next: () => {
         this.loading = false;
+        this.alert.toastSuccess('¡Bienvenido!');
         this.authenticated.emit();
         this.closeModal();
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message || 'Credenciales inválidas';
+        this.alert.error('Error', err.error?.message || 'Credenciales inválidas');
       }
     });
   }
@@ -110,16 +113,19 @@ export class AuthModalComponent {
     this.authService.register({
       name: this.registerName,
       email: this.registerEmail,
-      password: this.registerPassword
+      password: this.registerPassword,
+      role: 'ATTENDEE'
     }).subscribe({
       next: () => {
         this.loading = false;
-        this.authenticated.emit();
-        this.closeModal();
+        this.alert.registrationSuccess(this.registerEmail).then(() => {
+          this.authenticated.emit();
+          this.closeModal();
+        });
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.message || 'Error al crear la cuenta';
+        this.alert.error('Error en el registro', err.error?.message || 'Error al crear la cuenta');
       }
     });
   }

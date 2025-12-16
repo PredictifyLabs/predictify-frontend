@@ -1,4 +1,7 @@
 <div class="profile-page">
+  <!-- Navigation Bar -->
+  <app-navbar></app-navbar>
+
   <div class="ambient-bg">
     <div class="gradient-orb orb-1"></div>
     <div class="gradient-orb orb-2"></div>
@@ -161,13 +164,6 @@
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="profile-actions">
-      <button class="btn-danger" (click)="logout()">
-        <span nz-icon nzType="logout" nzTheme="outline"></span>
-        Cerrar Sesión
-      </button>
-    </div>
   </div>
 
   <!-- Edit Profile Modal -->
@@ -182,7 +178,7 @@
       <div class="edit-profile-modal">
         <!-- Banner Upload -->
         <div class="banner-upload-section">
-          <label>Banner de Perfil</label>
+          <label>Banner de Perfil <span class="size-hint">(Tamaño recomendado: 1200 x 300 px)</span></label>
           <div class="banner-preview" [style.background-image]="'url(' + editForm().banner + ')'">
             <nz-upload
               [nzBeforeUpload]="handleBannerUpload"

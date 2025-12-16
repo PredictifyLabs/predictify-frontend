@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, adminGuard } from './infrastructure/guards';
+import { authGuard, adminGuard, organizerGuard, bannedGuard, onlyBannedGuard } from './infrastructure/guards';
 
 export const routes: Routes = [
     // Public routes
@@ -37,13 +37,37 @@ export const routes: Routes = [
       path: 'dashboard', 
       loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
       title: 'Dashboard - Predictify',
-      canActivate: [authGuard]
+      canActivate: [authGuard, bannedGuard]
     },
     { 
       path: 'profile', 
       loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent),
       title: 'Mi Perfil - Predictify',
-      canActivate: [authGuard]
+      canActivate: [authGuard, bannedGuard]
+    },
+    {
+      path: 'my-events',
+      loadComponent: () => import('./components/my-events/my-events.component').then(m => m.MyEventsComponent),
+      title: 'Mis Eventos - Predictify',
+      canActivate: [authGuard, bannedGuard]
+    },
+    {
+      path: 'discover',
+      loadComponent: () => import('./components/discover/discover.component').then(m => m.DiscoverComponent),
+      title: 'Descubrir - Predictify',
+      canActivate: [authGuard, bannedGuard]
+    },
+    {
+      path: 'organizer',
+      loadComponent: () => import('./components/organizer/organizer-dashboard/organizer-dashboard.component').then(m => m.OrganizerDashboardComponent),
+      title: 'Dashboard Organizador - Predictify',
+      canActivate: [organizerGuard, bannedGuard]
+    },
+    {
+      path: 'organizer/event/:id/attendees',
+      loadComponent: () => import('./components/organizer/event-attendees/event-attendees.component').then(m => m.EventAttendeesComponent),
+      title: 'Gestión de Asistentes - Predictify',
+      canActivate: [organizerGuard, bannedGuard]
     },
     
     // Admin routes - require ADMIN or ORGANIZER role
@@ -52,6 +76,14 @@ export const routes: Routes = [
       loadComponent: () => import('./components/admin/admin.component').then(m => m.AdminComponent),
       title: 'Admin - Predictify',
       canActivate: [adminGuard]
+    },
+    
+    // Banned page (only for banned users)
+    {
+      path: 'banned',
+      loadComponent: () => import('./components/banned/banned.component').then(m => m.BannedComponent),
+      title: 'Cuenta Suspendida - Predictify',
+      canActivate: [onlyBannedGuard]
     },
     
     // Error pages (public)

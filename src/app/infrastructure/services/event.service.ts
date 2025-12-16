@@ -2,7 +2,7 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, catchError, delay } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { EventDTO, EventCategory } from '../../domain/models/event.model';
+import { EventDTO, EventCategory, EventType } from '../../domain/models/event.model';
 import { PredictionDTO } from '../../domain/models/prediction.model';
 import { MOCK_EVENTS, getMockEventById, getMockEventBySlug, getMockPrediction } from '../data/mock-events';
 
@@ -13,9 +13,8 @@ export class EventService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/events`;
   
-  // Enable mock mode when backend is not available
-  // Set to false when backend has published events
-  private readonly USE_MOCK = true;
+  // Set to true to use mock data, false to use real backend
+  private readonly USE_MOCK = false;
   
   // State signals
   private readonly _events = signal<EventDTO[]>([]);
@@ -74,7 +73,10 @@ export class EventService {
     
     if (this.USE_MOCK) {
       of(MOCK_EVENTS).pipe(delay(500)).subscribe(events => {
-        this._events.set(events);
+        // Merge with organizer-created events from localStorage
+        const organizerEvents = this.getOrganizerEvents();
+        const allEvents = [...events, ...organizerEvents];
+        this._events.set(allEvents);
         this._loading.set(false);
       });
       return;
@@ -85,11 +87,15 @@ export class EventService {
         catchError(err => {
           this._error.set('Error al cargar eventos');
           console.error('Error loading events:', err);
-          return of([]);
+          // Fallback to mock events if backend fails
+          return of(MOCK_EVENTS);
         })
       )
       .subscribe(events => {
-        this._events.set(events);
+        // Merge with organizer-created events from localStorage
+        const organizerEvents = this.getOrganizerEvents();
+        const allEvents = [...events, ...organizerEvents];
+        this._events.set(allEvents);
         this._loading.set(false);
       });
   }
@@ -214,5 +220,65 @@ export class EventService {
   clearSelectedEvent(): void {
     this._selectedEvent.set(null);
     this._selectedEventPrediction.set(null);
+  }
+
+  /**
+   * Get organizer-created events from localStorage and convert to EventDTO format
+   */
+  private getOrganizerEvents(): EventDTO[] {
+    try {
+      const stored = localStorage.getItem('predictify_organizer_events');
+      if (!stored) return [];
+      
+      const organizerEvents = JSON.parse(stored);
+      return organizerEvents
+        .filter((e: any) => e.status === 'PUBLISHED')
+        .map((e: any): EventDTO => ({
+          id: e.id,
+          title: e.title,
+          slug: e.title.toLowerCase().replace(/\s+/g, '-'),
+          description: e.description || '',
+          shortDescription: e.description?.substring(0, 100) || '',
+          category: (e.category as EventCategory) || 'CONFERENCE',
+          type: (e.type as EventType) || 'PRESENCIAL',
+          status: 'PUBLISHED',
+          imageUrl: e.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600',
+          startDate: e.startDate || new Date().toISOString(),
+          endDate: e.startDate || new Date().toISOString(),
+          startTime: e.startTime || '09:00',
+          endTime: e.startTime || '18:00',
+          timezone: 'America/Bogota',
+          location: {
+            type: (!e.location || e.location === 'Virtual') ? 'VIRTUAL' : 'PHYSICAL',
+            venue: e.location || 'Virtual',
+            address: e.location || '',
+            city: e.location || 'Virtual',
+            country: 'Colombia'
+          },
+          capacity: e.capacity || 100,
+          interestedCount: 0,
+          registeredCount: e.registered || 0,
+          isFree: true,
+          isFeatured: false,
+          isTrending: false,
+          organizer: {
+            id: 'org_current',
+            displayName: 'Organizador',
+            avatar: '',
+            isVerified: false,
+            eventsCount: 1
+          },
+          createdAt: e.createdAt || new Date().toISOString()
+        }));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Refresh events (used when organizer creates new events)
+   */
+  refreshEvents(): void {
+    this.loadEvents();
   }
 }
